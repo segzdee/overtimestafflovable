@@ -71,6 +71,14 @@ export default function Login() {
     }
   };
 
+  const handleSignUpClick = () => {
+    if (activeRole) {
+      navigate('/register', { state: { role: activeRole } });
+    } else {
+      navigate('/register');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
       {/* Header */}
@@ -85,9 +93,12 @@ export default function Login() {
           <Link to="/find-staff" className="text-gray-600 hover:text-gray-900">
             Find Extra Staff
           </Link>
-          <Link to="/register" className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+          <Button 
+            onClick={handleSignUpClick}
+            className="bg-green-600 hover:bg-green-700"
+          >
             Sign up
-          </Link>
+          </Button>
         </div>
       </header>
 
@@ -187,6 +198,19 @@ export default function Login() {
               >
                 {loading ? "Logging in..." : "Login"}
               </Button>
+
+              <div className="text-center mt-4">
+                <p className="text-sm text-gray-600">
+                  Don't have an account?{" "}
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto font-semibold text-purple-600 hover:text-purple-700"
+                    onClick={handleSignUpClick}
+                  >
+                    Sign up now
+                  </Button>
+                </p>
+              </div>
             </form>
           </div>
         )}
