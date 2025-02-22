@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { UserCircle2, Building2, Building, Bot, Menu, X, ArrowLeft, Terminal } from "lucide-react";
+import { UserCircle2, Building2, Building, Bot, Menu, X, ArrowLeft, Code } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import {
@@ -291,7 +291,7 @@ export default function Login() {
           </div>
         </div>
 
-        <footer className="mt-12 flex justify-between items-center gap-6 text-sm text-gray-600 py-4 border-t px-4">
+        <footer className="mt-12 flex flex-col items-center gap-6 text-sm text-gray-600 py-4 border-t">
           <div className="flex gap-6">
             <Link to="/terms" className="hover:text-gray-900 transition-colors">Terms</Link>
             <Link to="/privacy" className="hover:text-gray-900 transition-colors">Privacy</Link>
@@ -305,7 +305,7 @@ export default function Login() {
               onClick={handleDevLogin}
               className="flex items-center gap-2"
             >
-              <Terminal className="h-4 w-4" />
+              <Code className="h-4 w-4" />
               <span className="sr-only">Developer Access</span>
             </Button>
           )}
