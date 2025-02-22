@@ -2,6 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
 import {
   LayoutDashboard,
   Users,
@@ -74,7 +75,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
       {/* Sidebar */}
       <aside className="w-64 bg-[#0B4A3F] text-white">
         <div className="h-16 flex items-center px-6 border-b border-white/10">
-          <h1 className="text-lg font-semibold tracking-wider">OVERTIMESTAFF</h1>
+          <Logo />
         </div>
         <div className="px-3 py-2">
           <p className="text-sm text-white/60 px-3 mb-4">{portalType}</p>
