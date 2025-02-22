@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { UserCircle2, Building2, Building, Bot } from "lucide-react";
+import { UserCircle2, Building2, Building, Bot, Menu, X } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import {
@@ -15,90 +15,89 @@ import {
 } from "@/components/ui/dialog";
 
 export default function Login() {
-  const [activeRole, setActiveRole] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [token, setToken] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
-
-  const { login, loginWithToken } = useAuth();
+  const [activeRole, setActiveRole] = useState<string | null>(null);
+  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { updates, lastUpdateTime, newUpdatesCount } = useMarketUpdates();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { updates, lastUpdateTime, newUpdatesCount } = useMarketUpdates();
+  const { signIn } = useAuth();
 
   const loginCards = [
     {
-      role: "shift-worker",
-      title: "Shift Worker",
-      subtitle: "Clock-in",
-      icon: UserCircle2,
-    },
-    {
       role: "agency",
-      title: "Agency",
-      subtitle: "Manage Staff",
+      title: "Staffing Agency",
+      subtitle: "Manage your workforce and client relationships",
       icon: Building2,
     },
     {
       role: "company",
-      title: "Company",
-      subtitle: "Post Shifts",
+      title: "Hotels & Businesses",
+      subtitle: "Find reliable staff for your shifts",
       icon: Building,
     },
     {
-      role: "aiagent",
-      title: "AI Agents",
-      subtitle: "Token Auth",
+      role: "shift-worker",
+      title: "Shift Workers",
+      subtitle: "Find flexible work opportunities",
+      icon: UserCircle2,
+    },
+    {
+      role: "admin",
+      title: "Platform Admin",
+      subtitle: "Manage the platform and users",
       icon: Bot,
     },
   ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!activeRole) return;
-
-    try {
-      setError("");
-      setLoading(true);
-
-      if (activeRole === "aiagent") {
-        await loginWithToken(token);
-      } else {
-        await login(email, password);
-      }
-
-      toast({
-        title: "Login successful",
-        description: "Welcome back!"
-      });
-      setShowLoginDialog(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to log in");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSignUpClick = () => {
-    if (activeRole) {
-      navigate('/register', { state: { role: activeRole } });
-    } else {
-      navigate('/register');
-    }
+    navigate("/register");
   };
 
   const handleLoginClick = (role: string) => {
     setActiveRole(role);
-    setShowLoginDialog(true);
+    setLoginDialogOpen(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await signIn(email, password);
+      toast({
+        title: "Success",
+        description: "Logged in successfully",
+      });
+      navigate(`/dashboard/${activeRole}`);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Invalid credentials",
+      });
+    }
   };
 
   return (
     <div className="h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white overflow-hidden">
-      <header className="flex justify-between items-center p-4 md:px-6 border-b">
+      <header className="relative flex justify-between items-center p-4 md:px-6 border-b">
         <Logo />
-        <div className="flex items-center gap-4">
+        
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </Button>
+
+        <div className="hidden lg:flex items-center gap-4">
           <Link to="/find-shifts" className="text-gray-600 hover:text-gray-900">
             Find Extra Shifts
           </Link>
@@ -113,6 +112,36 @@ export default function Login() {
           </Button>
         </div>
       </header>
+
+      {mobileMenuOpen && (
+        <div className="lg:hidden absolute top-[73px] left-0 right-0 bg-white border-b shadow-lg z-50">
+          <div className="flex flex-col p-4 space-y-4">
+            <Link 
+              to="/find-shifts" 
+              className="text-gray-600 hover:text-gray-900 py-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Find Extra Shifts
+            </Link>
+            <Link 
+              to="/find-staff" 
+              className="text-gray-600 hover:text-gray-900 py-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Find Extra Staff
+            </Link>
+            <Button 
+              onClick={() => {
+                handleSignUpClick();
+                setMobileMenuOpen(false);
+              }}
+              className="bg-green-600 hover:bg-green-700 w-full"
+            >
+              Sign up
+            </Button>
+          </div>
+        </div>
+      )}
 
       <main className="flex-1 flex flex-col overflow-hidden">
         <div className="max-w-6xl mx-auto w-full px-4 py-8 flex flex-col h-full">
@@ -198,53 +227,36 @@ export default function Login() {
         </div>
       </main>
 
-      <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+      <Dialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Login as {loginCards.find(card => card.role === activeRole)?.title}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {activeRole === "aiagent" ? (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Authentication Token
-                </label>
-                <Input
-                  type="text"
-                  value={token}
-                  onChange={(e) => setToken(e.target.value)}
-                  placeholder="Enter your token"
-                  required
-                />
-              </div>
-            ) : (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-                  <Input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Password
-                  </label>
-                  <Input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    required
-                  />
-                </div>
-              </>
-            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+              />
+            </div>
 
             {error && (
               <div className="text-red-500 text-sm">{error}</div>
