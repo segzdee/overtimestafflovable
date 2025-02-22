@@ -9,6 +9,134 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      agency_client_relationships: {
+        Row: {
+          agency_id: string | null
+          client_id: string | null
+          created_at: string
+          id: string
+          status: Database["public"]["Enums"]["user_status"] | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["user_status"] | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["user_status"] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agency_client_relationships_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agency_client_relationships_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agency_worker_relationships: {
+        Row: {
+          agency_id: string | null
+          created_at: string
+          id: string
+          status: Database["public"]["Enums"]["user_status"] | null
+          updated_at: string
+          worker_id: string | null
+        }
+        Insert: {
+          agency_id?: string | null
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["user_status"] | null
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Update: {
+          agency_id?: string | null
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["user_status"] | null
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agency_worker_relationships_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agency_worker_relationships_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_agents: {
+        Row: {
+          activation_date: string | null
+          created_at: string
+          id: string
+          subscription_status:
+            | Database["public"]["Enums"]["subscription_status"]
+            | null
+          token: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          activation_date?: string | null
+          created_at?: string
+          id?: string
+          subscription_status?:
+            | Database["public"]["Enums"]["subscription_status"]
+            | null
+          token?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          activation_date?: string | null
+          created_at?: string
+          id?: string
+          subscription_status?:
+            | Database["public"]["Enums"]["subscription_status"]
+            | null
+          token?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_agents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           content: string | null
@@ -65,46 +193,150 @@ export type Database = {
           address: string | null
           agency_name: string | null
           category: string | null
+          commission_rate: number | null
           created_at: string
           email: string
           id: string
+          location: Json | null
           name: string
+          payment_info: Json | null
           phone_number: string | null
           profile_complete: boolean | null
           role: string
           specialization: string | null
           staffing_capacity: number | null
+          status: Database["public"]["Enums"]["user_status"] | null
           updated_at: string
         }
         Insert: {
           address?: string | null
           agency_name?: string | null
           category?: string | null
+          commission_rate?: number | null
           created_at?: string
           email: string
           id: string
+          location?: Json | null
           name: string
+          payment_info?: Json | null
           phone_number?: string | null
           profile_complete?: boolean | null
           role: string
           specialization?: string | null
           staffing_capacity?: number | null
+          status?: Database["public"]["Enums"]["user_status"] | null
           updated_at?: string
         }
         Update: {
           address?: string | null
           agency_name?: string | null
           category?: string | null
+          commission_rate?: number | null
           created_at?: string
           email?: string
           id?: string
+          location?: Json | null
           name?: string
+          payment_info?: Json | null
           phone_number?: string | null
           profile_complete?: boolean | null
           role?: string
           specialization?: string | null
           staffing_capacity?: number | null
+          status?: Database["public"]["Enums"]["user_status"] | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      worker_availability: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          profile_id: string | null
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          profile_id?: string | null
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          profile_id?: string | null
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worker_availability_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worker_profile_skills: {
+        Row: {
+          created_at: string
+          profile_id: string
+          skill_id: string
+        }
+        Insert: {
+          created_at?: string
+          profile_id: string
+          skill_id: string
+        }
+        Update: {
+          created_at?: string
+          profile_id?: string
+          skill_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worker_profile_skills_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_profile_skills_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "worker_skills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worker_skills: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
         }
         Relationships: []
       }
@@ -300,7 +532,8 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      subscription_status: "active" | "inactive"
+      user_status: "active" | "inactive" | "pending" | "verified"
     }
     CompositeTypes: {
       [_ in never]: never
