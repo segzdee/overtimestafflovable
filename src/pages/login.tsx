@@ -92,9 +92,15 @@ export default function Login() {
     setShowLoginDialog(true);
   };
 
+  const marketUpdates = [
+    { type: 'URGENT', title: 'Kitchen Staff Needed', location: 'Downtown', rate: '$35/hr', highlight: true },
+    { type: 'NEW', title: 'Server Position', location: 'Midtown', rate: '$25/hr', highlight: false },
+    { type: 'SWAP', title: 'Bartender Shift', location: 'Upper East', rate: '$30/hr', highlight: false },
+    { type: 'PREMIUM', title: 'Night Manager', location: 'Financial District', rate: '$40/hr', highlight: true },
+  ];
+
   return (
     <div className="h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white overflow-hidden">
-      {/* Header */}
       <header className="flex justify-between items-center p-4 md:px-6 border-b">
         <Logo />
         <div className="flex items-center gap-4">
@@ -113,10 +119,8 @@ export default function Login() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         <div className="max-w-6xl mx-auto w-full px-4 py-8 flex flex-col h-full">
-          {/* Hero Section */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold mb-4">AI Meets Hospitality:</h1>
             <h2 className="text-4xl font-bold mb-6">Extra Staff, Anytime, Anywhere</h2>
@@ -126,7 +130,6 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Login Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-auto px-4">
             {loginCards.map((card) => (
               <div
@@ -152,7 +155,43 @@ export default function Login() {
             ))}
           </div>
 
-          {/* News Ticker */}
+          <div className="mt-8 bg-gray-900 text-white p-4 rounded-lg shadow-xl">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-gray-400">LIVE MARKET UPDATES</h3>
+              <span className="text-sm text-gray-400">{new Date().toLocaleTimeString()}</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {marketUpdates.map((update, index) => (
+                <div
+                  key={index}
+                  className={`p-3 rounded border ${
+                    update.highlight
+                      ? 'bg-purple-900 border-purple-700'
+                      : 'bg-gray-800 border-gray-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className={`text-xs font-bold ${
+                      update.type === 'URGENT' ? 'text-red-400' :
+                      update.type === 'PREMIUM' ? 'text-purple-400' :
+                      update.type === 'SWAP' ? 'text-orange-400' :
+                      'text-green-400'
+                    }`}>
+                      {update.type}
+                    </span>
+                    <span className="text-lg font-bold text-green-400">{update.rate}</span>
+                  </div>
+                  <div className="text-sm font-medium">{update.title}</div>
+                  <div className="text-xs text-gray-400">{update.location}</div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-2 flex items-center justify-between text-xs text-gray-400">
+              <span>Updated every 5 minutes</span>
+              <span>8 new positions added today</span>
+            </div>
+          </div>
+
           <div className="mt-8 flex items-center gap-4 text-sm text-gray-600 overflow-hidden">
             <span className="whitespace-nowrap">Premium rates available for night shifts</span>
             <span className="text-gray-400">|</span>
@@ -161,7 +200,6 @@ export default function Login() {
             <span className="whitespace-nowrap">8 new positions added in downtown area</span>
           </div>
 
-          {/* Footer */}
           <footer className="mt-8 flex justify-center gap-6 text-sm text-gray-600 py-4 border-t">
             <Link to="/terms" className="hover:text-gray-900">Terms</Link>
             <Link to="/privacy" className="hover:text-gray-900">Privacy</Link>
@@ -171,7 +209,6 @@ export default function Login() {
         </div>
       </main>
 
-      {/* Login Dialog */}
       <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
