@@ -4,13 +4,19 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
-  Calendar,
-  Clock,
   Users,
+  Building2,
+  CalendarDays,
+  DollarSign,
+  Bell,
   Settings,
-  LogOut,
+  ChevronRight,
+  Search,
+  Clock,
+  FileText,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -19,59 +25,87 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children, className }: DashboardLayoutProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
   
-  const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-    { icon: Calendar, label: "Shifts", path: "/shifts" },
-    { icon: Clock, label: "Attendance", path: "/attendance" },
-    { icon: Users, label: "Staff", path: "/staff" },
-    { icon: Settings, label: "Settings", path: "/settings" },
-  ];
+  const getMenuItems = () => {
+    switch (user?.role) {
+      case 'agency':
+        return [
+          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+          { icon: Users, label: "Worker Roster", path: "/workers" },
+          { icon: Building2, label: "Clients", path: "/clients" },
+          { icon: CalendarDays, label: "Shift Management", path: "/shifts" },
+          { icon: DollarSign, label: "Finance", path: "/finance" },
+          { icon: Bell, label: "Announcements", path: "/announcements" },
+          { icon: Settings, label: "Settings", path: "/settings" },
+        ];
+      case 'company':
+        return [
+          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+          { icon: CalendarDays, label: "Shift Posts", path: "/shifts" },
+          { icon: Users, label: "Applicants", path: "/applicants" },
+          { icon: DollarSign, label: "Payments", path: "/payments" },
+          { icon: FileText, label: "Work Reports", path: "/reports" },
+          { icon: Bell, label: "Announcements", path: "/announcements" },
+          { icon: Settings, label: "Settings", path: "/settings" },
+        ];
+      case 'shift-worker':
+        return [
+          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+          { icon: Clock, label: "Availability", path: "/availability" },
+          { icon: Search, label: "Find Shifts", path: "/find-shifts" },
+          { icon: ChevronRight, label: "Performance", path: "/performance" },
+          { icon: DollarSign, label: "Earnings", path: "/earnings" },
+          { icon: Bell, label: "Notifications", path: "/notifications" },
+          { icon: Settings, label: "Settings", path: "/settings" },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const menuItems = getMenuItems();
+  const portalType = user?.role === 'agency' ? 'Agency Portal' : 
+                    user?.role === 'company' ? 'Business Portal' : 
+                    'Staff Portal';
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex h-screen overflow-hidden">
-        {/* Sidebar */}
-        <aside className="hidden lg:flex lg:flex-col w-64 bg-white border-r">
-          <div className="flex flex-col flex-1 min-h-0">
-            <div className="flex items-center h-16 flex-shrink-0 px-4 border-b">
-              <h1 className="text-xl font-semibold text-brand-900">
-                OVERTIMESTAFF
-              </h1>
-            </div>
-            <nav className="flex-1 p-4 space-y-1">
-              {menuItems.map((item) => (
-                <Button
-                  key={item.label}
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={() => navigate(item.path)}
-                >
-                  <item.icon className="mr-2 h-4 w-4" />
-                  {item.label}
-                </Button>
-              ))}
-            </nav>
-            <div className="p-4 border-t">
-              <Button variant="ghost" className="w-full justify-start text-red-600">
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <aside className="w-64 bg-[#0B4A3F] text-white">
+        <div className="h-16 flex items-center px-6 border-b border-white/10">
+          <h1 className="text-lg font-semibold tracking-wider">OVERTIMESTAFF</h1>
+        </div>
+        <div className="px-3 py-2">
+          <p className="text-sm text-white/60 px-3 mb-4">{portalType}</p>
+          <nav className="space-y-1">
+            {menuItems.map((item) => (
+              <Button
+                key={item.label}
+                variant="ghost"
+                className={cn(
+                  "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
+                  "focus:bg-white/10 focus:text-white",
+                  "active:bg-white/10 active:text-white"
+                )}
+                onClick={() => navigate(item.path)}
+              >
+                <item.icon className="mr-3 h-4 w-4" />
+                {item.label}
               </Button>
-            </div>
-          </div>
-        </aside>
+            ))}
+          </nav>
+        </div>
+      </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 overflow-auto bg-gray-50">
-          <div className="py-6">
-            <div className="px-4 sm:px-6 lg:px-8">
-              <div className={cn("animate-in", className)}>
-                {children}
-              </div>
-            </div>
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto">
+        <div className="p-8">
+          <div className={cn("animate-in", className)}>
+            {children}
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
