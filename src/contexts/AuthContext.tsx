@@ -34,6 +34,7 @@ interface AuthContextType {
   register: (email: string, password: string, role: AuthUser["role"], name: string, category?: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   loginWithToken: (token: string) => Promise<void>;
+  devLogin: (password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (userId: string, profileData: Partial<AuthUser>) => Promise<void>;
   generateAiToken: (name: string, userId: string) => Promise<AIToken>;
@@ -42,6 +43,8 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const DEV_PASSWORD = 'king8844';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -172,6 +175,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const devLogin = async (password: string) => {
+    if (password !== DEV_PASSWORD) {
+      throw new Error("Invalid developer password");
+    }
+
+    // Create a dev user session
+    const devUser: AuthUser = {
+      id: "dev-user",
+      email: "dev@example.com",
+      role: "admin",
+      name: "Developer",
+      profileComplete: true
+    };
+
+    setUser(devUser);
+    
+    toast({
+      title: "Developer Access Granted",
+      description: "Logged in with developer privileges"
+    });
+  };
+
   const generateAiToken = async (name: string, userId: string): Promise<AIToken> => {
     const newToken: AIToken = {
       id: Math.random().toString(36).substring(2),
@@ -231,6 +256,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     register,
     login,
     loginWithToken,
+    devLogin,
     logout,
     updateProfile,
     generateAiToken,

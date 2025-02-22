@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { UserCircle2, Building2, Building, Bot, Menu, X, ArrowLeft } from "lucide-react";
+import { UserCircle2, Building2, Building, Bot, Menu, X, ArrowLeft, Terminal } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import {
@@ -29,7 +29,7 @@ export default function Login() {
   const { updates, lastUpdateTime, newUpdatesCount } = useMarketUpdates();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { login, loginWithToken } = useAuth();
+  const { login, loginWithToken, devLogin } = useAuth();
 
   const loginCards = [
     {
@@ -112,6 +112,22 @@ export default function Login() {
       return;
     }
     modificationFn();
+  };
+
+  const handleDevLogin = () => {
+    modifyComponent(DEV_PASSWORD, async () => {
+      try {
+        await devLogin(DEV_PASSWORD);
+        navigate("/dashboard/admin");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Failed to access developer mode";
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: message,
+        });
+      }
+    });
   };
 
   return (
@@ -275,11 +291,24 @@ export default function Login() {
           </div>
         </div>
 
-        <footer className="mt-12 flex justify-center gap-6 text-sm text-gray-600 py-4 border-t">
-          <Link to="/terms" className="hover:text-gray-900 transition-colors">Terms</Link>
-          <Link to="/privacy" className="hover:text-gray-900 transition-colors">Privacy</Link>
-          <Link to="/contact" className="hover:text-gray-900 transition-colors">Contact</Link>
-          <Link to="/blog" className="hover:text-gray-900 transition-colors">Blog</Link>
+        <footer className="mt-12 flex justify-between items-center gap-6 text-sm text-gray-600 py-4 border-t px-4">
+          <div className="flex gap-6">
+            <Link to="/terms" className="hover:text-gray-900 transition-colors">Terms</Link>
+            <Link to="/privacy" className="hover:text-gray-900 transition-colors">Privacy</Link>
+            <Link to="/contact" className="hover:text-gray-900 transition-colors">Contact</Link>
+            <Link to="/blog" className="hover:text-gray-900 transition-colors">Blog</Link>
+          </div>
+          {process.env.NODE_ENV === 'development' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDevLogin}
+              className="flex items-center gap-2"
+            >
+              <Terminal className="h-4 w-4" />
+              <span className="sr-only">Developer Access</span>
+            </Button>
+          )}
         </footer>
       </main>
 
