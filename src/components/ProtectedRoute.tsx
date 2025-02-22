@@ -15,7 +15,12 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     return <Navigate to="/login" replace />;
   }
   
-  // If authenticated but wrong role, redirect to appropriate dashboard
+  // Admin role has access to all routes
+  if (user.role === "admin") {
+    return <>{children}</>;
+  }
+  
+  // For non-admin roles, check specific permissions
   if (!allowedRoles.includes(user.role)) {
     return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
   }
