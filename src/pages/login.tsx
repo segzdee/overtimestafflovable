@@ -16,6 +16,24 @@ import {
 
 const DEV_PASSWORD = 'king8844';
 
+const DEMO_ACCOUNTS = {
+  agency: {
+    email: "demo.agency@overtimestaff.com",
+    password: "demo123",
+    label: "Demo Staffing Agency"
+  },
+  company: {
+    email: "demo.company@overtimestaff.com",
+    password: "demo123",
+    label: "Demo Hotel/Business"
+  },
+  "shift-worker": {
+    email: "demo.worker@overtimestaff.com",
+    password: "demo123",
+    label: "Demo Shift Worker"
+  }
+};
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +47,7 @@ export default function Login() {
   const { updates, lastUpdateTime, newUpdatesCount } = useMarketUpdates();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { login, loginWithToken, devLogin } = useAuth();
+  const { login, loginWithToken } = useAuth();
 
   const loginCards = [
     {
@@ -68,6 +86,30 @@ export default function Login() {
     setErrorMessage(null);
   };
 
+  const handleDemoLogin = async (role: keyof typeof DEMO_ACCOUNTS) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    
+    try {
+      await login(DEMO_ACCOUNTS[role].email, DEMO_ACCOUNTS[role].password);
+      toast({
+        title: "Demo Login Successful",
+        description: `Logged in as ${DEMO_ACCOUNTS[role].label}`,
+      });
+      navigate(`/dashboard/${role}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to login";
+      setErrorMessage(message);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -95,33 +137,6 @@ export default function Login() {
       });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const verifyDevPassword = (password: string) => {
-    return password === DEV_PASSWORD;
-  };
-
-  const handleDevLogin = () => {
-    if (!verifyDevPassword(DEV_PASSWORD)) {
-      toast({
-        variant: "destructive",
-        title: "Access Denied",
-        description: "Developer password required to modify this component.",
-      });
-      return;
-    }
-
-    try {
-      devLogin(DEV_PASSWORD);
-      navigate("/dashboard/agency");
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to access developer mode";
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: message,
-      });
     }
   };
 
@@ -214,7 +229,7 @@ export default function Login() {
             Extra Staff, Anytime, Anywhere
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Got extra time? Need extra shifts? No dinner staff coverage? John canceled? The Overtimestaff Platform connects people with spare time to hospitality companies and agencies using smart AI Integration. Sign up. Sign in. Post shifts ————— Pick up a shift. Clock in/out. Get paid.
+            Got extra time? Need extra shifts? No dinner staff coverage? John canceled? The Overtimestaff Platform connects people with spare time to hospitality companies and agencies using smart AI Integration.
           </p>
         </div>
 
@@ -235,12 +250,24 @@ export default function Login() {
                   <p className="text-sm text-gray-600">{card.subtitle}</p>
                 </div>
               </div>
-              <Button 
-                className="w-full mt-6 bg-gradient-to-r from-purple-600 to-green-500 hover:opacity-90 transition-opacity"
-                onClick={() => handleLoginClick(card.role)}
-              >
-                LOGIN
-              </Button>
+              <div className="space-y-2 mt-6">
+                <Button 
+                  className="w-full bg-gradient-to-r from-purple-600 to-green-500 hover:opacity-90 transition-opacity"
+                  onClick={() => handleLoginClick(card.role)}
+                >
+                  LOGIN
+                </Button>
+                {card.role !== 'aiagent' && (
+                  <Button 
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => handleDemoLogin(card.role as keyof typeof DEMO_ACCOUNTS)}
+                    disabled={isLoading}
+                  >
+                    Try Demo Account
+                  </Button>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -293,17 +320,6 @@ export default function Login() {
             <Link to="/contact" className="hover:text-gray-900 transition-colors">Contact</Link>
             <Link to="/blog" className="hover:text-gray-900 transition-colors">Blog</Link>
           </div>
-          {process.env.NODE_ENV === 'development' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDevLogin}
-              className="flex items-center gap-2"
-            >
-              <Code className="h-4 w-4" />
-              Dev Mode
-            </Button>
-          )}
         </footer>
       </main>
 
