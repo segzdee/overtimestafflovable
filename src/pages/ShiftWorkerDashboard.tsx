@@ -6,6 +6,7 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { Badge } from "@/components/ui/badge";
 import { StatsCard } from "@/components/ui/stats-card";
 import { Award, MapPin, Clock, AlertCircle, DollarSign, CalendarDays } from "lucide-react";
+import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 
 interface Shift {
   id: string;
@@ -39,6 +40,8 @@ export default function ShiftWorkerDashboard() {
       status: 'emergency' 
     }
   ]);
+
+  const { updates, lastUpdateTime, newUpdatesCount } = useMarketUpdates();
 
   const handleApplyShift = async (shiftId: string) => {
     // Stub: Will be connected to Supabase
