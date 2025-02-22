@@ -10,21 +10,12 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user } = useAuth();
   
-  // Development bypass
-  if (process.env.NODE_ENV === 'development') {
-    const devBypass = localStorage.getItem('dev-bypass');
-    if (devBypass === 'true') {
-      // Simulate an admin user for development
-      return <>{children}</>;
-    }
-  }
-  
-  // Regular authentication check
+  // If not authenticated, redirect to login
   if (!user) {
     return <Navigate to="/login" replace />;
   }
   
-  // Role check
+  // If authenticated but wrong role, redirect to appropriate dashboard
   if (!allowedRoles.includes(user.role)) {
     return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
   }

@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import Index from "./pages/index";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import FindShifts from "./pages/find-shifts";
@@ -24,12 +23,11 @@ const RootRoute = () => {
   const { user } = useAuth();
   
   if (user) {
-    // Only redirect to dashboard if user is logged in
+    // Redirect to appropriate dashboard based on role
     return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
   }
   
-  // Show landing page if not logged in
-  return <Index />;
+  return <Navigate to="/login" replace />;
 };
 
 const App = () => (
