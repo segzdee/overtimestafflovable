@@ -17,6 +17,7 @@ import {
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [token, setToken] = useState("");
   const [activeRole, setActiveRole] = useState<string | null>(null);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -26,7 +27,7 @@ export default function Login() {
   const { updates, lastUpdateTime, newUpdatesCount } = useMarketUpdates();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { login } = useAuth();
+  const { login, loginWithToken } = useAuth();
 
   const loginCards = [
     {
@@ -48,9 +49,9 @@ export default function Login() {
       icon: UserCircle2,
     },
     {
-      role: "admin",
+      role: "aiagent",
       title: "AI Agent",
-      subtitle: "Manage the platform and users",
+      subtitle: "Automated scheduling and management",
       icon: Bot,
     },
   ];
@@ -71,7 +72,12 @@ export default function Login() {
     setIsLoading(true);
     
     try {
-      await login(email, password);
+      if (activeRole === 'aiagent') {
+        await loginWithToken(token);
+      } else {
+        await login(email, password);
+      }
+      
       toast({
         title: "Success",
         description: "Logged in successfully",
@@ -92,7 +98,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
-      {/* Header */}
       <header className="sticky top-0 z-50 flex justify-between items-center px-4 py-3 md:px-6 bg-white/80 backdrop-blur-sm border-b">
         <div className="flex items-center gap-4">
           <Button
@@ -141,7 +146,6 @@ export default function Login() {
         </nav>
       </header>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-x-0 top-[57px] bg-white/95 backdrop-blur-sm border-b shadow-lg z-40 animate-in">
           <nav className="flex flex-col p-4 space-y-3">
@@ -172,7 +176,6 @@ export default function Login() {
         </div>
       )}
 
-      {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 py-8 md:py-12 max-w-7xl">
         <div className="text-center space-y-4 mb-12">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-green-600 bg-clip-text text-transparent">
@@ -187,7 +190,6 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Login Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-12">
           {loginCards.map((card) => (
             <div
@@ -215,7 +217,6 @@ export default function Login() {
           ))}
         </div>
 
-        {/* Market Updates */}
         <div className="bg-gray-900 text-white rounded-xl shadow-xl overflow-hidden">
           <div className="p-4 md:p-6 space-y-6">
             <div className="flex items-center justify-between">
@@ -257,7 +258,6 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Footer */}
         <footer className="mt-12 flex justify-center gap-6 text-sm text-gray-600 py-4 border-t">
           <Link to="/terms" className="hover:text-gray-900 transition-colors">Terms</Link>
           <Link to="/privacy" className="hover:text-gray-900 transition-colors">Privacy</Link>
@@ -266,41 +266,61 @@ export default function Login() {
         </footer>
       </main>
 
-      {/* Login Dialog */}
       <Dialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              Login as {loginCards.find(card => card.role === activeRole)?.title}
+              {activeRole === 'aiagent' ? 'Login with Token' : `Login as ${loginCards.find(card => card.role === activeRole)?.title}`}
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-                className="w-full"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-                className="w-full"
-              />
-            </div>
+            {activeRole === 'aiagent' ? (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Access Token
+                </label>
+                <Input
+                  type="text"
+                  value={token}
+                  onChange={(e) => setToken(e.target.value)}
+                  placeholder="Enter your AI agent access token"
+                  required
+                  className="w-full"
+                />
+                <p className="mt-2 text-sm text-gray-500">
+                  AI Agent tokens can be generated from the Agency or Company dashboard
+                </p>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    required
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Password
+                  </label>
+                  <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    required
+                    className="w-full"
+                  />
+                </div>
+              </>
+            )}
 
             {errorMessage && (
               <div className="text-red-500 text-sm p-2 bg-red-50 rounded-md">
@@ -316,18 +336,20 @@ export default function Login() {
               {isLoading ? "Logging in..." : "Login"}
             </Button>
 
-            <div className="text-center">
-              <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
-                <Button
-                  variant="link"
-                  className="p-0 h-auto font-semibold text-purple-600 hover:text-purple-700"
-                  onClick={handleSignUpClick}
-                >
-                  Sign up now
-                </Button>
-              </p>
-            </div>
+            {activeRole !== 'aiagent' && (
+              <div className="text-center">
+                <p className="text-sm text-gray-600">
+                  Don't have an account?{" "}
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto font-semibold text-purple-600 hover:text-purple-700"
+                    onClick={() => navigate("/register")}
+                  >
+                    Sign up now
+                  </Button>
+                </p>
+              </div>
+            )}
           </form>
         </DialogContent>
       </Dialog>

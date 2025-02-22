@@ -1,11 +1,38 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { StatsCard } from "@/components/ui/stats-card";
-import { AlertCircle, Clock, Users, CalendarDays, DollarSign } from "lucide-react";
+import { AlertCircle, Clock, Users, CalendarDays, DollarSign, Bot } from "lucide-react";
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function CompanyDashboard() {
+  const { user, generateAiToken } = useAuth();
+  const { toast } = useToast();
+  const [isActivatingAI, setIsActivatingAI] = useState(false);
+
+  const handleActivateAI = async () => {
+    setIsActivatingAI(true);
+    try {
+      const token = await generateAiToken("Company AI Assistant", user?.id || "");
+      toast({
+        title: "AI Agent Activated",
+        description: "Your AI agent has been successfully activated. Save this token for future use.",
+      });
+      // Here you would typically integrate with a payment processing service
+      console.log("AI Agent Token:", token);
+    } catch (error) {
+      toast({
+        title: "Activation Failed",
+        description: "Failed to activate AI agent. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsActivatingAI(false);
+    }
+  };
+
   const handleCancelShift = async (shiftId: string) => {
     const hoursRemaining = 10; // Stub: Calculate dynamically post-MVP
     if (hoursRemaining < 12) {
@@ -20,7 +47,17 @@ export default function CompanyDashboard() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-3xl font-bold tracking-tight">Business Dashboard</h2>
-          <Button variant="outline">Download Reports</Button>
+          <div className="flex gap-4">
+            <Button variant="outline">Download Reports</Button>
+            <Button
+              onClick={handleActivateAI}
+              disabled={isActivatingAI}
+              className="bg-gradient-to-r from-purple-600 to-green-500 text-white"
+            >
+              <Bot className="w-4 h-4 mr-2" />
+              {isActivatingAI ? "Activating..." : "Activate AI Agent"}
+            </Button>
+          </div>
         </div>
 
         {/* Stats Overview */}

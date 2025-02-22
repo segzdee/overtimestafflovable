@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/table";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
+import { Bot } from "@/components/ui/icons";
 
 interface FormData {
   name: string;
@@ -42,7 +43,6 @@ interface FormData {
 export default function AgencyDashboard() {
   const { user, logout, updateProfile, generateAiToken, aiTokens, revokeAiToken } = useAuth();
   const { toast } = useToast();
-
   const [isEditing, setIsEditing] = useState(!user?.profileComplete);
   const [formData, setFormData] = useState<FormData>({
     name: user?.name || "",
@@ -56,6 +56,7 @@ export default function AgencyDashboard() {
   const [showCreateTokenModal, setShowCreateTokenModal] = useState(false);
   const [newTokenName, setNewTokenName] = useState("");
   const [newToken, setNewToken] = useState<any>(null);
+  const [isActivatingAI, setIsActivatingAI] = useState(false);
 
   const handleChange = (name: string, value: string | number) => {
     setFormData(prev => ({
@@ -123,12 +124,42 @@ export default function AgencyDashboard() {
     token => token.authorizedBy.id === user?.id
   );
 
+  const handleActivateAI = async () => {
+    setIsActivatingAI(true);
+    try {
+      const token = await generateAiToken("Agency AI Assistant", user?.id || "");
+      toast({
+        title: "AI Agent Activated",
+        description: "Your AI agent has been successfully activated. Save this token for future use.",
+      });
+      console.log("AI Agent Token:", token);
+    } catch (error) {
+      toast({
+        title: "Activation Failed",
+        description: "Failed to activate AI agent. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsActivatingAI(false);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-3xl font-bold tracking-tight">Agency Dashboard</h2>
-          <Button variant="outline" onClick={() => logout()}>Logout</Button>
+          <div className="flex gap-4">
+            <Button variant="outline" onClick={() => logout()}>Logout</Button>
+            <Button
+              onClick={handleActivateAI}
+              disabled={isActivatingAI}
+              className="bg-gradient-to-r from-purple-600 to-green-500 text-white"
+            >
+              <Bot className="w-4 h-4 mr-2" />
+              {isActivatingAI ? "Activating..." : "Activate AI Agent"}
+            </Button>
+          </div>
         </div>
 
         <Card>
