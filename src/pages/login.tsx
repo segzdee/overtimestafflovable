@@ -33,25 +33,25 @@ export default function Login() {
     {
       role: "agency",
       title: "Staffing Agency",
-      subtitle: "Manage your staff and clients",
+      subtitle: "Manage Multiple Venues and Staff",
       icon: Building2,
     },
     {
       role: "company",
       title: "Hotels & Businesses",
-      subtitle: "Find reliable staff for your shifts",
+      subtitle: "Post shifts and Hire Extra Staff",
       icon: Building,
     },
     {
       role: "shift-worker",
       title: "Shift Workers",
-      subtitle: "Find flexible work opportunities",
+      subtitle: "Clock-in for Extra Shifts",
       icon: UserCircle2,
     },
     {
       role: "aiagent",
       title: "AI Agent",
-      subtitle: "Automated scheduling and management",
+      subtitle: "Activate Agent for Automation",
       icon: Bot,
     },
   ];
@@ -185,8 +185,7 @@ export default function Login() {
             Extra Staff, Anytime, Anywhere
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            From unfilled shifts to finding the right staff, OVERTIMESTAFF Platform connects agencies,
-            hotels, and businesses with AI-driven solutions.
+            Got extra time? Need extra shifts? No dinner staff coverage? John canceled? The Overtimestaff Platform connects people with spare time to hospitality companies and agencies using smart AI Integration. Sign up. Sign in. Post shifts ————— Pick up a shift. Clock in/out. Get paid.
           </p>
         </div>
 
