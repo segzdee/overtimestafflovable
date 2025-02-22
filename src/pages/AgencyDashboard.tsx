@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/table";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
-import { Bot } from "@/components/ui/icons";
+import { Bot } from "lucide-react";
 
 interface FormData {
   name: string;
