@@ -8,12 +8,55 @@ import { useToast } from "@/components/ui/use-toast";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff } from "lucide-react";
+
+const CATEGORIES = {
+  company: [
+    { group: 'Hotels', items: [
+      'Full-Service Hotel', 'Limited-Service Hotel', 'Boutique Hotel', 'Luxury Hotel',
+      'Extended Stay Hotel', 'Budget Hotel', 'Capsule Hotel', 'Motel', 'Heritage Hotel',
+      'Eco-Hotel', 'Business Hotel', 'Airport Hotel', 'Design Hotel', 'Theme Hotel'
+    ]},
+    { group: 'Resorts', items: [
+      'Beach Resort', 'Ski Resort', 'Golf Resort', 'Spa Resort', 'All-Inclusive Resort',
+      'Eco-Resort', 'Adventure Resort', 'Family Resort', 'Casino Resort', 'Luxury Resort',
+      'Boutique Resort', 'Island Resort', 'Mountain Resort', 'Urban Resort'
+    ]},
+    { group: 'Alternative Accommodations', items: [
+      'Bed and Breakfast (B&B)', 'Hostel', 'Vacation Rental', 'Serviced Apartment',
+      'Inn', 'Lodge', 'Glamping Site', 'Treehouse', 'Farm Stay', 'Wellness Retreat'
+    ]}
+  ],
+  agency: [
+    { group: 'Staffing Services', items: [
+      'Staffing Agency', 'Temping Agency', 'Recruitment Agency', 'Executive Search Firm'
+    ]},
+    { group: 'Specialized Services', items: [
+      'Event Planning Agency', 'Food and Beverage Consulting Agency',
+      'Training and Development Agency', 'Vendor and Supplier Agency'
+    ]},
+    { group: 'Support Services', items: [
+      'Management Consulting Agency', 'Marketing and PR Agency',
+      'Technology and Software Agency', 'Design and Branding Agency'
+    ]}
+  ],
+  'shift-worker': [
+    { group: 'Employment Type', items: [
+      'Full-Time Staff', 'Part-Time Staff', 'Casual Staff', 'Seasonal Staff',
+      'Temporary Staff', 'Contract Employees', 'On-Call Staff', 'Per Diem Staff'
+    ]},
+    { group: 'Specialized Roles', items: [
+      'Extra-Hands', 'Freelancers', 'Independent Contractors', 'Shift Workers'
+    ]}
+  ]
+};
 
 export default function Register() {
   const navigate = useNavigate();
@@ -25,6 +68,7 @@ export default function Register() {
     password: "",
     confirmPassword: "",
     role: "",
+    category: "",
     name: ""
   });
   
@@ -51,6 +95,11 @@ export default function Register() {
       return;
     }
 
+    if (!formData.category) {
+      setError("Please select a category");
+      return;
+    }
+
     try {
       setError("");
       setLoading(true);
@@ -59,7 +108,8 @@ export default function Register() {
         formData.email,
         formData.password,
         formData.role as "company" | "agency" | "shift-worker" | "admin" | "aiagent",
-        formData.name
+        formData.name,
+        formData.category
       );
 
       toast({
@@ -76,7 +126,6 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md">
-        {/* Logo and Navigation */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">OVERTIMESTAFF</h1>
         </div>
@@ -90,7 +139,7 @@ export default function Register() {
               <label className="block text-sm font-medium text-gray-700">I am a</label>
               <Select
                 value={formData.role}
-                onValueChange={(value) => setFormData({ ...formData, role: value })}
+                onValueChange={(value) => setFormData({ ...formData, role: value, category: "" })}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select account type" />
@@ -102,6 +151,32 @@ export default function Register() {
                 </SelectContent>
               </Select>
             </div>
+
+            {formData.role && (
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">Category</label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => setFormData({ ...formData, category: value })}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select your category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES[formData.role as keyof typeof CATEGORIES]?.map((group) => (
+                      <SelectGroup key={group.group}>
+                        <SelectLabel>{group.group}</SelectLabel>
+                        {group.items.map((item) => (
+                          <SelectItem key={item} value={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">Name</label>

@@ -9,6 +9,7 @@ interface AuthUser {
   email: string;
   role: "admin" | "shift-worker" | "company" | "agency" | "aiagent";
   name: string;
+  category?: string;
   profileComplete: boolean;
   agencyName?: string;
   address?: string;
@@ -30,7 +31,7 @@ interface AIToken {
 
 interface AuthContextType {
   user: AuthUser | null;
-  register: (email: string, password: string, role: AuthUser["role"], name: string) => Promise<void>;
+  register: (email: string, password: string, role: AuthUser["role"], name: string, category?: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   loginWithToken: (token: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -81,6 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: supabaseUser.email!,
         role: profile.role,
         name: profile.name,
+        category: profile.category,
         profileComplete: profile.profile_complete,
         agencyName: profile.agency_name,
         address: profile.address,
@@ -95,13 +97,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     password: string,
     role: AuthUser["role"],
-    name: string
+    name: string,
+    category?: string
   ) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { role, name }
+        data: { role, name, category }
       }
     });
 
@@ -116,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email,
             role,
             name,
+            category,
             profile_complete: false
           }
         ]);
