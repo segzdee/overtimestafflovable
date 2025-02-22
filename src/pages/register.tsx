@@ -83,7 +83,7 @@ export default function Register() {
 
         <div className="bg-white p-8 rounded-lg shadow-sm border">
           <h2 className="text-2xl font-semibold text-center mb-2">Create Account</h2>
-          <p className="text-center text-gray-600 mb-6">Join OVERTIMESTAFF to find shifts</p>
+          <p className="text-center text-gray-600 mb-6">Join OVERTIMESTAFF</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -98,9 +98,21 @@ export default function Register() {
                 <SelectContent>
                   <SelectItem value="company">Business (Hiring Staff)</SelectItem>
                   <SelectItem value="agency">Staffing Agency</SelectItem>
-                  <SelectItem value="shift-worker">Staff Member</SelectItem>
+                  <SelectItem value="shift-worker">Shift Worker</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">Name</label>
+              <Input
+                type="text"
+                placeholder="Enter your full name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                className="w-full"
+              />
             </div>
 
             <div className="space-y-2">
@@ -171,7 +183,7 @@ export default function Register() {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-500 to-emerald-500 hover:from-purple-600 hover:to-emerald-600"
+              className="w-full bg-[#0B4A3F] hover:bg-[#0B4A3F]/90"
               disabled={loading}
             >
               {loading ? "Creating Account..." : "Create Account"}
