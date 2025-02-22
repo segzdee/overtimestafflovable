@@ -1,3 +1,4 @@
+
 import { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -40,6 +41,7 @@ interface AuthContextType {
   generateAiToken: (name: string, userId: string) => Promise<AIToken>;
   revokeAiToken: (token: string) => Promise<void>;
   aiTokens: AIToken[];
+  isDevMode: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -49,30 +51,47 @@ const DEV_PASSWORD = 'king8844';
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
+  const [isDevMode, setIsDevMode] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Check for dev mode on initial load
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUserFromSupabase(session.user);
-      }
-    });
+    const devMode = localStorage.getItem('dev_mode');
+    if (devMode === 'true') {
+      const devUser: AuthUser = {
+        id: "dev-user",
+        email: "dev@example.com",
+        role: "admin",
+        name: "Developer",
+        profileComplete: true
+      };
+      setUser(devUser);
+      setIsDevMode(true);
+    }
+  }, []);
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        await setUserFromSupabase(session.user);
-      } else {
-        if (!localStorage.getItem('dev_mode')) {
+  useEffect(() => {
+    if (!isDevMode) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          setUserFromSupabase(session.user);
+        }
+      });
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (session?.user) {
+          await setUserFromSupabase(session.user);
+        } else {
           setUser(null);
         }
-      }
-    });
+      });
 
-    return () => subscription.unsubscribe();
-  }, []);
+      return () => subscription.unsubscribe();
+    }
+  }, [isDevMode]);
 
   const setUserFromSupabase = async (supabaseUser: User) => {
     const { data: profile } = await supabase
@@ -182,7 +201,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error("Invalid developer password");
     }
 
-    // Create a dev user session
     const devUser: AuthUser = {
       id: "dev-user",
       email: "dev@example.com",
@@ -191,13 +209,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profileComplete: true
     };
 
-    // Set dev mode flag in localStorage
     localStorage.setItem('dev_mode', 'true');
+    setIsDevMode(true);
     setUser(devUser);
     
     toast({
       title: "Developer Access Granted",
-      description: "Logged in with developer privileges"
+      description: "You now have access to all dashboards"
     });
   };
 
@@ -224,11 +242,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    // Clear dev mode flag
     localStorage.removeItem('dev_mode');
+    setIsDevMode(false);
     
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    if (!isDevMode) {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    }
     
     setUser(null);
     navigate("/login");
@@ -268,7 +288,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     updateProfile,
     generateAiToken,
     revokeAiToken,
-    aiTokens
+    aiTokens,
+    isDevMode
   };
 
   return (

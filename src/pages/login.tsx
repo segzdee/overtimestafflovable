@@ -114,11 +114,7 @@ export default function Login() {
 
     try {
       devLogin(DEV_PASSWORD);
-      navigate("/dashboard/company");
-      toast({
-        title: "Dev Mode Activated",
-        description: "You now have access to all dashboards",
-      });
+      navigate("/dashboard/agency");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to access developer mode";
       toast({
