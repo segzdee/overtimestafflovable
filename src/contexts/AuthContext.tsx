@@ -1,264 +1,182 @@
+
 import { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/lib/supabase";
+import { User } from "@supabase/supabase-js";
 
-interface User {
+interface AuthUser {
   id: string;
   email: string;
   role: "admin" | "shift-worker" | "company" | "agency" | "aiagent";
   name: string;
   profileComplete: boolean;
-  password?: string;
-  authorizedBy?: {
-    id: string;
-    name: string;
-    role: "company" | "agency";
-  };
-  token?: string;
-  agencyName?: string;
-  address?: string;
-  phoneNumber?: string;
-  specialization?: string;
-  staffingCapacity?: string;
-}
-
-interface AIToken {
-  id: string;
-  token: string;
-  name: string;
-  authorizedBy: {
-    id: string;
-    name: string;
-    role: "company" | "agency";
-  };
-  createdAt: string;
-  isActive: boolean;
 }
 
 interface AuthContextType {
-  user: User | null;
-  users: User[];
-  aiTokens: AIToken[];
-  register: (email: string, password: string, role: User["role"], name: string) => Promise<User>;
-  login: (email: string, password: string) => Promise<User>;
-  loginWithToken: (token: string) => Promise<User>;
-  logout: () => void;
-  updateProfile: (userId: string, profileData: Partial<User>) => void;
-  generateAiToken: (name: string, authorizedByUserId: string) => AIToken;
-  revokeAiToken: (tokenId: string) => void;
+  user: AuthUser | null;
+  register: (email: string, password: string, role: AuthUser["role"], name: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  updateProfile: (userId: string, profileData: Partial<AuthUser>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+  const [user, setUser] = useState<AuthUser | null>(null);
   const navigate = useNavigate();
-
-  const [users, setUsers] = useState<User[]>(() => {
-    const storedUsers = localStorage.getItem('users');
-    return storedUsers ? JSON.parse(storedUsers) : [
-      {
-        id: 'admin1',
-        email: 'admin@example.com',
-        password: 'Admin123!',
-        role: 'admin',
-        name: 'System Admin',
-        profileComplete: true
-      }
-    ];
-  });
-
-  const [aiTokens, setAiTokens] = useState<AIToken[]>(() => {
-    const storedTokens = localStorage.getItem('aiTokens');
-    return storedTokens ? JSON.parse(storedTokens) : [];
-  });
+  const { toast } = useToast();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    // Check for initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUserFromSupabase(session.user);
+      }
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        await setUserFromSupabase(session.user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('users', JSON.stringify(users));
-  }, [users]);
+  const setUserFromSupabase = async (supabaseUser: User) => {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', supabaseUser.id)
+      .single();
 
-  useEffect(() => {
-    localStorage.setItem('aiTokens', JSON.stringify(aiTokens));
-  }, [aiTokens]);
-
-  const register = async (email: string, password: string, role: User["role"], name: string): Promise<User> => {
-    if (users.find(user => user.email === email)) {
-      throw new Error('User with this email already exists');
+    if (profile) {
+      setUser({
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        role: profile.role,
+        name: profile.name,
+        profileComplete: profile.profile_complete
+      });
     }
+  };
 
-    const newUser: User = {
-      id: Date.now().toString(),
+  const register = async (
+    email: string,
+    password: string,
+    role: AuthUser["role"],
+    name: string
+  ) => {
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      role,
-      name,
-      profileComplete: false
-    };
-
-    setUsers(prev => [...prev, newUser]);
-    setUser(newUser);
-    localStorage.setItem('currentUser', JSON.stringify(newUser));
-    
-    toast({
-      title: "Registration successful",
-      description: "Welcome to the platform!"
+      options: {
+        data: { role, name }
+      }
     });
 
-    return newUser;
+    if (error) throw error;
+
+    if (data.user) {
+      // Create profile record
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([
+          {
+            id: data.user.id,
+            email,
+            role,
+            name,
+            profile_complete: false
+          }
+        ]);
+
+      if (profileError) throw profileError;
+
+      toast({
+        title: "Registration successful",
+        description: "Please check your email to verify your account."
+      });
+    }
   };
 
-  const login = async (email: string, password: string): Promise<User> => {
-    const foundUser = users.find(user => user.email === email && user.password === password);
-    
-    if (!foundUser) {
-      throw new Error('Invalid email or password');
+  const login = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) throw error;
+
+    if (data.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
+
+      if (profile && !profile.profile_complete) {
+        navigate(`/dashboard/${profile.role}/complete-profile`);
+      }
     }
-    
-    setUser(foundUser);
-    localStorage.setItem('currentUser', JSON.stringify(foundUser));
-    
+
     toast({
       title: "Login successful",
-      description: `Welcome back, ${foundUser.name}!`
+      description: "Welcome back!"
     });
-    
-    return foundUser;
   };
 
-  const loginWithToken = async (token: string): Promise<User> => {
-    const aiToken = aiTokens.find(t => t.token === token && t.isActive);
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
     
-    if (!aiToken) {
-      throw new Error('Invalid or inactive token');
-    }
-    
-    const aiUser: User = {
-      id: aiToken.id,
-      email: `ai-${aiToken.id}@system.local`,
-      name: aiToken.name,
-      role: 'aiagent',
-      authorizedBy: aiToken.authorizedBy,
-      token: token,
-      profileComplete: true
-    };
-    
-    setUser(aiUser);
-    localStorage.setItem('currentUser', JSON.stringify(aiUser));
+    setUser(null);
+    navigate("/login");
     
     toast({
-      title: "AI Agent Login successful",
-      description: `Welcome, ${aiUser.name}`
-    });
-    
-    return aiUser;
-  };
-
-  const generateAiToken = (name: string, authorizedByUserId: string): AIToken => {
-    const authUser = users.find(user => user.id === authorizedByUserId);
-    
-    if (!authUser || (authUser.role !== 'company' && authUser.role !== 'agency')) {
-      throw new Error('Only Company and Agency users can authorize AI agents');
-    }
-    
-    const token = Math.random().toString(36).substring(2, 15) + 
-                 Math.random().toString(36).substring(2, 15);
-    
-    const newToken: AIToken = {
-      id: Date.now().toString(),
-      token,
-      name,
-      authorizedBy: {
-        id: authUser.id,
-        name: authUser.name,
-        role: authUser.role
-      },
-      createdAt: new Date().toISOString(),
-      isActive: true
-    };
-    
-    setAiTokens(prev => [...prev, newToken]);
-    
-    toast({
-      title: "AI Token Generated",
-      description: `Token created for ${name}`
-    });
-    
-    return newToken;
-  };
-
-  const revokeAiToken = (tokenId: string): void => {
-    setAiTokens(prev => 
-      prev.map(token => 
-        token.id === tokenId 
-          ? { ...token, isActive: false } 
-          : token
-      )
-    );
-    
-    toast({
-      title: "AI Token Revoked",
-      description: "The token has been deactivated"
+      title: "Logged out successfully"
     });
   };
 
-  const updateProfile = (userId: string, profileData: Partial<User>): void => {
-    const updatedUsers = users.map(u => {
-      if (u.id === userId) {
-        const updatedUser = { ...u, ...profileData, profileComplete: true };
-        
-        if (user && user.id === userId) {
-          setUser(updatedUser);
-          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-        }
-        
-        return updatedUser;
-      }
-      return u;
-    });
-    
-    setUsers(updatedUsers);
-    
+  const updateProfile = async (userId: string, profileData: Partial<AuthUser>) => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        ...profileData,
+        profile_complete: true,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', userId);
+
+    if (error) throw error;
+
+    // Update local user state
+    setUser(prev => prev ? { ...prev, ...profileData, profileComplete: true } : null);
+
     toast({
       title: "Profile Updated",
       description: "Your profile has been successfully updated"
     });
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('currentUser');
-    navigate("/");
-    toast({
-      title: "Logged out successfully"
-    });
-  };
-
   const value = {
     user,
-    users,
-    aiTokens,
     register,
     login,
-    loginWithToken,
     logout,
-    updateProfile,
-    generateAiToken,
-    revokeAiToken
+    updateProfile
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }
