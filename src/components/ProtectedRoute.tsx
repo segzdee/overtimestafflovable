@@ -10,12 +10,14 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user } = useAuth();
   
+  // If not authenticated, redirect to login
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
   
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} />;
+  // If authenticated but wrong role, redirect to appropriate dashboard
+  if (!allowedRoles.includes(user.role)) {
+    return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
   }
   
   return <>{children}</>;

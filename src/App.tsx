@@ -4,9 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import Index from "./pages/index";
 import Login from "./pages/login";
 import ShiftWorkerDashboard from "./pages/ShiftWorkerDashboard";
 import CompanyDashboard from "./pages/CompanyDashboard";
@@ -16,6 +15,18 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Root route handler component
+const RootRoute = () => {
+  const { user } = useAuth();
+  
+  if (user) {
+    // Redirect to appropriate dashboard based on role
+    return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
+  }
+  
+  return <Navigate to="/login" replace />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -24,7 +35,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<RootRoute />} />
             <Route path="/login" element={<Login />} />
             
             <Route
