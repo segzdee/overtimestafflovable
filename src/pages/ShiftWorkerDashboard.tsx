@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Badge } from "@/components/ui/badge";
-import { Award, MapPin, Clock, AlertCircle } from "lucide-react";
+import { StatsCard } from "@/components/ui/stats-card";
+import { Award, MapPin, Clock, AlertCircle, DollarSign, CalendarDays } from "lucide-react";
 
 interface Shift {
   id: string;
@@ -39,11 +40,6 @@ export default function ShiftWorkerDashboard() {
     }
   ]);
 
-  const handleSetPreferences = async () => {
-    // Stub: Will be connected to Supabase
-    alert('Preferences Updated');
-  };
-
   const handleApplyShift = async (shiftId: string) => {
     // Stub: Will be connected to Supabase
     alert(`Applied to shift ${shiftId}`);
@@ -52,14 +48,44 @@ export default function ShiftWorkerDashboard() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold tracking-tight">My Dashboard</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-3xl font-bold tracking-tight">Shift Worker Dashboard</h2>
+          <Button variant="outline">View Schedule</Button>
+        </div>
+
+        {/* Stats Overview */}
+        <div className="grid gap-4 md:grid-cols-4">
+          <StatsCard
+            title="Total Earnings"
+            value="$1,234"
+            icon={<DollarSign className="h-4 w-4 text-brand-600" />}
+            trend={{ value: "+12% vs last month", positive: true }}
+          />
+          <StatsCard
+            title="Hours Worked"
+            value="48"
+            icon={<Clock className="h-4 w-4 text-brand-600" />}
+            description="This month"
+          />
+          <StatsCard
+            title="Upcoming Shifts"
+            value="3"
+            icon={<CalendarDays className="h-4 w-4 text-brand-600" />}
+          />
+          <StatsCard
+            title="Rating"
+            value="4.8"
+            icon={<Award className="h-4 w-4 text-brand-600" />}
+            description="Based on 24 reviews"
+          />
+        </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-brand-600" />
-                Recently Posted Shifts
+                Available Shifts
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -71,9 +97,13 @@ export default function ShiftWorkerDashboard() {
                   >
                     <div>
                       <h3 className="font-medium">{shift.title}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        ${shift.pay_rate}/hr • {shift.location}
-                      </p>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <DollarSign className="h-4 w-4" />
+                        ${shift.pay_rate}/hr
+                        <span className="mx-1">•</span>
+                        <MapPin className="h-4 w-4" />
+                        {shift.location}
+                      </div>
                     </div>
                     <Button 
                       variant="outline"
@@ -103,12 +133,16 @@ export default function ShiftWorkerDashboard() {
                   >
                     <div>
                       <h3 className="font-medium">{shift.title}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        ${shift.pay_rate}/hr • {shift.location}
-                      </p>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <DollarSign className="h-4 w-4" />
+                        ${shift.pay_rate}/hr
+                        <span className="mx-1">•</span>
+                        <MapPin className="h-4 w-4" />
+                        {shift.location}
+                      </div>
                       {shift.remaining_time && (
                         <Badge variant="destructive" className="mt-2">
-                          {shift.remaining_time} left
+                          {shift.remaining_time} left to apply
                         </Badge>
                       )}
                     </div>
@@ -125,47 +159,46 @@ export default function ShiftWorkerDashboard() {
           </Card>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Award className="h-5 w-5 text-brand-600" />
-              My Badges
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-2 flex-wrap">
-              {badges.map((badge) => (
-                <Badge key={badge} variant="secondary" className="text-brand-600">
-                  {badge}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-brand-600" />
+                My Achievements
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-2 flex-wrap">
+                {badges.map((badge) => (
+                  <Badge key={badge} variant="secondary" className="text-brand-600">
+                    {badge}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-brand-600" />
-              My Preferences
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Location</span>
-                <span className="font-medium">{preferences.location}</span>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-brand-600" />
+                My Preferences
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Preferred Location</span>
+                  <span className="font-medium">{preferences.location}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Minimum Pay Rate</span>
+                  <span className="font-medium">${preferences.pay_rate}/hr</span>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Minimum Pay Rate</span>
-                <span className="font-medium">${preferences.pay_rate}/hr</span>
-              </div>
-              <Button onClick={handleSetPreferences} className="w-full">
-                Update Preferences
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </DashboardLayout>
   );
