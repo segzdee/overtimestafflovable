@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
+import { Logo } from "@/components/ui/logo";
 import {
   Select,
   SelectContent,
@@ -127,7 +128,7 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">OVERTIMESTAFF</h1>
+          <Logo />
         </div>
 
         <div className="bg-white p-8 rounded-lg shadow-sm border">
