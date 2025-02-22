@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -33,7 +32,7 @@ export default function Login() {
     {
       role: "agency",
       title: "Staffing Agency",
-      subtitle: "Manage your workforce and client relationships",
+      subtitle: "Manage your staff and clients",
       icon: Building2,
     },
     {
@@ -50,7 +49,7 @@ export default function Login() {
     },
     {
       role: "admin",
-      title: "Platform Admin",
+      title: "AI Agent",
       subtitle: "Manage the platform and users",
       icon: Bot,
     },
