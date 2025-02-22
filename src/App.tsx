@@ -62,6 +62,15 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+
+            <Route
+              path="/dashboard/aiagent"
+              element={
+                <ProtectedRoute allowedRoles={["aiagent"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
             
             <Route path="*" element={<NotFound />} />
           </Routes>
