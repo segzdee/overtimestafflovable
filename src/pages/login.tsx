@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,10 +21,13 @@ export default function Login() {
   const [activeRole, setActiveRole] = useState<string | null>(null);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  
   const { updates, lastUpdateTime, newUpdatesCount } = useMarketUpdates();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn } = useAuth();
+  const { login } = useAuth();
 
   const loginCards = [
     {
@@ -59,23 +63,31 @@ export default function Login() {
   const handleLoginClick = (role: string) => {
     setActiveRole(role);
     setLoginDialogOpen(true);
+    setErrorMessage(null); // Clear any previous errors
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
+    setIsLoading(true);
+    
     try {
-      await signIn(email, password);
+      await login(email, password);
       toast({
         title: "Success",
         description: "Logged in successfully",
       });
       navigate(`/dashboard/${activeRole}`);
     } catch (error) {
+      const message = error instanceof Error ? error.message : "Invalid credentials";
+      setErrorMessage(message);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Invalid credentials",
+        description: message,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -258,16 +270,16 @@ export default function Login() {
               />
             </div>
 
-            {error && (
-              <div className="text-red-500 text-sm">{error}</div>
+            {errorMessage && (
+              <div className="text-red-500 text-sm">{errorMessage}</div>
             )}
 
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-purple-600 to-green-500 hover:opacity-90"
-              disabled={loading}
+              disabled={isLoading}
             >
-              {loading ? "Logging in..." : "Login"}
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
 
             <div className="text-center mt-4">
