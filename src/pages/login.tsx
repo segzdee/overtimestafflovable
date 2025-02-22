@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { UserCircle2, Building2, Building, Bot, Menu, X, ArrowLeft, Code } from "lucide-react";
+import { UserCircle2, Building2, Building, Bot, Menu, X, ArrowLeft } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import {
@@ -13,8 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-const DEV_PASSWORD = 'king8844';
 
 const DEMO_ACCOUNTS = {
   agency: {
