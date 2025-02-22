@@ -14,6 +14,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+const DEV_PASSWORD = 'king8844';
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -94,6 +96,22 @@ export default function Login() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const verifyDevPassword = (password: string) => {
+    return password === DEV_PASSWORD;
+  };
+
+  const modifyComponent = (password: string, modificationFn: () => void) => {
+    if (!verifyDevPassword(password)) {
+      toast({
+        variant: "destructive",
+        title: "Access Denied",
+        description: "Developer password required to modify this component.",
+      });
+      return;
+    }
+    modificationFn();
   };
 
   return (
