@@ -17,7 +17,7 @@ interface StatsCardProps {
 
 export function StatsCard({ title, value, description, icon, trend, className }: StatsCardProps) {
   return (
-    <Card className={cn("p-6", className)}>
+    <Card className={cn("p-4 sm:p-6", className)}>
       <div className="flex items-center gap-4">
         {icon && (
           <div className="rounded-full p-2 bg-gray-100/50">
@@ -29,12 +29,12 @@ export function StatsCard({ title, value, description, icon, trend, className }:
             {title}
           </p>
           <div className="flex items-baseline gap-2">
-            <h2 className="text-2xl font-bold tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
               {value}
             </h2>
             {trend && (
               <span className={cn(
-                "text-sm",
+                "text-xs sm:text-sm",
                 trend.positive ? "text-green-600" : "text-red-600"
               )}>
                 {trend.value}
@@ -42,7 +42,7 @@ export function StatsCard({ title, value, description, icon, trend, className }:
             )}
           </div>
           {description && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               {description}
             </p>
           )}

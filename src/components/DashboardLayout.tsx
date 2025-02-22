@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
@@ -15,6 +15,8 @@ import {
   Search,
   Clock,
   FileText,
+  Menu,
+  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -27,6 +29,7 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children, className }: DashboardLayoutProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const getMenuItems = () => {
     switch (user?.role) {
@@ -71,9 +74,36 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                     'Staff Portal';
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="bg-white shadow-sm"
+        >
+          {sidebarOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </Button>
+      </div>
+
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 lg:hidden z-40"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-[#0B4A3F] text-white">
+      <aside className={cn(
+        "fixed inset-y-0 left-0 z-50 w-64 bg-[#0B4A3F] text-white transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:relative",
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
         <div className="h-16 flex items-center px-6 border-b border-white/10">
           <Logo />
         </div>
@@ -89,7 +119,10 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                   "focus:bg-white/10 focus:text-white",
                   "active:bg-white/10 active:text-white"
                 )}
-                onClick={() => navigate(item.path)}
+                onClick={() => {
+                  navigate(item.path);
+                  setSidebarOpen(false);
+                }}
               >
                 <item.icon className="mr-3 h-4 w-4" />
                 {item.label}
@@ -100,8 +133,11 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
-        <div className="p-8">
+      <main className={cn(
+        "min-h-screen transition-all duration-200 ease-in-out",
+        "lg:ml-64"
+      )}>
+        <div className="p-4 sm:p-6 lg:p-8">
           <div className={cn("animate-in", className)}>
             {children}
           </div>
