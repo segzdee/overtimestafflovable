@@ -99,50 +99,54 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
         />
       )}
 
-      {/* Sidebar */}
-      <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-[#0B4A3F] text-white transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:relative",
-        sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
-        <div className="h-16 flex items-center px-6 border-b border-white/10">
-          <Logo />
-        </div>
-        <div className="px-3 py-2">
-          <p className="text-sm text-white/60 px-3 mb-4">{portalType}</p>
-          <nav className="space-y-1">
-            {menuItems.map((item) => (
-              <Button
-                key={item.label}
-                variant="ghost"
-                className={cn(
-                  "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
-                  "focus:bg-white/10 focus:text-white",
-                  "active:bg-white/10 active:text-white"
-                )}
-                onClick={() => {
-                  navigate(item.path);
-                  setSidebarOpen(false);
-                }}
-              >
-                <item.icon className="mr-3 h-4 w-4" />
-                {item.label}
-              </Button>
-            ))}
-          </nav>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className={cn(
-        "min-h-screen transition-all duration-200 ease-in-out",
-        "lg:ml-64"
-      )}>
-        <div className="p-4 sm:p-6 lg:p-8">
-          <div className={cn("animate-in", className)}>
-            {children}
+      <div className="flex min-h-screen">
+        {/* Sidebar */}
+        <aside className={cn(
+          "fixed inset-y-0 left-0 z-50 w-64 bg-[#0B4A3F] transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:relative",
+          "border-r border-[#0B4A3F]/10 shadow-lg",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        )}>
+          <div className="h-16 flex items-center px-6 border-b border-white/10">
+            <Logo />
           </div>
-        </div>
-      </main>
+          <div className="px-3 py-4">
+            <p className="text-sm text-white/60 px-3 mb-4">{portalType}</p>
+            <nav className="space-y-1">
+              {menuItems.map((item) => (
+                <Button
+                  key={item.label}
+                  variant="ghost"
+                  className={cn(
+                    "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
+                    "focus:bg-white/10 focus:text-white",
+                    "active:bg-white/10 active:text-white"
+                  )}
+                  onClick={() => {
+                    navigate(item.path);
+                    setSidebarOpen(false);
+                  }}
+                >
+                  <item.icon className="mr-3 h-4 w-4" />
+                  {item.label}
+                </Button>
+              ))}
+            </nav>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main className={cn(
+          "flex-1 transition-all duration-200 ease-in-out",
+          "bg-gray-50",
+          "min-h-screen"
+        )}>
+          <div className="container mx-auto px-4 py-8 max-w-7xl">
+            <div className={cn("animate-in", className)}>
+              {children}
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
