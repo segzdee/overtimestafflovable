@@ -3,8 +3,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import Index from "./pages/index";
 import Login from "./pages/login";
 import ShiftWorkerDashboard from "./pages/ShiftWorkerDashboard";
@@ -25,10 +26,43 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/dashboard/shift-worker" element={<ShiftWorkerDashboard />} />
-            <Route path="/dashboard/company" element={<CompanyDashboard />} />
-            <Route path="/dashboard/admin" element={<AdminDashboard />} />
-            <Route path="/dashboard/agency" element={<AgencyDashboard />} />
+            
+            <Route
+              path="/dashboard/shift-worker"
+              element={
+                <ProtectedRoute allowedRoles={["shift-worker"]}>
+                  <ShiftWorkerDashboard />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/dashboard/company"
+              element={
+                <ProtectedRoute allowedRoles={["company"]}>
+                  <CompanyDashboard />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/dashboard/admin"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/dashboard/agency"
+              element={
+                <ProtectedRoute allowedRoles={["agency"]}>
+                  <AgencyDashboard />
+                </ProtectedRoute>
+              }
+            />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
