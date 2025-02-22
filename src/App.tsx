@@ -8,6 +8,8 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Login from "./pages/login";
 import Register from "./pages/register";
+import FindShifts from "./pages/find-shifts";
+import FindStaff from "./pages/find-staff";
 import ShiftWorkerDashboard from "./pages/ShiftWorkerDashboard";
 import CompanyDashboard from "./pages/CompanyDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -39,6 +41,8 @@ const App = () => (
             <Route path="/" element={<RootRoute />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/find-shifts" element={<FindShifts />} />
+            <Route path="/find-staff" element={<FindStaff />} />
             
             <Route
               path="/dashboard/shift-worker"
