@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { AlertTriangle, Clock, XCircle, DollarSign, Users } from "lucide-react";
@@ -161,7 +162,7 @@ export default function AdminDashboard() {
                   <span className="font-medium">Base Rate</span>
                 </div>
                 <div className="flex justify-between items-center p-2 border-b">
-                  <span>Overtime (>8 hours)</span>
+                  <span>Overtime (8+ hours)</span>
                   <span className="font-medium">1.5x Base Rate</span>
                 </div>
                 <div className="flex justify-between items-center p-2">
