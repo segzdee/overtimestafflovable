@@ -102,8 +102,8 @@ export default function Login() {
     return password === DEV_PASSWORD;
   };
 
-  const modifyComponent = (password: string, modificationFn: () => void) => {
-    if (!verifyDevPassword(password)) {
+  const handleDevLogin = () => {
+    if (!verifyDevPassword(DEV_PASSWORD)) {
       toast({
         variant: "destructive",
         title: "Access Denied",
@@ -111,23 +111,22 @@ export default function Login() {
       });
       return;
     }
-    modificationFn();
-  };
 
-  const handleDevLogin = () => {
-    modifyComponent(DEV_PASSWORD, async () => {
-      try {
-        await devLogin(DEV_PASSWORD);
-        navigate("/dashboard/admin");
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "Failed to access developer mode";
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: message,
-        });
-      }
-    });
+    try {
+      devLogin(DEV_PASSWORD);
+      navigate("/dashboard/company");
+      toast({
+        title: "Dev Mode Activated",
+        description: "You now have access to all dashboards",
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to access developer mode";
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: message,
+      });
+    }
   };
 
   return (
@@ -306,7 +305,7 @@ export default function Login() {
               className="flex items-center gap-2"
             >
               <Code className="h-4 w-4" />
-              <span className="sr-only">Developer Access</span>
+              Dev Mode
             </Button>
           )}
         </footer>
