@@ -137,6 +137,47 @@ export type Database = {
           },
         ]
       }
+      clock_records: {
+        Row: {
+          clock_id: string
+          clock_in_time: string | null
+          clock_out_time: string | null
+          created_at: string
+          notes: string | null
+          shift_id: string | null
+          status: Database["public"]["Enums"]["clock_status"] | null
+          updated_at: string
+        }
+        Insert: {
+          clock_id?: string
+          clock_in_time?: string | null
+          clock_out_time?: string | null
+          created_at?: string
+          notes?: string | null
+          shift_id?: string | null
+          status?: Database["public"]["Enums"]["clock_status"] | null
+          updated_at?: string
+        }
+        Update: {
+          clock_id?: string
+          clock_in_time?: string | null
+          clock_out_time?: string | null
+          created_at?: string
+          notes?: string | null
+          shift_id?: string | null
+          status?: Database["public"]["Enums"]["clock_status"] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clock_records_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["shift_id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           content: string | null
@@ -187,6 +228,57 @@ export type Database = {
           type?: string
         }
         Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          payment_id: string
+          payment_method: Json | null
+          shift_id: string | null
+          status: Database["public"]["Enums"]["payment_status"] | null
+          transaction_date: string | null
+          updated_at: string
+          worker_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          payment_id?: string
+          payment_method?: Json | null
+          shift_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          transaction_date?: string | null
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          payment_id?: string
+          payment_method?: Json | null
+          shift_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          transaction_date?: string | null
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["shift_id"]
+          },
+          {
+            foreignKeyName: "payments_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -247,6 +339,63 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      shifts: {
+        Row: {
+          created_at: string
+          date_time: string
+          location: Json | null
+          poster_id: string | null
+          rate: number
+          requirements: string[] | null
+          role: string
+          shift_id: string
+          status: Database["public"]["Enums"]["shift_status"] | null
+          updated_at: string
+          worker_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          date_time: string
+          location?: Json | null
+          poster_id?: string | null
+          rate: number
+          requirements?: string[] | null
+          role: string
+          shift_id?: string
+          status?: Database["public"]["Enums"]["shift_status"] | null
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          date_time?: string
+          location?: Json | null
+          poster_id?: string | null
+          rate?: number
+          requirements?: string[] | null
+          role?: string
+          shift_id?: string
+          status?: Database["public"]["Enums"]["shift_status"] | null
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shifts_poster_id_fkey"
+            columns: ["poster_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       worker_availability: {
         Row: {
@@ -532,6 +681,9 @@ export type Database = {
       }
     }
     Enums: {
+      clock_status: "pending" | "approved" | "rejected"
+      payment_status: "pending" | "paid" | "failed"
+      shift_status: "posted" | "picked" | "completed" | "cancelled"
       subscription_status: "active" | "inactive"
       user_status: "active" | "inactive" | "pending" | "verified"
     }
