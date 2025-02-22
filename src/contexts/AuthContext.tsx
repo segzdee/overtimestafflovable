@@ -65,7 +65,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         await setUserFromSupabase(session.user);
       } else {
-        setUser(null);
+        if (!localStorage.getItem('dev_mode')) {
+          setUser(null);
+        }
       }
     });
 
@@ -189,6 +191,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profileComplete: true
     };
 
+    // Set dev mode flag in localStorage
+    localStorage.setItem('dev_mode', 'true');
     setUser(devUser);
     
     toast({
@@ -220,6 +224,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
+    // Clear dev mode flag
+    localStorage.removeItem('dev_mode');
+    
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     
