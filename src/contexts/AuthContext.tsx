@@ -35,63 +35,40 @@ interface AuthContextType {
   register: (email: string, password: string, role: AuthUser["role"], name: string, category?: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   loginWithToken: (token: string) => Promise<void>;
-  devLogin: (password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (userId: string, profileData: Partial<AuthUser>) => Promise<void>;
   generateAiToken: (name: string, userId: string) => Promise<AIToken>;
   revokeAiToken: (token: string) => Promise<void>;
   aiTokens: AIToken[];
-  isDevMode: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const DEV_PASSWORD = 'king8844';
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
-  const [isDevMode, setIsDevMode] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Check for dev mode on initial load
   useEffect(() => {
-    const devMode = localStorage.getItem('dev_mode');
-    if (devMode === 'true') {
-      const devUser: AuthUser = {
-        id: "dev-user",
-        email: "dev@example.com",
-        role: "admin",
-        name: "Developer",
-        profileComplete: true
-      };
-      setUser(devUser);
-      setIsDevMode(true);
-    }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUserFromSupabase(session.user);
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        await setUserFromSupabase(session.user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
-
-  useEffect(() => {
-    if (!isDevMode) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) {
-          setUserFromSupabase(session.user);
-        }
-      });
-
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange(async (event, session) => {
-        if (session?.user) {
-          await setUserFromSupabase(session.user);
-        } else {
-          setUser(null);
-        }
-      });
-
-      return () => subscription.unsubscribe();
-    }
-  }, [isDevMode]);
 
   const setUserFromSupabase = async (supabaseUser: User) => {
     const { data: profile } = await supabase
@@ -196,29 +173,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const devLogin = async (password: string) => {
-    if (password !== DEV_PASSWORD) {
-      throw new Error("Invalid developer password");
-    }
-
-    const devUser: AuthUser = {
-      id: "dev-user",
-      email: "dev@example.com",
-      role: "admin",
-      name: "Developer",
-      profileComplete: true
-    };
-
-    localStorage.setItem('dev_mode', 'true');
-    setIsDevMode(true);
-    setUser(devUser);
-    
-    toast({
-      title: "Developer Access Granted",
-      description: "You now have access to all dashboards"
-    });
-  };
-
   const generateAiToken = async (name: string, userId: string): Promise<AIToken> => {
     const newToken: AIToken = {
       id: Math.random().toString(36).substring(2),
@@ -242,13 +196,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    localStorage.removeItem('dev_mode');
-    setIsDevMode(false);
-    
-    if (!isDevMode) {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-    }
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
     
     setUser(null);
     navigate("/login");
@@ -283,13 +232,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     register,
     login,
     loginWithToken,
-    devLogin,
     logout,
     updateProfile,
     generateAiToken,
     revokeAiToken,
-    aiTokens,
-    isDevMode
+    aiTokens
   };
 
   return (
