@@ -9,6 +9,74 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_activity_logs: {
+        Row: {
+          action_details: Json | null
+          action_type: string
+          admin_id: string | null
+          log_id: string
+          performed_at: string
+        }
+        Insert: {
+          action_details?: Json | null
+          action_type: string
+          admin_id?: string | null
+          log_id?: string
+          performed_at?: string
+        }
+        Update: {
+          action_details?: Json | null
+          action_type?: string
+          admin_id?: string | null
+          log_id?: string
+          performed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_activity_logs_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["admin_id"]
+          },
+        ]
+      }
+      admin_users: {
+        Row: {
+          admin_id: string
+          created_at: string
+          email: string
+          is_active: boolean | null
+          last_login: string | null
+          name: string
+          password_hash: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          admin_id?: string
+          created_at?: string
+          email: string
+          is_active?: boolean | null
+          last_login?: string | null
+          name: string
+          password_hash: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          email?: string
+          is_active?: boolean | null
+          last_login?: string | null
+          name?: string
+          password_hash?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       agency_client_relationships: {
         Row: {
           agency_id: string | null
@@ -605,6 +673,14 @@ export type Database = {
             }
             Returns: unknown
           }
+      log_admin_activity: {
+        Args: {
+          p_admin_id: string
+          p_action_type: string
+          p_action_details: Json
+        }
+        Returns: string
+      }
       match_documents: {
         Args: {
           query_embedding: string
