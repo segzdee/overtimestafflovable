@@ -189,14 +189,6 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="mt-8 flex items-center gap-4 text-sm text-gray-600 overflow-hidden">
-            <span className="whitespace-nowrap">Premium rates available for night shifts</span>
-            <span className="text-gray-400">|</span>
-            <span className="whitespace-nowrap">07:35 PM</span>
-            <span className="text-blue-500">New Opportunities</span>
-            <span className="whitespace-nowrap">8 new positions added in downtown area</span>
-          </div>
-
           <footer className="mt-8 flex justify-center gap-6 text-sm text-gray-600 py-4 border-t">
             <Link to="/terms" className="hover:text-gray-900">Terms</Link>
             <Link to="/privacy" className="hover:text-gray-900">Privacy</Link>
