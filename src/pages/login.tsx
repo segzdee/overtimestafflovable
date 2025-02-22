@@ -35,15 +35,6 @@ export default function Login() {
     }
   };
 
-  const enableDevMode = () => {
-    localStorage.setItem('dev-bypass', 'true');
-    toast({
-      title: "Developer Mode Enabled",
-      description: "You now have full access to all routes.",
-    });
-    navigate("/dashboard/admin");
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -96,18 +87,6 @@ export default function Login() {
             {isLoading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
-
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-4 text-center">
-            <Button
-              variant="outline"
-              onClick={enableDevMode}
-              className="text-sm text-gray-500 hover:text-gray-700"
-            >
-              Enable Developer Mode
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );
