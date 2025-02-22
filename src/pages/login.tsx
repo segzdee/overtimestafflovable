@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,7 +21,7 @@ export default function Login() {
   const loginCards = [
     {
       role: "shift-worker",
-      title: "Staff",
+      title: "Shift Worker",
       subtitle: "Clock-in",
       icon: UserCircle2,
     },
@@ -93,6 +92,7 @@ export default function Login() {
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-12">
+        {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">AI Meets Hospitality:</h1>
           <h2 className="text-4xl font-bold mb-6">Extra Staff, Anytime, Anywhere</h2>
