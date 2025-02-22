@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { UserCircle2, Building2, Building, Bot } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
+import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,7 @@ export default function Login() {
   const { login, loginWithToken } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { updates, lastUpdateTime, newUpdatesCount } = useMarketUpdates();
 
   const loginCards = [
     {
@@ -92,13 +94,6 @@ export default function Login() {
     setShowLoginDialog(true);
   };
 
-  const marketUpdates = [
-    { type: 'URGENT', title: 'Kitchen Staff Needed', location: 'Downtown', rate: '$35/hr', highlight: true },
-    { type: 'NEW', title: 'Server Position', location: 'Midtown', rate: '$25/hr', highlight: false },
-    { type: 'SWAP', title: 'Bartender Shift', location: 'Upper East', rate: '$30/hr', highlight: false },
-    { type: 'PREMIUM', title: 'Night Manager', location: 'Financial District', rate: '$40/hr', highlight: true },
-  ];
-
   return (
     <div className="h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white overflow-hidden">
       <header className="flex justify-between items-center p-4 md:px-6 border-b">
@@ -158,12 +153,14 @@ export default function Login() {
           <div className="mt-8 bg-gray-900 text-white p-4 rounded-lg shadow-xl">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-semibold text-gray-400">LIVE MARKET UPDATES</h3>
-              <span className="text-sm text-gray-400">{new Date().toLocaleTimeString()}</span>
+              <span className="text-sm text-gray-400">
+                {lastUpdateTime.toLocaleTimeString()}
+              </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {marketUpdates.map((update, index) => (
+              {updates.map((update) => (
                 <div
-                  key={index}
+                  key={update.id}
                   className={`p-3 rounded border ${
                     update.highlight
                       ? 'bg-purple-900 border-purple-700'
@@ -188,7 +185,7 @@ export default function Login() {
             </div>
             <div className="mt-2 flex items-center justify-between text-xs text-gray-400">
               <span>Updated every 5 minutes</span>
-              <span>8 new positions added today</span>
+              <span>{newUpdatesCount} new positions added today</span>
             </div>
           </div>
 
