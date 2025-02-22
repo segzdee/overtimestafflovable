@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import Index from "./pages/index";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import FindShifts from "./pages/find-shifts";
@@ -27,8 +28,8 @@ const RootRoute = () => {
     return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
   }
   
-  // Show login page as landing page
-  return <Login />;
+  // Show index page as landing page
+  return <Index />;
 };
 
 const App = () => (
@@ -81,15 +82,6 @@ const App = () => (
               }
             />
 
-            <Route
-              path="/dashboard/aiagent"
-              element={
-                <ProtectedRoute allowedRoles={["aiagent"]}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
