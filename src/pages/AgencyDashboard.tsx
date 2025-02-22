@@ -36,7 +36,7 @@ interface FormData {
   address: string;
   phoneNumber: string;
   specialization: string;
-  staffingCapacity: string;
+  staffingCapacity: number;
 }
 
 export default function AgencyDashboard() {
@@ -50,37 +50,44 @@ export default function AgencyDashboard() {
     address: user?.address || "",
     phoneNumber: user?.phoneNumber || "",
     specialization: user?.specialization || "",
-    staffingCapacity: user?.staffingCapacity || "",
+    staffingCapacity: user?.staffingCapacity || 0,
   });
   
   const [showCreateTokenModal, setShowCreateTokenModal] = useState(false);
   const [newTokenName, setNewTokenName] = useState("");
   const [newToken, setNewToken] = useState<any>(null);
 
-  const handleChange = (name: string, value: string) => {
+  const handleChange = (name: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'staffingCapacity' ? Number(value) : value
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
-    updateProfile(user.id, formData);
-    setIsEditing(false);
-    toast({
-      title: "Success",
-      description: "Profile updated successfully!",
-    });
+    try {
+      await updateProfile(user.id, {
+        ...formData,
+        staffingCapacity: Number(formData.staffingCapacity)
+      });
+      setIsEditing(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update profile",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleCreateToken = () => {
+  const handleCreateToken = async () => {
     if (!newTokenName.trim() || !user) return;
 
     try {
-      const token = generateAiToken(newTokenName, user.id);
+      const token = await generateAiToken(newTokenName, user.id);
       setNewToken(token);
       setNewTokenName("");
       toast({
@@ -96,12 +103,20 @@ export default function AgencyDashboard() {
     }
   };
 
-  const handleRevokeToken = (tokenId: string) => {
-    revokeAiToken(tokenId);
-    toast({
-      title: "Success",
-      description: "AI Agent access revoked",
-    });
+  const handleRevokeToken = async (tokenId: string) => {
+    try {
+      await revokeAiToken(tokenId);
+      toast({
+        title: "Success",
+        description: "AI Agent access revoked",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to revoke AI Agent access",
+        variant: "destructive",
+      });
+    }
   };
 
   const agencyTokens = aiTokens.filter(

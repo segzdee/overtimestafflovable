@@ -1,4 +1,3 @@
-
 import { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -11,12 +10,22 @@ interface AuthUser {
   role: "admin" | "shift-worker" | "company" | "agency" | "aiagent";
   name: string;
   profileComplete: boolean;
-  // Add agency-specific fields
   agencyName?: string;
   address?: string;
   phoneNumber?: string;
   specialization?: string;
   staffingCapacity?: number;
+}
+
+interface AIToken {
+  id: string;
+  name: string;
+  createdAt: string;
+  isActive: boolean;
+  authorizedBy: {
+    id: string;
+    name: string;
+  };
 }
 
 interface AuthContextType {
@@ -26,28 +35,26 @@ interface AuthContextType {
   loginWithToken: (token: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (userId: string, profileData: Partial<AuthUser>) => Promise<void>;
-  generateAiToken: () => Promise<string>;
+  generateAiToken: (name: string, userId: string) => Promise<AIToken>;
   revokeAiToken: (token: string) => Promise<void>;
-  aiTokens: string[];
+  aiTokens: AIToken[];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [aiTokens, setAiTokens] = useState<string[]>([]);
+  const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check for initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUserFromSupabase(session.user);
       }
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -101,7 +108,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
 
     if (data.user) {
-      // Create profile record
       const { error: profileError } = await supabase
         .from('profiles')
         .insert([
@@ -150,29 +156,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const loginWithToken = async (token: string) => {
-    // Implement token-based authentication logic here
-    // This is a placeholder implementation
     const { data, error } = await supabase.auth.verifyOtp({
       token_hash: token,
       type: 'magiclink'
     });
 
     if (error) throw error;
-
-    return data;
+    
+    if (data.user) {
+      await setUserFromSupabase(data.user);
+    }
   };
 
-  const generateAiToken = async () => {
-    // Implement AI token generation logic here
-    // This is a placeholder implementation
-    const token = Math.random().toString(36).substring(2);
-    setAiTokens([...aiTokens, token]);
-    return token;
+  const generateAiToken = async (name: string, userId: string): Promise<AIToken> => {
+    const newToken: AIToken = {
+      id: Math.random().toString(36).substring(2),
+      name,
+      createdAt: new Date().toISOString(),
+      isActive: true,
+      authorizedBy: {
+        id: userId,
+        name: user?.name || ""
+      }
+    };
+    
+    setAiTokens([...aiTokens, newToken]);
+    return newToken;
   };
 
-  const revokeAiToken = async (token: string) => {
-    // Implement AI token revocation logic here
-    setAiTokens(aiTokens.filter(t => t !== token));
+  const revokeAiToken = async (tokenId: string) => {
+    setAiTokens(aiTokens.map(token => 
+      token.id === tokenId ? { ...token, isActive: false } : token
+    ));
   };
 
   const logout = async () => {
@@ -199,7 +214,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (error) throw error;
 
-    // Update local user state
     setUser(prev => prev ? { ...prev, ...profileData, profileComplete: true } : null);
 
     toast({
