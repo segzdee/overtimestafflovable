@@ -27,7 +27,8 @@ const RootRoute = () => {
     return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
   }
   
-  return <Navigate to="/login" replace />;
+  // Show login page as landing page
+  return <Login />;
 };
 
 const App = () => (
