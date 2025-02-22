@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -105,7 +104,6 @@ export default function AgencyDashboard() {
     });
   };
 
-  // Filter tokens created by this agency
   const agencyTokens = aiTokens.filter(
     token => token.authorizedBy.id === user?.id
   );
@@ -258,7 +256,7 @@ export default function AgencyDashboard() {
                       <TableCell>{token.name}</TableCell>
                       <TableCell>{new Date(token.createdAt).toLocaleString()}</TableCell>
                       <TableCell>
-                        <Badge variant={token.isActive ? "success" : "destructive"}>
+                        <Badge variant={token.isActive ? "default" : "destructive"}>
                           {token.isActive ? "Active" : "Revoked"}
                         </Badge>
                       </TableCell>

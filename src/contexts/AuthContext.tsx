@@ -1,4 +1,3 @@
-
 import { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -9,13 +8,18 @@ interface User {
   role: "admin" | "shift-worker" | "company" | "agency" | "aiagent";
   name: string;
   profileComplete: boolean;
-  password?: string; // Optional as it won't be included in currentUser
+  password?: string;
   authorizedBy?: {
     id: string;
     name: string;
     role: "company" | "agency";
   };
   token?: string;
+  agencyName?: string;
+  address?: string;
+  phoneNumber?: string;
+  specialization?: string;
+  staffingCapacity?: string;
 }
 
 interface AIToken {
@@ -52,7 +56,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Initialize users from localStorage or with default admin
   const [users, setUsers] = useState<User[]>(() => {
     const storedUsers = localStorage.getItem('users');
     return storedUsers ? JSON.parse(storedUsers) : [
@@ -67,13 +70,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ];
   });
 
-  // Initialize AI tokens from localStorage
   const [aiTokens, setAiTokens] = useState<AIToken[]>(() => {
     const storedTokens = localStorage.getItem('aiTokens');
     return storedTokens ? JSON.parse(storedTokens) : [];
   });
 
-  // Check for stored user session on mount
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
@@ -82,7 +83,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  // Persist users and tokens to localStorage
   useEffect(() => {
     localStorage.setItem('users', JSON.stringify(users));
   }, [users]);
