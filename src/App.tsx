@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Login from "./pages/login";
+import Register from "./pages/register";
 import ShiftWorkerDashboard from "./pages/ShiftWorkerDashboard";
 import CompanyDashboard from "./pages/CompanyDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -37,6 +38,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<RootRoute />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             
             <Route
               path="/dashboard/shift-worker"
