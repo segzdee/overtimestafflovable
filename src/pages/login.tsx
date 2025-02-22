@@ -6,6 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { UserCircle2, Building2, Building, Bot } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function Login() {
   const [activeRole, setActiveRole] = useState<string | null>(null);
@@ -14,6 +20,7 @@ export default function Login() {
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   const { login, loginWithToken } = useAuth();
   const navigate = useNavigate();
@@ -64,6 +71,7 @@ export default function Login() {
         title: "Login successful",
         description: "Welcome back!"
       });
+      setShowLoginDialog(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to log in");
     } finally {
@@ -77,6 +85,11 @@ export default function Login() {
     } else {
       navigate('/register');
     }
+  };
+
+  const handleLoginClick = (role: string) => {
+    setActiveRole(role);
+    setShowLoginDialog(true);
   };
 
   return (
@@ -122,7 +135,6 @@ export default function Login() {
               className={`bg-white rounded-lg p-6 shadow-sm border cursor-pointer transition-all
                 ${activeRole === card.role ? "ring-2 ring-purple-500" : "hover:shadow-md"}
               `}
-              onClick={() => setActiveRole(card.role)}
             >
               <div className="flex flex-col items-center text-center">
                 <div className="p-3 bg-purple-50 rounded-full mb-4">
@@ -133,7 +145,7 @@ export default function Login() {
               </div>
               <Button 
                 className="w-full mt-4 bg-gradient-to-r from-purple-600 to-green-500 hover:opacity-90"
-                onClick={() => setActiveRole(card.role)}
+                onClick={() => handleLoginClick(card.role)}
               >
                 LOGIN
               </Button>
@@ -141,9 +153,12 @@ export default function Login() {
           ))}
         </div>
 
-        {/* Login Form */}
-        {activeRole && (
-          <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-sm border">
+        {/* Login Dialog */}
+        <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Login as {loginCards.find(card => card.role === activeRole)?.title}</DialogTitle>
+            </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               {activeRole === "aiagent" ? (
                 <div>
@@ -212,8 +227,8 @@ export default function Login() {
                 </p>
               </div>
             </form>
-          </div>
-        )}
+          </DialogContent>
+        </Dialog>
 
         {/* News Ticker */}
         <div className="mt-12 flex items-center gap-4 text-sm text-gray-600 overflow-hidden">
