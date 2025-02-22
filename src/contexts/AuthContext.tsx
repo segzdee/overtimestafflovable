@@ -151,13 +151,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (profile && !profile.profile_complete) {
         navigate(`/dashboard/${profile.role}/complete-profile`);
+      } else {
+        navigate(`/dashboard/${profile.role}`);
       }
-    }
 
-    toast({
-      title: "Login successful",
-      description: "Welcome back!"
-    });
+      toast({
+        title: "Login successful",
+        description: "Welcome back!"
+      });
+    }
   };
 
   const loginWithToken = async (token: string) => {
