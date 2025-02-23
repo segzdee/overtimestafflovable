@@ -29,55 +29,53 @@ export default function Index() {
     {
       title: "Staffing Agency",
       description: "Manage your workforce and client relationships",
-      icon: <Building2 className="w-8 h-8 text-purple-500" />,
-      path: "/login",
-      gradient: "from-purple-500 to-purple-600"
+      icon: <Building2 className="w-10 h-10 text-purple-500" />,
+      path: "/login"
     },
     {
       title: "Hotels & Businesses",
       description: "Find reliable staff for your shifts",
-      icon: <Building className="w-8 h-8 text-purple-500" />,
-      path: "/login",
-      gradient: "from-purple-500 to-purple-600"
+      icon: <Building className="w-10 h-10 text-purple-500" />,
+      path: "/login"
     },
     {
       title: "Shift Workers",
       description: "Find flexible work opportunities",
-      icon: <Users className="w-8 h-8 text-purple-500" />,
-      path: "/login",
-      gradient: "from-purple-500 to-purple-600"
+      icon: <Users className="w-10 h-10 text-purple-500" />,
+      path: "/login"
     },
     {
       title: "Platform Admin",
       description: "Manage the platform and users",
-      icon: <UserCog className="w-8 h-8 text-purple-500" />,
-      path: "/login",
-      gradient: "from-purple-500 to-purple-600"
+      icon: <UserCog className="w-10 h-10 text-purple-500" />,
+      path: "/login"
     }
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="flex justify-between items-center px-6 py-4 border-b">
+      <header className="flex justify-between items-center px-6 py-4">
         <Logo />
         <div className="flex gap-4">
           <Button 
             variant="ghost" 
             onClick={() => navigate("/find-shifts")}
+            className="text-gray-600 hover:text-gray-900"
           >
             Find Extra Shifts
           </Button>
           <Button 
             variant="ghost" 
             onClick={() => navigate("/find-staff")}
+            className="text-gray-600 hover:text-gray-900"
           >
             Find Extra Staff
           </Button>
           <Button 
             variant="default"
             onClick={() => navigate("/register")}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-green-600 hover:bg-green-700 text-white"
           >
             Sign up
           </Button>
@@ -86,7 +84,7 @@ export default function Index() {
 
       {/* Main Content */}
       <main className="flex-1 px-6 py-12 flex flex-col items-center">
-        <div className="max-w-4xl mx-auto text-center mb-12">
+        <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="text-4xl font-bold mb-4">
             AI Meets Hospitality:
             <br />
@@ -97,7 +95,7 @@ export default function Index() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl mb-16">
           {userTypes.map((type) => (
             <Card key={type.title} className="relative overflow-hidden hover:shadow-lg transition-all">
               <div className="p-6 flex flex-col items-center text-center">
@@ -116,23 +114,28 @@ export default function Index() {
         </div>
 
         {/* Live Market Updates */}
-        <div className="w-full max-w-7xl mt-12 bg-gray-900 rounded-lg overflow-hidden">
+        <div className="w-full max-w-7xl bg-gray-900 rounded-lg overflow-hidden">
           <div className="p-4 flex justify-between items-center">
-            <span className="text-white font-medium">LIVE MARKET UPDATES</span>
+            <span className="text-gray-400 font-medium">LIVE MARKET UPDATES</span>
             <span className="text-gray-400 text-sm">7:52:26 AM</span>
           </div>
-          <div className="flex gap-4 p-4 overflow-x-auto">
-            {updates.slice(0, 4).map((update) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+            {[
+              { type: 'URGENT', title: 'Kitchen Staff Needed', location: 'Downtown', rate: '$35/hr' },
+              { type: 'NEW', title: 'Server Position', location: 'Midtown', rate: '$25/hr' },
+              { type: 'SWAP', title: 'Bartender Shift', location: 'Upper East', rate: '$30/hr' },
+              { type: 'PREMIUM', title: 'Night Manager', location: 'Financial District', rate: '$40/hr' }
+            ].map((update) => (
               <div 
-                key={update.id}
-                className={`flex-none w-64 p-4 rounded ${
+                key={update.title}
+                className={`p-4 rounded ${
                   update.type === 'URGENT' ? 'bg-purple-600' :
                   update.type === 'NEW' ? 'bg-gray-800' :
                   update.type === 'SWAP' ? 'bg-gray-800' :
                   'bg-purple-600'
                 }`}
               >
-                <div className="text-xs text-gray-300 mb-1">
+                <div className="text-xs text-gray-300 uppercase mb-2">
                   {update.type}
                 </div>
                 <div className="text-white font-medium mb-1">
@@ -148,19 +151,17 @@ export default function Index() {
             ))}
           </div>
           <div className="px-4 py-2 bg-gray-800 text-gray-400 text-sm">
-            Updated every 5 minutes • {updates.length} new positions added today
+            Updated every 5 minutes • 0 new positions added today
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="py-4 px-6 border-t">
-        <div className="flex justify-center gap-8 text-sm text-gray-600">
-          <button onClick={() => navigate("/terms")}>Terms</button>
-          <button onClick={() => navigate("/privacy")}>Privacy</button>
-          <button onClick={() => navigate("/contact")}>Contact</button>
-          <button onClick={() => navigate("/blog")}>Blog</button>
-        </div>
+      <footer className="py-8 flex justify-center gap-8 text-sm text-gray-600">
+        <button onClick={() => navigate("/terms")}>Terms</button>
+        <button onClick={() => navigate("/privacy")}>Privacy</button>
+        <button onClick={() => navigate("/contact")}>Contact</button>
+        <button onClick={() => navigate("/blog")}>Blog</button>
       </footer>
     </div>
   );
