@@ -1,77 +1,20 @@
-import { createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/lib/supabase";
+
 import { User } from "@supabase/supabase-js";
-
-interface AuthUser {
-  id: string;
-  email: string;
-  role: "admin" | "shift-worker" | "company" | "agency" | "aiagent";
-  name: string;
-  category?: string;
-  profileComplete: boolean;
-  agencyName?: string;
-  address?: string;
-  phoneNumber?: string;
-  specialization?: string;
-  staffingCapacity?: number;
-}
-
-interface AIToken {
-  id: string;
-  name: string;
-  createdAt: string;
-  isActive: boolean;
-  authorizedBy: {
-    id: string;
-    name: string;
-  };
-}
-
-interface AuthContextType {
-  user: AuthUser | null;
-  register: (email: string, password: string, role: AuthUser["role"], name: string, category?: string) => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
-  loginWithToken: (token: string) => Promise<void>;
-  devLogin: (password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  updateProfile: (userId: string, profileData: Partial<AuthUser>) => Promise<void>;
-  generateAiToken: (name: string, userId: string) => Promise<AIToken>;
-  revokeAiToken: (token: string) => Promise<void>;
-  aiTokens: AIToken[];
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { NavigateFunction } from "react-router-dom";
+import { Toast } from "@/components/ui/use-toast";
+import { supabase } from "@/lib/supabase";
+import { AuthUser, AIToken } from "./types";
 
 const DEV_PASSWORD = 'king8844';
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
-  const navigate = useNavigate();
-  const { toast } = useToast();
+interface AuthOperationsProps {
+  setUser: (user: AuthUser | null) => void;
+  setAiTokens: (tokens: AIToken[]) => void;
+  navigate: NavigateFunction;
+  toast: Toast;
+}
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUserFromSupabase(session.user);
-      }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        await setUserFromSupabase(session.user);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
+export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: AuthOperationsProps) {
   const setUserFromSupabase = async (supabaseUser: User) => {
     const { data: profile } = await supabase
       .from('profiles')
@@ -180,7 +123,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error("Invalid developer password");
     }
 
-    // Create a dev user session
     const devUser: AuthUser = {
       id: "dev-user",
       email: "dev@example.com",
@@ -205,18 +147,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isActive: true,
       authorizedBy: {
         id: userId,
-        name: user?.name || ""
+        name: ""
       }
     };
     
-    setAiTokens([...aiTokens, newToken]);
+    setAiTokens(current => [...current, newToken]);
     return newToken;
   };
 
   const revokeAiToken = async (tokenId: string) => {
-    setAiTokens(aiTokens.map(token => 
-      token.id === tokenId ? { ...token, isActive: false } : token
-    ));
+    setAiTokens(current => 
+      current.map(token => 
+        token.id === tokenId ? { ...token, isActive: false } : token
+      )
+    );
   };
 
   const logout = async () => {
@@ -251,8 +195,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const value = {
-    user,
+  return {
+    setUserFromSupabase,
     register,
     login,
     loginWithToken,
@@ -260,21 +204,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
     updateProfile,
     generateAiToken,
-    revokeAiToken,
-    aiTokens
+    revokeAiToken
   };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
 }
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
