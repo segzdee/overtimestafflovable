@@ -1,6 +1,6 @@
 
 import { lazy, Suspense } from 'react';
-import { Navigate, RouteObject } from 'react-router-dom';
+import { Navigate, Routes as RouterRoutes, Route } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
 
 // Lazy load components
@@ -22,103 +22,109 @@ const LoadingFallback = () => (
   </div>
 );
 
-export const routes: RouteObject[] = [
-  {
-    path: '/',
-    element: <Navigate to="/dashboard" replace />
-  },
-  {
-    path: '/login',
-    element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <Login />
-      </Suspense>
-    )
-  },
-  {
-    path: '/token-login',
-    element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <TokenLogin />
-      </Suspense>
-    )
-  },
-  {
-    path: '/register',
-    element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <Register />
-      </Suspense>
-    )
-  },
-  {
-    path: '/admin-login',
-    element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <AdminLogin />
-      </Suspense>
-    )
-  },
-  {
-    path: '/dashboard',
-    element: <DashboardLayout />,
-    children: [
-      {
-        path: 'shift-worker',
-        element: (
+export const Routes = () => (
+  <RouterRoutes>
+    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+    
+    <Route
+      path="/login"
+      element={
+        <Suspense fallback={<LoadingFallback />}>
+          <Login />
+        </Suspense>
+      }
+    />
+    
+    <Route
+      path="/token-login"
+      element={
+        <Suspense fallback={<LoadingFallback />}>
+          <TokenLogin />
+        </Suspense>
+      }
+    />
+    
+    <Route
+      path="/register"
+      element={
+        <Suspense fallback={<LoadingFallback />}>
+          <Register />
+        </Suspense>
+      }
+    />
+    
+    <Route
+      path="/admin-login"
+      element={
+        <Suspense fallback={<LoadingFallback />}>
+          <AdminLogin />
+        </Suspense>
+      }
+    />
+    
+    <Route path="/dashboard" element={<DashboardLayout />}>
+      <Route
+        path="shift-worker"
+        element={
           <Suspense fallback={<LoadingFallback />}>
             <ShiftWorkerDashboard />
           </Suspense>
-        )
-      },
-      {
-        path: 'company',
-        element: (
+        }
+      />
+      
+      <Route
+        path="company"
+        element={
           <Suspense fallback={<LoadingFallback />}>
             <CompanyDashboard />
           </Suspense>
-        )
-      },
-      {
-        path: 'admin',
-        element: (
+        }
+      />
+      
+      <Route
+        path="admin"
+        element={
           <Suspense fallback={<LoadingFallback />}>
             <AdminDashboard />
           </Suspense>
-        )
-      },
-      {
-        path: 'agency',
-        element: (
+        }
+      />
+      
+      <Route
+        path="agency"
+        element={
           <Suspense fallback={<LoadingFallback />}>
             <AgencyDashboard />
           </Suspense>
-        )
+        }
+      />
+    </Route>
+    
+    <Route
+      path="/find-shifts"
+      element={
+        <Suspense fallback={<LoadingFallback />}>
+          <FindShifts />
+        </Suspense>
       }
-    ]
-  },
-  {
-    path: '/find-shifts',
-    element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <FindShifts />
-      </Suspense>
-    )
-  },
-  {
-    path: '/find-staff',
-    element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <FindStaff />
-      </Suspense>
-    )
-  },
-  {
-    path: '*',
-    element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <NotFound />
-      </Suspense>
-    )
-  }
-];
+    />
+    
+    <Route
+      path="/find-staff"
+      element={
+        <Suspense fallback={<LoadingFallback />}>
+          <FindStaff />
+        </Suspense>
+      }
+    />
+    
+    <Route
+      path="*"
+      element={
+        <Suspense fallback={<LoadingFallback />}>
+          <NotFound />
+        </Suspense>
+      }
+    />
+  </RouterRoutes>
+);
