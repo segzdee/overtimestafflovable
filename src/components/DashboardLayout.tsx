@@ -81,7 +81,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gray-50">
-        {/* Header */}
+        {/* Header - Simplified */}
         <header className="h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
           <div className="h-full max-w-screen-2xl mx-auto px-4 flex justify-between items-center">
             <div className="flex items-center gap-4">
@@ -97,29 +97,14 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                 <Logo />
               </Link>
             </div>
-            <div className="hidden md:flex items-center gap-4">
-              <Link to="/find-shifts">
-                <Button variant="ghost">Find Extra Shifts</Button>
-              </Link>
-              <Link to="/find-staff">
-                <Button variant="ghost">Find Extra Staff</Button>
-              </Link>
-              {user ? (
+            <div className="flex items-center gap-4">
+              {user && (
                 <Button 
                   variant="ghost"
                   onClick={() => logout()}
                 >
                   Logout
                 </Button>
-              ) : (
-                <Link to="/register">
-                  <Button
-                    variant="default"
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    Sign up
-                  </Button>
-                </Link>
               )}
             </div>
           </div>
