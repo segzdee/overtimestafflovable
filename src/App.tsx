@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Index from "./pages/index";
 import Login from "./pages/login";
+import AdminLogin from "./pages/admin-login";
 import Register from "./pages/register";
 import FindShifts from "./pages/find-shifts";
 import FindStaff from "./pages/find-staff";
@@ -42,6 +43,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<RootRoute />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/admin-login" element={<AdminLogin />} /> {/* Hidden admin login route */}
             <Route path="/register" element={<Register />} />
             <Route path="/find-shifts" element={<FindShifts />} />
             <Route path="/find-staff" element={<FindStaff />} />

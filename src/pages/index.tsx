@@ -48,7 +48,7 @@ export default function Index() {
       title: "AI Agents",
       description: "Token Auth",
       icon: <Bot className="w-10 h-10 text-purple-500" />,
-      path: "/login-token"
+      path: "/login"
     }
   ];
 
