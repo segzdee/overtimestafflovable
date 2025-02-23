@@ -46,18 +46,23 @@ export function FileUpload({
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
 
+      // Simulate progress since we can't track it directly
+      const progressInterval = setInterval(() => {
+        setProgress(prev => Math.min(prev + 10, 90));
+      }, 100);
+
       const { error: uploadError } = await supabase.storage
         .from(bucketName)
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false,
-          onUploadProgress: (progress) => {
-            const percent = (progress.loaded / progress.total) * 100;
-            setProgress(percent);
-          },
+          upsert: false
         });
 
+      clearInterval(progressInterval);
+      
       if (uploadError) throw uploadError;
+
+      setProgress(100);
 
       const { data } = supabase.storage
         .from(bucketName)
