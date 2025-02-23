@@ -48,18 +48,19 @@ export default function Index() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Hero Section */}
-      <section className="relative px-6 lg:px-8 pt-24 pb-12 sm:pt-32 text-center">
+    <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-brand-50">
+      {/* Hero Section with enhanced gradient */}
+      <section className="relative px-6 lg:px-8 pt-24 pb-12 sm:pt-32 text-center bg-gradient-to-r from-purple-50 via-white to-blue-50">
         <Logo />
-        <h1 className="mt-8 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+        <h1 className="mt-8 text-4xl font-bold tracking-tight bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent sm:text-6xl">
           The Future of Hospitality Staffing
         </h1>
         <p className="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
           Connect with the perfect staff or shifts in real-time. Powered by AI for smarter matches and better outcomes.
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
-          <Button onClick={() => navigate("/register")} size="lg">
+          <Button onClick={() => navigate("/register")} size="lg" 
+            className="bg-gradient-to-r from-brand-500 to-purple-500 hover:from-brand-600 hover:to-purple-600">
             Get Started
           </Button>
           <Button variant="outline" onClick={() => navigate("/find-shifts")} size="lg">
@@ -68,67 +69,69 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Live Market Updates */}
-      <section className="py-12 bg-gray-50 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-8">Live Market Updates</h2>
+      {/* Live Market Updates with smaller belts */}
+      <section className="py-12 bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">
+            Live Market Updates
+          </h2>
           <div className="relative">
             {/* Animation belt for urgent shifts */}
-            <div className="flex space-x-6 animate-marquee">
+            <div className="flex space-x-4 animate-marquee">
               {updates.filter(update => update.type === 'URGENT').map((update) => (
                 <Card key={update.id} 
-                  className="min-w-[300px] p-6 bg-red-50 border-l-4 border-red-500 
+                  className="min-w-[250px] p-4 bg-gradient-to-br from-red-50 to-white border-l-4 border-red-500 
                            hover:shadow-lg transition-shadow animate-pulse">
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
                         URGENT
                       </span>
-                      <h3 className="mt-3 font-semibold text-gray-900">{update.title}</h3>
-                      <p className="mt-2 text-gray-500">{update.location}</p>
+                      <h3 className="mt-2 font-semibold text-gray-900 text-sm">{update.title}</h3>
+                      <p className="mt-1 text-gray-500 text-xs">{update.location}</p>
                     </div>
-                    <span className="text-lg font-semibold text-red-600">{update.rate}</span>
+                    <span className="text-base font-semibold text-red-600">{update.rate}</span>
                   </div>
                 </Card>
               ))}
             </div>
 
             {/* Animation belt for swap shifts */}
-            <div className="flex space-x-6 animate-marquee-reverse mt-6">
+            <div className="flex space-x-4 animate-marquee-reverse mt-4">
               {updates.filter(update => update.type === 'SWAP').map((update) => (
                 <Card key={update.id} 
-                  className="min-w-[300px] p-6 bg-blue-50 border-l-4 border-blue-500 
+                  className="min-w-[250px] p-4 bg-gradient-to-br from-blue-50 to-white border-l-4 border-blue-500 
                            hover:shadow-lg transition-shadow">
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
                         SWAP
                       </span>
-                      <h3 className="mt-3 font-semibold text-gray-900">{update.title}</h3>
-                      <p className="mt-2 text-gray-500">{update.location}</p>
+                      <h3 className="mt-2 font-semibold text-gray-900 text-sm">{update.title}</h3>
+                      <p className="mt-1 text-gray-500 text-xs">{update.location}</p>
                     </div>
-                    <span className="text-lg font-semibold text-blue-600">{update.rate}</span>
+                    <span className="text-base font-semibold text-blue-600">{update.rate}</span>
                   </div>
                 </Card>
               ))}
             </div>
 
-            {/* Animation belt for premium/rate increase shifts */}
-            <div className="flex space-x-6 animate-marquee mt-6">
+            {/* Animation belt for premium shifts */}
+            <div className="flex space-x-4 animate-marquee mt-4">
               {updates.filter(update => update.type === 'PREMIUM').map((update) => (
                 <Card key={update.id} 
-                  className="min-w-[300px] p-6 bg-green-50 border-l-4 border-green-500 
+                  className="min-w-[250px] p-4 bg-gradient-to-br from-green-50 to-white border-l-4 border-green-500 
                            hover:shadow-lg transition-shadow">
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
                         PREMIUM
                       </span>
-                      <h3 className="mt-3 font-semibold text-gray-900">{update.title}</h3>
-                      <p className="mt-2 text-gray-500">{update.location}</p>
+                      <h3 className="mt-2 font-semibold text-gray-900 text-sm">{update.title}</h3>
+                      <p className="mt-1 text-gray-500 text-xs">{update.location}</p>
                     </div>
                     <div className="text-right">
-                      <span className="text-lg font-semibold text-green-600">{update.rate}</span>
+                      <span className="text-base font-semibold text-green-600">{update.rate}</span>
                       <div className="text-xs text-green-600 font-medium animate-bounce">
                         Rate Increased!
                       </div>
@@ -141,22 +144,24 @@ export default function Index() {
         </div>
       </section>
 
-      {/* User Types */}
-      <section className="py-16">
+      {/* User Types with enhanced gradients */}
+      <section className="py-16 bg-gradient-to-br from-white via-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12">Choose Your Path</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">
+            Choose Your Path
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {userTypes.map((type) => (
               <Card key={type.title} 
                 className="relative overflow-hidden hover:shadow-xl transition-shadow animate-fade-in">
-                <div className={`absolute inset-0 bg-gradient-to-r ${type.gradient} opacity-10`} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${type.gradient} opacity-10`} />
                 <div className="relative p-6">
                   <h3 className="text-xl font-semibold mb-4">{type.title}</h3>
                   <p className="text-gray-600 mb-6">{type.description}</p>
                   <Button 
                     variant="outline" 
                     onClick={() => navigate(type.path)}
-                    className="w-full"
+                    className="w-full bg-gradient-to-r from-brand-50 to-purple-50 hover:from-brand-100 hover:to-purple-100"
                   >
                     Join as {type.title}
                   </Button>
@@ -166,6 +171,20 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Tiny Footer */}
+      <footer className="py-4 bg-gradient-to-r from-gray-50 via-white to-gray-50 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center text-sm text-gray-500">
+            <p>© 2024 OvertimeStaff. All rights reserved.</p>
+            <div className="flex gap-4">
+              <button onClick={() => navigate("/privacy")} className="hover:text-brand-600">Privacy</button>
+              <button onClick={() => navigate("/terms")} className="hover:text-brand-600">Terms</button>
+              <button onClick={() => navigate("/contact")} className="hover:text-brand-600">Contact</button>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
