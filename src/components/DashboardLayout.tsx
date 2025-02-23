@@ -1,9 +1,8 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
-import { Link } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -19,13 +18,8 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -33,14 +27,15 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, className }: DashboardLayoutProps) {
-  const { user, logout } = useAuth();
-  const [isOpen, setIsOpen] = React.useState(true);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const getMenuItems = () => {
     switch (user?.role) {
       case 'agency':
         return [
-          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/agency" },
+          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
           { icon: Users, label: "Worker Roster", path: "/workers" },
           { icon: Building2, label: "Clients", path: "/clients" },
           { icon: CalendarDays, label: "Shift Management", path: "/shifts" },
@@ -50,7 +45,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
         ];
       case 'company':
         return [
-          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/company" },
+          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
           { icon: CalendarDays, label: "Shift Posts", path: "/shifts" },
           { icon: Users, label: "Applicants", path: "/applicants" },
           { icon: DollarSign, label: "Payments", path: "/payments" },
@@ -60,7 +55,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
         ];
       case 'shift-worker':
         return [
-          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/shift-worker" },
+          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
           { icon: Clock, label: "Availability", path: "/availability" },
           { icon: Search, label: "Find Shifts", path: "/find-shifts" },
           { icon: ChevronRight, label: "Performance", path: "/performance" },
@@ -79,90 +74,75 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                     'Staff Portal';
 
   return (
-    <SidebarProvider defaultOpen>
-      <div className="min-h-screen flex w-full bg-gray-50">
-        <header className="h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
-          <div className="h-full px-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(!isOpen)}
-                className="lg:hidden"
-              >
-                {isOpen ? <X /> : <Menu />}
-              </Button>
-              <Link to="/">
-                <Logo />
-              </Link>
-            </div>
-            {user && (
-              <Button 
-                variant="ghost"
-                onClick={logout}
-              >
-                Logout
-              </Button>
-            )}
-          </div>
-        </header>
-
-        <div className="flex flex-1 pt-16">
-          <Sidebar className={cn(
-            "fixed lg:static lg:flex w-64 h-[calc(100vh-4rem)] z-50",
-            "bg-[#0B4A3F] border-r border-[#0B4A3F]/10",
-            "transition-transform duration-200 ease-in-out lg:translate-x-0",
-            !isOpen && "-translate-x-full"
-          )}>
-            <SidebarHeader className="h-16 flex items-center px-6 border-b border-white/10">
-              <p className="text-sm text-white/60">{portalType}</p>
-            </SidebarHeader>
-            <SidebarContent className="p-3">
-              <nav className="space-y-1">
-                {menuItems.map((item) => (
-                  <Link 
-                    key={item.label}
-                    to={item.path}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-white/70 hover:text-white hover:bg-white/10 focus:bg-white/10 focus:text-white"
-                    >
-                      <item.icon className="mr-3 h-4 w-4" />
-                      {item.label}
-                    </Button>
-                  </Link>
-                ))}
-              </nav>
-            </SidebarContent>
-          </Sidebar>
-
-          {isOpen && (
-            <div
-              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-              onClick={() => setIsOpen(false)}
-            />
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="bg-white shadow-sm"
+        >
+          {sidebarOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
           )}
-
-          <main className="flex-1 w-full min-h-[calc(100vh-4rem)]">
-            <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
-              {children}
-            </div>
-          </main>
-        </div>
-
-        <footer className="bg-white border-t border-gray-200 mt-auto py-4">
-          <div className="mx-auto px-4">
-            <div className="flex justify-center gap-8 text-sm text-gray-600">
-              <Link to="/terms" className="hover:text-gray-900">Terms</Link>
-              <Link to="/privacy" className="hover:text-gray-900">Privacy</Link>
-              <Link to="/contact" className="hover:text-gray-900">Contact</Link>
-              <Link to="/blog" className="hover:text-gray-900">Blog</Link>
-            </div>
-          </div>
-        </footer>
+        </Button>
       </div>
-    </SidebarProvider>
+
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 lg:hidden z-40"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={cn(
+        "fixed inset-y-0 left-0 z-50 w-64 bg-[#0B4A3F] text-white transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:relative",
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        <div className="h-16 flex items-center px-6 border-b border-white/10">
+          <Logo />
+        </div>
+        <div className="px-3 py-2">
+          <p className="text-sm text-white/60 px-3 mb-4">{portalType}</p>
+          <nav className="space-y-1">
+            {menuItems.map((item) => (
+              <Button
+                key={item.label}
+                variant="ghost"
+                className={cn(
+                  "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
+                  "focus:bg-white/10 focus:text-white",
+                  "active:bg-white/10 active:text-white"
+                )}
+                onClick={() => {
+                  navigate(item.path);
+                  setSidebarOpen(false);
+                }}
+              >
+                <item.icon className="mr-3 h-4 w-4" />
+                {item.label}
+              </Button>
+            ))}
+          </nav>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className={cn(
+        "min-h-screen transition-all duration-200 ease-in-out",
+        "lg:ml-64"
+      )}>
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className={cn("animate-in", className)}>
+            {children}
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }

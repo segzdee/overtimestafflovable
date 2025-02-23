@@ -1,20 +1,11 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Award, 
-  MapPin, 
-  Clock, 
-  DollarSign, 
-  CalendarDays,
-  TrendingUp,
-  CheckCircle,
-  Star,
-  AlertTriangle
-} from "lucide-react";
+import { StatsCard } from "@/components/ui/stats-card";
+import { Award, MapPin, Clock, AlertCircle, DollarSign, CalendarDays } from "lucide-react";
+import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 
 interface Shift {
   id: string;
@@ -27,12 +18,12 @@ interface Shift {
 
 export default function ShiftWorkerDashboard() {
   const [badges] = useState(['Top Performer', 'Reliable', 'Experienced']);
-  const [stats] = useState({
-    totalEarnings: 1234,
-    hoursWorked: 48,
-    upcomingShifts: 3,
-    rating: 4.8
+  const [preferences] = useState({
+    location: 'NY',
+    pay_rate: 20
   });
+  
+  // Stub data - will be replaced with Supabase queries
   const [recentShifts] = useState<Shift[]>([
     { id: '1', title: 'Evening Server', pay_rate: 25, location: 'Manhattan', status: 'open' },
     { id: '2', title: 'Bartender', pay_rate: 30, location: 'Brooklyn', status: 'open' }
@@ -49,6 +40,8 @@ export default function ShiftWorkerDashboard() {
     }
   ]);
 
+  const { updates, lastUpdateTime, newUpdatesCount } = useMarketUpdates();
+
   const handleApplyShift = async (shiftId: string) => {
     // Stub: Will be connected to Supabase
     alert(`Applied to shift ${shiftId}`);
@@ -56,122 +49,98 @@ export default function ShiftWorkerDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-        <div className="flex items-center justify-between space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">Staff Dashboard</h2>
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Shift Worker Dashboard</h2>
           <Button variant="outline">View Schedule</Button>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Earnings
-              </CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">${stats.totalEarnings}</div>
-              <p className="text-xs text-muted-foreground">
-                +12% vs last month
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Hours Worked
-              </CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.hoursWorked}</div>
-              <p className="text-xs text-muted-foreground">
-                This month
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Upcoming Shifts
-              </CardTitle>
-              <CalendarDays className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.upcomingShifts}</div>
-              <p className="text-xs text-muted-foreground">
-                Next 7 days
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Rating</CardTitle>
-              <Star className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.rating}</div>
-              <p className="text-xs text-muted-foreground">
-                Based on 24 reviews
-              </p>
-            </CardContent>
-          </Card>
+        {/* Stats Overview */}
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          <StatsCard
+            title="Total Earnings"
+            value="$1,234"
+            icon={<DollarSign className="h-4 w-4 text-brand-600" />}
+            trend={{ value: "+12% vs last month", positive: true }}
+          />
+          <StatsCard
+            title="Hours Worked"
+            value="48"
+            icon={<Clock className="h-4 w-4 text-brand-600" />}
+            description="This month"
+          />
+          <StatsCard
+            title="Upcoming Shifts"
+            value="3"
+            icon={<CalendarDays className="h-4 w-4 text-brand-600" />}
+          />
+          <StatsCard
+            title="Rating"
+            value="4.8"
+            icon={<Award className="h-4 w-4 text-brand-600" />}
+            description="Based on 24 reviews"
+          />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-4">
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+          <Card>
             <CardHeader>
-              <CardTitle>Available Shifts</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5 text-brand-600" />
+                Available Shifts
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-8">
+              <div className="space-y-4">
                 {recentShifts.map((shift) => (
-                  <div key={shift.id} className="flex items-center">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {shift.title}
-                      </p>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <MapPin className="mr-1 h-4 w-4" />
-                        {shift.location}
-                        <span className="mx-2">•</span>
-                        <DollarSign className="mr-1 h-4 w-4" />
+                  <div 
+                    key={shift.id}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                  >
+                    <div>
+                      <h3 className="font-medium">{shift.title}</h3>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <DollarSign className="h-4 w-4" />
                         ${shift.pay_rate}/hr
+                        <span className="mx-1">•</span>
+                        <MapPin className="h-4 w-4" />
+                        {shift.location}
                       </div>
                     </div>
-                    <div className="ml-auto">
-                      <Button
-                        variant="outline" 
-                        onClick={() => handleApplyShift(shift.id)}
-                      >
-                        Apply
-                      </Button>
-                    </div>
+                    <Button 
+                      variant="outline"
+                      onClick={() => handleApplyShift(shift.id)}
+                    >
+                      Apply
+                    </Button>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
-          <Card className="col-span-3">
+
+          <Card>
             <CardHeader>
-              <CardTitle>Urgent Shifts</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-red-500" />
+                Urgent Shifts
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-8">
+              <div className="space-y-4">
                 {urgentShifts.map((shift) => (
-                  <div key={shift.id} className="flex items-center space-x-4 rounded-md border p-4 bg-red-50">
-                    <AlertTriangle className="h-5 w-5 text-red-500" />
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {shift.title}
-                      </p>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <MapPin className="mr-1 h-4 w-4" />
-                        {shift.location}
-                        <span className="mx-2">•</span>
-                        <DollarSign className="mr-1 h-4 w-4" />
+                  <div 
+                    key={shift.id}
+                    className="flex items-center justify-between p-4 border border-red-200 rounded-lg bg-red-50"
+                  >
+                    <div>
+                      <h3 className="font-medium">{shift.title}</h3>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <DollarSign className="h-4 w-4" />
                         ${shift.pay_rate}/hr
+                        <span className="mx-1">•</span>
+                        <MapPin className="h-4 w-4" />
+                        {shift.location}
                       </div>
                       {shift.remaining_time && (
                         <Badge variant="destructive" className="mt-2">
@@ -179,7 +148,7 @@ export default function ShiftWorkerDashboard() {
                         </Badge>
                       )}
                     </div>
-                    <Button
+                    <Button 
                       variant="destructive"
                       onClick={() => handleApplyShift(shift.id)}
                     >
@@ -192,55 +161,41 @@ export default function ShiftWorkerDashboard() {
           </Card>
         </div>
 
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>My Achievements</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-brand-600" />
+                My Achievements
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {badges.map((badge) => (
-                  <Badge key={badge} variant="secondary" className="text-xs">
-                    <Award className="mr-1 h-3 w-3" />
+                  <Badge key={badge} variant="secondary" className="text-brand-600">
                     {badge}
                   </Badge>
                 ))}
               </div>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader>
-              <CardTitle>My Performance</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-brand-600" />
+                My Preferences
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      On-time Rate
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Last 30 days
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
-                    <span className="text-2xl font-bold">98%</span>
-                  </div>
+                  <span className="text-muted-foreground">Preferred Location</span>
+                  <span className="font-medium">{preferences.location}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      Shift Completion
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Last 30 days
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <TrendingUp className="mr-2 h-4 w-4 text-green-500" />
-                    <span className="text-2xl font-bold">100%</span>
-                  </div>
+                  <span className="text-muted-foreground">Minimum Pay Rate</span>
+                  <span className="font-medium">${preferences.pay_rate}/hr</span>
                 </div>
               </div>
             </CardContent>

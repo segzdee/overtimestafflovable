@@ -11,84 +11,48 @@ export interface MarketUpdate {
   rate: string;
   highlight: boolean;
   created_at: string;
-  isNew?: boolean;
-  isUpdating?: boolean;
+  isNew?: boolean; // Added for animation purposes
+  isUpdating?: boolean; // Added for animation purposes
 }
 
-// Global demo data
+// Demo data to show immediately
 const demoUpdates: MarketUpdate[] = [
   { 
     id: '1',
     type: 'URGENT', 
-    title: 'Executive Chef - Fine Dining', 
-    location: 'Dubai, UAE', 
-    rate: '$45/hr', 
+    title: 'Kitchen Staff Needed', 
+    location: 'Downtown', 
+    rate: '$35/hr', 
     highlight: true,
     created_at: new Date().toISOString()
   },
   { 
     id: '2',
     type: 'NEW', 
-    title: 'Sommelier', 
-    location: 'Valletta, Malta', 
-    rate: '€35/hr', 
+    title: 'Server Position', 
+    location: 'Midtown', 
+    rate: '$25/hr', 
     highlight: false,
     created_at: new Date().toISOString()
   },
   { 
     id: '3',
     type: 'SWAP', 
-    title: 'Head Bartender', 
-    location: 'Barcelona, Spain', 
-    rate: '€32/hr', 
+    title: 'Bartender Shift', 
+    location: 'Upper East', 
+    rate: '$30/hr', 
     highlight: false,
     created_at: new Date().toISOString()
   },
   { 
     id: '4',
     type: 'PREMIUM', 
-    title: 'Restaurant Manager', 
-    location: 'Cape Town, South Africa', 
-    rate: 'R450/hr', 
+    title: 'Night Manager', 
+    location: 'Financial District', 
+    rate: '$40/hr', 
     highlight: true,
     created_at: new Date().toISOString()
   },
-  { 
-    id: '5',
-    type: 'URGENT', 
-    title: 'Pastry Chef', 
-    location: 'Milan, Italy', 
-    rate: '€38/hr', 
-    highlight: true,
-    created_at: new Date().toISOString()
-  },
-  { 
-    id: '6',
-    type: 'NEW', 
-    title: 'Events Coordinator', 
-    location: 'Toronto, Canada', 
-    rate: 'C$40/hr', 
-    highlight: false,
-    created_at: new Date().toISOString()
-  },
-  { 
-    id: '7',
-    type: 'PREMIUM', 
-    title: 'Sushi Master Chef', 
-    location: 'New York, USA', 
-    rate: '$55/hr', 
-    highlight: true,
-    created_at: new Date().toISOString()
-  },
-  { 
-    id: '8',
-    type: 'SWAP', 
-    title: 'Hospitality Manager', 
-    location: 'London, UK', 
-    rate: '£35/hr', 
-    highlight: false,
-    created_at: new Date().toISOString()
-  }
 ];
 
 export function useMarketUpdates() {
@@ -131,10 +95,12 @@ export function useMarketUpdates() {
         (payload) => {
           console.log('Real-time update received:', payload);
           
+          // Update the list based on the type of change
           if (payload.eventType === 'INSERT') {
             setUpdates(prev => [{...payload.new as MarketUpdate, isNew: true}, ...prev.slice(0, -1)]);
             setNewUpdatesCount(prev => prev + 1);
             
+            // Remove isNew flag after animation
             setTimeout(() => {
               setUpdates(prevUpdates => 
                 prevUpdates.map(update => 
@@ -155,6 +121,7 @@ export function useMarketUpdates() {
               return update;
             }));
             
+            // Remove updating animation after a short delay
             setTimeout(() => {
               setUpdates(prevUpdates => 
                 prevUpdates.map(update => 
@@ -172,42 +139,12 @@ export function useMarketUpdates() {
     // Simulate real-time updates for demo purposes (only in development)
     if (process.env.NODE_ENV === 'development') {
       const interval = setInterval(() => {
-        const locations = [
-          { city: 'Dubai', country: 'UAE', currency: '$' },
-          { city: 'Valletta', country: 'Malta', currency: '€' },
-          { city: 'Barcelona', country: 'Spain', currency: '€' },
-          { city: 'Cape Town', country: 'South Africa', currency: 'R' },
-          { city: 'Milan', country: 'Italy', currency: '€' },
-          { city: 'Toronto', country: 'Canada', currency: 'C$' },
-          { city: 'New York', country: 'USA', currency: '$' },
-          { city: 'London', country: 'UK', currency: '£' },
-          { city: 'Paris', country: 'France', currency: '€' },
-          { city: 'Amsterdam', country: 'Netherlands', currency: '€' }
-        ];
-        
-        const roles = [
-          'Executive Chef',
-          'Sommelier',
-          'Head Bartender',
-          'Restaurant Manager',
-          'Pastry Chef',
-          'Events Coordinator',
-          'Sushi Master',
-          'Hospitality Manager',
-          'Fine Dining Server',
-          'Mixologist'
-        ];
-
-        const randomLocation = locations[Math.floor(Math.random() * locations.length)];
-        const randomRole = roles[Math.floor(Math.random() * roles.length)];
-        const randomRate = Math.floor(Math.random() * 30) + 30;
-
         const randomUpdate = {
           id: Math.random().toString(),
           type: ['URGENT', 'NEW', 'SWAP', 'PREMIUM'][Math.floor(Math.random() * 4)] as MarketUpdate['type'],
-          title: randomRole,
-          location: `${randomLocation.city}, ${randomLocation.country}`,
-          rate: `${randomLocation.currency}${randomRate}/hr`,
+          title: ['Chef Needed', 'Bartender Wanted', 'Server Required', 'Host Position'][Math.floor(Math.random() * 4)],
+          location: ['Downtown', 'Uptown', 'Midtown', 'West Side'][Math.floor(Math.random() * 4)],
+          rate: `$${Math.floor(Math.random() * 20) + 25}/hr`,
           highlight: Math.random() > 0.7,
           created_at: new Date().toISOString(),
           isNew: true
@@ -217,6 +154,7 @@ export function useMarketUpdates() {
         setNewUpdatesCount(prev => prev + 1);
         setLastUpdateTime(new Date());
 
+        // Remove isNew flag after animation
         setTimeout(() => {
           setUpdates(prevUpdates => 
             prevUpdates.map(update => 
@@ -224,7 +162,7 @@ export function useMarketUpdates() {
             )
           );
         }, 300);
-      }, 5000);
+      }, 5000); // Update every 5 seconds
 
       return () => {
         clearInterval(interval);
@@ -232,8 +170,10 @@ export function useMarketUpdates() {
       };
     }
 
+    // Fetch initial real data
     fetchUpdates();
 
+    // Cleanup subscription
     return () => {
       supabase.removeChannel(channel);
     };
