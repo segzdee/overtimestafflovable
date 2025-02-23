@@ -6,8 +6,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+
+// Pages
+import Landing from "./pages/Landing";
 import Login from "./pages/login";
 import Register from "./pages/register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import TokenValidation from "./pages/TokenValidation";
 import FindShifts from "./pages/find-shifts";
 import FindStaff from "./pages/find-staff";
 import ShiftWorkerDashboard from "./pages/ShiftWorkerDashboard";
@@ -27,8 +33,20 @@ const RootRoute = () => {
     return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
   }
   
-  // Show login page as landing page
-  return <Login />;
+  // Show landing page for non-authenticated users
+  return <Landing />;
+};
+
+// Dashboard route handler component
+const DashboardRoute = () => {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  // Redirect to role-specific dashboard
+  return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
 };
 
 const App = () => (
@@ -39,11 +57,18 @@ const App = () => (
           <Toaster />
           <Sonner />
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<RootRoute />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/token-validation" element={<TokenValidation />} />
             <Route path="/find-shifts" element={<FindShifts />} />
             <Route path="/find-staff" element={<FindStaff />} />
+            
+            {/* Dashboard Routes */}
+            <Route path="/dashboard" element={<DashboardRoute />} />
             
             <Route
               path="/dashboard/shift-worker"
@@ -80,16 +105,8 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-
-            <Route
-              path="/dashboard/aiagent"
-              element={
-                <ProtectedRoute allowedRoles={["aiagent"]}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
             
+            {/* Catch all for 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
