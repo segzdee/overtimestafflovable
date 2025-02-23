@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
@@ -34,7 +34,7 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children, className }: DashboardLayoutProps) {
   const { user, logout } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isOpen, setIsOpen] = React.useState(true);
   
   const getMenuItems = () => {
     switch (user?.role) {
@@ -81,43 +81,38 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
   return (
     <SidebarProvider defaultOpen>
       <div className="min-h-screen flex w-full bg-gray-50">
-        {/* Header */}
         <header className="h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
-          <div className="h-full px-4 flex justify-between items-center">
+          <div className="h-full px-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
+                onClick={() => setIsOpen(!isOpen)}
                 className="lg:hidden"
               >
-                {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {isOpen ? <X /> : <Menu />}
               </Button>
-              <Link to="/" className="flex items-center">
+              <Link to="/">
                 <Logo />
               </Link>
             </div>
-            <div className="flex items-center gap-4">
-              {user && (
-                <Button 
-                  variant="ghost"
-                  onClick={() => logout()}
-                >
-                  Logout
-                </Button>
-              )}
-            </div>
+            {user && (
+              <Button 
+                variant="ghost"
+                onClick={logout}
+              >
+                Logout
+              </Button>
+            )}
           </div>
         </header>
 
-        {/* Main Layout */}
         <div className="flex flex-1 pt-16">
-          {/* Sidebar */}
           <Sidebar className={cn(
             "fixed lg:static lg:flex w-64 h-[calc(100vh-4rem)] z-50",
             "bg-[#0B4A3F] border-r border-[#0B4A3F]/10",
             "transition-transform duration-200 ease-in-out lg:translate-x-0",
-            !sidebarOpen && "-translate-x-full"
+            !isOpen && "-translate-x-full"
           )}>
             <SidebarHeader className="h-16 flex items-center px-6 border-b border-white/10">
               <p className="text-sm text-white/60">{portalType}</p>
@@ -128,14 +123,11 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                   <Link 
                     key={item.label}
                     to={item.path}
-                    onClick={() => setSidebarOpen(false)}
+                    onClick={() => setIsOpen(false)}
                   >
                     <Button
                       variant="ghost"
-                      className={cn(
-                        "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
-                        "focus:bg-white/10 focus:text-white"
-                      )}
+                      className="w-full justify-start text-white/70 hover:text-white hover:bg-white/10 focus:bg-white/10 focus:text-white"
                     >
                       <item.icon className="mr-3 h-4 w-4" />
                       {item.label}
@@ -146,27 +138,22 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
             </SidebarContent>
           </Sidebar>
 
-          {/* Mobile Overlay */}
-          {sidebarOpen && (
+          {isOpen && (
             <div
               className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-              onClick={() => setSidebarOpen(false)}
+              onClick={() => setIsOpen(false)}
             />
           )}
 
-          {/* Main Content */}
-          <main className="flex-1 w-full min-h-[calc(100vh-4rem)] overflow-x-hidden">
+          <main className="flex-1 w-full min-h-[calc(100vh-4rem)]">
             <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
-              <div className={cn("animate-in", className)}>
-                {children}
-              </div>
+              {children}
             </div>
           </main>
         </div>
 
-        {/* Footer */}
         <footer className="bg-white border-t border-gray-200 mt-auto py-4">
-          <div className="container mx-auto px-4">
+          <div className="mx-auto px-4">
             <div className="flex justify-center gap-8 text-sm text-gray-600">
               <Link to="/terms" className="hover:text-gray-900">Terms</Link>
               <Link to="/privacy" className="hover:text-gray-900">Privacy</Link>
