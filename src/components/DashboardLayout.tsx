@@ -79,103 +79,101 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                     'Staff Portal';
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gray-50">
-        {/* Header - Simplified */}
-        <header className="h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
-          <div className="h-full max-w-screen-2xl mx-auto px-4 flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <Button
+    <div className="min-h-screen flex w-full bg-gray-50">
+      {/* Header */}
+      <header className="h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
+        <div className="h-full px-4 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden"
+            >
+              {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+            <Link to="/" className="flex items-center">
+              <Logo />
+            </Link>
+          </div>
+          <div className="flex items-center gap-4">
+            {user && (
+              <Button 
                 variant="ghost"
-                size="icon"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden"
+                onClick={() => logout()}
               >
-                {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                Logout
               </Button>
-              <Link to="/" className="flex items-center">
-                <Logo />
-              </Link>
-            </div>
-            <div className="flex items-center gap-4">
-              {user && (
-                <Button 
-                  variant="ghost"
-                  onClick={() => logout()}
-                >
-                  Logout
-                </Button>
-              )}
-            </div>
+            )}
           </div>
-        </header>
-
-        {/* Main Layout */}
-        <div className="flex flex-1 pt-16">
-          {/* Sidebar */}
-          <Sidebar className={cn(
-            "fixed lg:relative lg:flex w-64 h-[calc(100vh-4rem)]",
-            "bg-[#0B4A3F] border-r border-[#0B4A3F]/10",
-            "transition-transform duration-200 ease-in-out lg:translate-x-0",
-            !sidebarOpen && "-translate-x-full"
-          )}>
-            <SidebarHeader className="h-16 flex items-center px-6 border-b border-white/10">
-              <p className="text-sm text-white/60">{portalType}</p>
-            </SidebarHeader>
-            <SidebarContent className="p-3">
-              <nav className="space-y-1">
-                {menuItems.map((item) => (
-                  <Link 
-                    key={item.label}
-                    to={item.path}
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    <Button
-                      variant="ghost"
-                      className={cn(
-                        "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
-                        "focus:bg-white/10 focus:text-white"
-                      )}
-                    >
-                      <item.icon className="mr-3 h-4 w-4" />
-                      {item.label}
-                    </Button>
-                  </Link>
-                ))}
-              </nav>
-            </SidebarContent>
-          </Sidebar>
-
-          {/* Mobile Overlay */}
-          {sidebarOpen && (
-            <div
-              className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-              onClick={() => setSidebarOpen(false)}
-            />
-          )}
-
-          {/* Main Content */}
-          <main className="flex-1 min-h-[calc(100vh-4rem)]">
-            <div className="container mx-auto px-4 py-8">
-              <div className={cn("animate-in", className)}>
-                {children}
-              </div>
-            </div>
-          </main>
         </div>
+      </header>
 
-        {/* Footer */}
-        <footer className="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex justify-center gap-8 text-sm text-gray-600">
-              <Link to="/terms" className="hover:text-gray-900">Terms</Link>
-              <Link to="/privacy" className="hover:text-gray-900">Privacy</Link>
-              <Link to="/contact" className="hover:text-gray-900">Contact</Link>
-              <Link to="/blog" className="hover:text-gray-900">Blog</Link>
+      {/* Main Layout */}
+      <div className="flex flex-1 pt-16">
+        {/* Sidebar */}
+        <Sidebar className={cn(
+          "fixed lg:static lg:flex w-64 h-[calc(100vh-4rem)] z-50",
+          "bg-[#0B4A3F] border-r border-[#0B4A3F]/10",
+          "transition-transform duration-200 ease-in-out lg:translate-x-0",
+          !sidebarOpen && "-translate-x-full"
+        )}>
+          <SidebarHeader className="h-16 flex items-center px-6 border-b border-white/10">
+            <p className="text-sm text-white/60">{portalType}</p>
+          </SidebarHeader>
+          <SidebarContent className="p-3">
+            <nav className="space-y-1">
+              {menuItems.map((item) => (
+                <Link 
+                  key={item.label}
+                  to={item.path}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <Button
+                    variant="ghost"
+                    className={cn(
+                      "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
+                      "focus:bg-white/10 focus:text-white"
+                    )}
+                  >
+                    <item.icon className="mr-3 h-4 w-4" />
+                    {item.label}
+                  </Button>
+                </Link>
+              ))}
+            </nav>
+          </SidebarContent>
+        </Sidebar>
+
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Main Content */}
+        <main className="flex-1 w-full min-h-[calc(100vh-4rem)] overflow-x-hidden">
+          <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+            <div className={cn("animate-in", className)}>
+              {children}
             </div>
           </div>
-        </footer>
+        </main>
       </div>
-    </SidebarProvider>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 mt-auto py-4">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-center gap-8 text-sm text-gray-600">
+            <Link to="/terms" className="hover:text-gray-900">Terms</Link>
+            <Link to="/privacy" className="hover:text-gray-900">Privacy</Link>
+            <Link to="/contact" className="hover:text-gray-900">Contact</Link>
+            <Link to="/blog" className="hover:text-gray-900">Blog</Link>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }
