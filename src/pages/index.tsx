@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { UserCircle2, Building2, Building, Bot, Menu, X, ArrowLeft, Terminal } from "lucide-react";
+import { UserCircle2, Building2, Building, Bot, Menu, X, ArrowLeft } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import {
@@ -13,8 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-const DEV_PASSWORD = 'king8844';
 
 export default function Index() {
   const [email, setEmail] = useState("");
@@ -29,7 +28,7 @@ export default function Index() {
   const { updates, lastUpdateTime, newUpdatesCount } = useMarketUpdates();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { login, loginWithToken, devLogin } = useAuth();
+  const { login, loginWithToken } = useAuth();
 
   const loginCards = [
     {
@@ -96,38 +95,6 @@ export default function Index() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const verifyDevPassword = (password: string) => {
-    return password === DEV_PASSWORD;
-  };
-
-  const modifyComponent = (password: string, modificationFn: () => void) => {
-    if (!verifyDevPassword(password)) {
-      toast({
-        variant: "destructive",
-        title: "Access Denied",
-        description: "Developer password required to modify this component.",
-      });
-      return;
-    }
-    modificationFn();
-  };
-
-  const handleDevLogin = () => {
-    modifyComponent(DEV_PASSWORD, async () => {
-      try {
-        await devLogin(DEV_PASSWORD);
-        navigate("/dashboard/admin");
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "Failed to access developer mode";
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: message,
-        });
-      }
-    });
   };
 
   return (
@@ -290,27 +257,16 @@ export default function Index() {
             </div>
           </div>
         </div>
-
-        <footer className="mt-12 flex justify-between items-center gap-6 text-sm text-gray-600 py-4 border-t px-4">
-          <div className="flex gap-6">
-            <Link to="/terms" className="hover:text-gray-900 transition-colors">Terms</Link>
-            <Link to="/privacy" className="hover:text-gray-900 transition-colors">Privacy</Link>
-            <Link to="/contact" className="hover:text-gray-900 transition-colors">Contact</Link>
-            <Link to="/blog" className="hover:text-gray-900 transition-colors">Blog</Link>
-          </div>
-          {process.env.NODE_ENV === 'development' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDevLogin}
-              className="flex items-center gap-2"
-            >
-              <Terminal className="h-4 w-4" />
-              <span className="sr-only">Developer Access</span>
-            </Button>
-          )}
-        </footer>
       </main>
+
+      <footer className="mt-12 text-center py-4 border-t">
+        <div className="flex justify-center gap-6 text-sm text-gray-600">
+          <Link to="/terms" className="hover:text-gray-900 transition-colors">Terms</Link>
+          <Link to="/privacy" className="hover:text-gray-900 transition-colors">Privacy</Link>
+          <Link to="/contact" className="hover:text-gray-900 transition-colors">Contact</Link>
+          <Link to="/blog" className="hover:text-gray-900 transition-colors">Blog</Link>
+        </div>
+      </footer>
 
       <Dialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
         <DialogContent className="sm:max-w-md">
