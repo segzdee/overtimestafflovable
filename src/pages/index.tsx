@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { UserCircle2, Building2, Building, Bot, Menu, X, ArrowLeft } from "lucide-react";
+import { UserCircle2, Building2, Building, Bot, Menu, X, ArrowLeft, MapPin } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import {
@@ -25,7 +24,14 @@ export default function Index() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
-  const { updates, lastUpdateTime, newUpdatesCount } = useMarketUpdates();
+  const { 
+    updates, 
+    lastUpdateTime, 
+    newUpdatesCount, 
+    selectedCurrency, 
+    setSelectedCurrency, 
+    exchangeRates 
+  } = useMarketUpdates();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { login, loginWithToken } = useAuth();
@@ -220,34 +226,64 @@ export default function Index() {
         <div className="bg-gray-900 text-white rounded-xl shadow-xl overflow-hidden">
           <div className="p-4 md:p-6 space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-400">LIVE MARKET UPDATES</h3>
-              <span className="text-sm text-gray-400">
-                {lastUpdateTime.toLocaleTimeString()}
-              </span>
+              <h3 className="text-sm font-semibold text-gray-400">LIVE HOSPITALITY INDEX</h3>
+              <div className="flex items-center gap-4">
+                <select
+                  value={selectedCurrency}
+                  onChange={(e) => setSelectedCurrency(e.target.value)}
+                  className="bg-gray-800 text-white text-sm rounded-md border border-gray-700 px-2 py-1"
+                >
+                  {Object.keys(exchangeRates).map((currency) => (
+                    <option key={currency} value={currency}>
+                      {currency}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-sm text-gray-400">
+                  {lastUpdateTime.toLocaleTimeString()} UTC
+                </span>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {updates.map((update) => (
                 <div
                   key={update.id}
-                  className={`p-4 rounded-lg border transition-colors ${
+                  className={`p-4 rounded-lg border transition-all ${
                     update.highlight
                       ? 'bg-purple-900 border-purple-700'
                       : 'bg-gray-800 border-gray-700'
+                  } ${
+                    update.isNew ? 'animate-in fade-in slide-in-from-bottom-5' : ''
+                  } ${
+                    update.isUpdating ? 'animate-pulse' : ''
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className={`text-xs font-bold ${
-                      update.type === 'URGENT' ? 'text-red-400' :
-                      update.type === 'PREMIUM' ? 'text-purple-400' :
-                      update.type === 'SWAP' ? 'text-orange-400' :
-                      'text-green-400'
-                    }`}>
-                      {update.type}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-bold ${
+                        update.type === 'URGENT' ? 'text-red-400' :
+                        update.type === 'PREMIUM' ? 'text-purple-400' :
+                        update.type === 'SWAP' ? 'text-orange-400' :
+                        'text-green-400'
+                      }`}>
+                        {update.type}
+                      </span>
+                      <span className={`text-xs px-2 py-0.5 rounded ${
+                        update.urgency_level === 'high' ? 'bg-red-900 text-red-200' :
+                        update.urgency_level === 'medium' ? 'bg-yellow-900 text-yellow-200' :
+                        'bg-green-900 text-green-200'
+                      }`}>
+                        {update.urgency_level.toUpperCase()}
+                      </span>
+                    </div>
                     <span className="text-lg font-bold text-green-400">{update.rate}</span>
                   </div>
                   <div className="text-sm font-medium">{update.title}</div>
                   <div className="text-xs text-gray-400 mt-1">{update.location}</div>
+                  <div className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    {update.region}
+                  </div>
                 </div>
               ))}
             </div>

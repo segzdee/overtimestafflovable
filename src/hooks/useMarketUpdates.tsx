@@ -11,47 +11,74 @@ export interface MarketUpdate {
   rate: string;
   highlight: boolean;
   created_at: string;
-  isNew?: boolean; // Added for animation purposes
-  isUpdating?: boolean; // Added for animation purposes
+  region: string;
+  currency: string;
+  original_rate: number;
+  currency_rate: number;
+  urgency_level: 'low' | 'medium' | 'high';
+  isNew?: boolean;
+  isUpdating?: boolean;
 }
+
+const REGIONS = ['USA', 'Dubai', 'Malta', 'South Africa', 'Italy', 'Spain', 'Canada', 'Europe'];
 
 // Demo data to show immediately
 const demoUpdates: MarketUpdate[] = [
-  { 
+  {
     id: '1',
-    type: 'URGENT', 
-    title: 'Kitchen Staff Needed', 
-    location: 'Downtown', 
-    rate: '$35/hr', 
+    type: 'URGENT',
+    title: 'Executive Chef Needed',
+    location: 'Luxury Resort',
+    rate: '€35/hr',
     highlight: true,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
+    region: 'Dubai',
+    currency: 'EUR',
+    original_rate: 35,
+    currency_rate: 1,
+    urgency_level: 'high'
   },
-  { 
+  {
     id: '2',
-    type: 'NEW', 
-    title: 'Server Position', 
-    location: 'Midtown', 
-    rate: '$25/hr', 
+    type: 'NEW',
+    title: 'Sommelier Position',
+    location: 'Fine Dining Restaurant',
+    rate: '€30/hr',
     highlight: false,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
+    region: 'Italy',
+    currency: 'EUR',
+    original_rate: 30,
+    currency_rate: 1,
+    urgency_level: 'medium'
   },
-  { 
+  {
     id: '3',
-    type: 'SWAP', 
-    title: 'Bartender Shift', 
-    location: 'Upper East', 
-    rate: '$30/hr', 
+    type: 'SWAP',
+    title: 'Head Bartender Shift',
+    location: 'Beach Club',
+    rate: '€40/hr',
     highlight: false,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
+    region: 'Malta',
+    currency: 'EUR',
+    original_rate: 40,
+    currency_rate: 1,
+    urgency_level: 'low'
   },
-  { 
+  {
     id: '4',
-    type: 'PREMIUM', 
-    title: 'Night Manager', 
-    location: 'Financial District', 
-    rate: '$40/hr', 
+    type: 'PREMIUM',
+    title: 'Food & Beverage Director',
+    location: 'Boutique Hotel',
+    rate: '€45/hr',
     highlight: true,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
+    region: 'Spain',
+    currency: 'EUR',
+    original_rate: 45,
+    currency_rate: 1,
+    urgency_level: 'high'
   },
 ];
 
@@ -59,6 +86,26 @@ export function useMarketUpdates() {
   const [updates, setUpdates] = useState<MarketUpdate[]>(demoUpdates);
   const [lastUpdateTime, setLastUpdateTime] = useState<Date>(new Date());
   const [newUpdatesCount, setNewUpdatesCount] = useState(0);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('EUR');
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({
+    EUR: 1,
+    USD: 1.1,
+    GBP: 0.86,
+    AED: 4.04,
+    ZAR: 20.65,
+    CAD: 1.48
+  });
+
+  const formatRate = (original: number, currency: string): string => {
+    const rate = original * exchangeRates[currency];
+    const symbol = currency === 'EUR' ? '€' : 
+                  currency === 'USD' ? '$' :
+                  currency === 'GBP' ? '£' :
+                  currency === 'AED' ? 'AED ' :
+                  currency === 'ZAR' ? 'R ' :
+                  currency === 'CAD' ? 'C$' : '';
+    return `${symbol}${Math.round(rate)}/hr`;
+  };
 
   useEffect(() => {
     // Initial fetch of real data
@@ -70,7 +117,12 @@ export function useMarketUpdates() {
         .limit(8);
 
       if (data && !error) {
-        setUpdates(data.map(update => ({ ...update, isNew: true })));
+        const formattedData = data.map(update => ({
+          ...update,
+          isNew: true,
+          rate: formatRate(update.original_rate, selectedCurrency)
+        }));
+        setUpdates(formattedData);
         setLastUpdateTime(new Date());
 
         // Remove isNew flag after animation
@@ -97,10 +149,14 @@ export function useMarketUpdates() {
           
           // Update the list based on the type of change
           if (payload.eventType === 'INSERT') {
-            setUpdates(prev => [{...payload.new as MarketUpdate, isNew: true}, ...prev.slice(0, -1)]);
+            const newUpdate = {
+              ...payload.new as MarketUpdate,
+              isNew: true,
+              rate: formatRate(payload.new.original_rate, selectedCurrency)
+            };
+            setUpdates(prev => [newUpdate, ...prev.slice(0, -1)]);
             setNewUpdatesCount(prev => prev + 1);
             
-            // Remove isNew flag after animation
             setTimeout(() => {
               setUpdates(prevUpdates => 
                 prevUpdates.map(update => 
@@ -108,20 +164,18 @@ export function useMarketUpdates() {
                 )
               );
             }, 300);
-          } else if (payload.eventType === 'DELETE') {
-            setUpdates(prev => prev.filter(update => update.id !== payload.old.id));
           } else if (payload.eventType === 'UPDATE') {
             setUpdates(prev => prev.map(update => {
               if (update.id === payload.new.id) {
                 return { 
-                  ...payload.new as MarketUpdate, 
-                  isUpdating: true 
+                  ...payload.new as MarketUpdate,
+                  isUpdating: true,
+                  rate: formatRate(payload.new.original_rate, selectedCurrency)
                 };
               }
               return update;
             }));
             
-            // Remove updating animation after a short delay
             setTimeout(() => {
               setUpdates(prevUpdates => 
                 prevUpdates.map(update => 
@@ -142,19 +196,27 @@ export function useMarketUpdates() {
         const randomUpdate = {
           id: Math.random().toString(),
           type: ['URGENT', 'NEW', 'SWAP', 'PREMIUM'][Math.floor(Math.random() * 4)] as MarketUpdate['type'],
-          title: ['Chef Needed', 'Bartender Wanted', 'Server Required', 'Host Position'][Math.floor(Math.random() * 4)],
-          location: ['Downtown', 'Uptown', 'Midtown', 'West Side'][Math.floor(Math.random() * 4)],
-          rate: `$${Math.floor(Math.random() * 20) + 25}/hr`,
+          title: ['Head Chef', 'Sommelier', 'Restaurant Manager', 'Executive Sous Chef'][Math.floor(Math.random() * 4)],
+          location: ['Luxury Hotel', 'Fine Dining', 'Resort & Spa', 'Boutique Restaurant'][Math.floor(Math.random() * 4)],
+          region: REGIONS[Math.floor(Math.random() * REGIONS.length)],
+          original_rate: Math.floor(Math.random() * 30) + 25,
+          currency: 'EUR',
+          currency_rate: 1,
           highlight: Math.random() > 0.7,
           created_at: new Date().toISOString(),
+          urgency_level: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as 'low' | 'medium' | 'high',
           isNew: true
         };
 
-        setUpdates(prev => [randomUpdate, ...prev.slice(0, -1)]);
+        const formattedUpdate = {
+          ...randomUpdate,
+          rate: formatRate(randomUpdate.original_rate, selectedCurrency)
+        };
+
+        setUpdates(prev => [formattedUpdate, ...prev.slice(0, -1)]);
         setNewUpdatesCount(prev => prev + 1);
         setLastUpdateTime(new Date());
 
-        // Remove isNew flag after animation
         setTimeout(() => {
           setUpdates(prevUpdates => 
             prevUpdates.map(update => 
@@ -162,7 +224,7 @@ export function useMarketUpdates() {
             )
           );
         }, 300);
-      }, 5000); // Update every 5 seconds
+      }, 5000);
 
       return () => {
         clearInterval(interval);
@@ -170,18 +232,19 @@ export function useMarketUpdates() {
       };
     }
 
-    // Fetch initial real data
     fetchUpdates();
-
-    // Cleanup subscription
+    
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [selectedCurrency]);
 
   return {
     updates,
     lastUpdateTime,
-    newUpdatesCount
+    newUpdatesCount,
+    selectedCurrency,
+    setSelectedCurrency,
+    exchangeRates
   };
 }

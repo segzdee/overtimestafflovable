@@ -270,30 +270,45 @@ export type Database = {
       market_updates: {
         Row: {
           created_at: string
+          currency: string
+          currency_rate: number
           highlight: boolean | null
           id: string
           location: string
+          original_rate: number
           rate: string
+          region: string
           title: string
           type: string
+          urgency_level: string | null
         }
         Insert: {
           created_at?: string
+          currency?: string
+          currency_rate?: number
           highlight?: boolean | null
           id?: string
           location: string
+          original_rate?: number
           rate: string
+          region?: string
           title: string
           type: string
+          urgency_level?: string | null
         }
         Update: {
           created_at?: string
+          currency?: string
+          currency_rate?: number
           highlight?: boolean | null
           id?: string
           location?: string
+          original_rate?: number
           rate?: string
+          region?: string
           title?: string
           type?: string
+          urgency_level?: string | null
         }
         Relationships: []
       }
