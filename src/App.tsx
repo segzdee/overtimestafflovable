@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,7 +7,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Pages
-import Landing from "./pages/Landing";
+import Index from "./pages/index";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -33,8 +32,8 @@ const RootRoute = () => {
     return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
   }
   
-  // Show landing page for non-authenticated users
-  return <Landing />;
+  // Show index page for non-authenticated users
+  return <Index />;
 };
 
 // Dashboard route handler component
