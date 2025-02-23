@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
@@ -46,17 +45,30 @@ export default function Index() {
     }
   ];
 
-  // Transform market updates into stock-like data
+  // Transform market updates with more data types
   const marketData = updates.map(update => {
     const isIncreased = Math.random() > 0.5;
     const changePercent = (Math.random() * 5 + 1).toFixed(2);
     const baseRate = parseInt(update.rate.replace(/[^0-9]/g, ''));
+    const swapRate = Math.floor(Math.random() * 20) + 5;
+    const urgencyLevel = Math.floor(Math.random() * 100);
+    const isNew = Math.random() > 0.7;
     return {
       ...update,
       change: isIncreased ? `+${changePercent}%` : `-${changePercent}%`,
       isPositive: isIncreased,
       volume: Math.floor(Math.random() * 100) + 20,
-      baseRate
+      baseRate,
+      swapRate,
+      urgencyLevel,
+      isNew,
+      rateHistory: [
+        baseRate * 0.95,
+        baseRate * 0.98,
+        baseRate,
+        baseRate * 1.02,
+        baseRate * 1.05
+      ].map(rate => Math.round(rate))
     };
   });
 
@@ -108,7 +120,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* New Stock Market Style Section */}
+      {/* Enhanced Stock Market Style Section */}
       <section className="flex-1 bg-gradient-to-br from-gray-900 to-gray-800 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between mb-6">
@@ -128,7 +140,14 @@ export default function Index() {
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="font-semibold text-gray-200">{item.title}</h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-gray-200">{item.title}</h3>
+                        {item.isNew && (
+                          <span className="px-1.5 py-0.5 text-xs font-medium bg-purple-500/20 text-purple-300 rounded">
+                            NEW
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-gray-400">{item.location}</p>
                     </div>
                     <span className={`flex items-center gap-1 text-sm ${
@@ -139,11 +158,50 @@ export default function Index() {
                     </span>
                   </div>
                   
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center mb-3">
                     <span className="text-2xl font-bold text-gray-100">${item.baseRate}</span>
                     <div className="flex flex-col items-end">
                       <span className="text-xs text-gray-400">Volume</span>
                       <span className="text-sm font-medium text-gray-300">{item.volume} shifts</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 mt-2 text-xs">
+                    <div className="bg-gray-700/30 rounded p-2">
+                      <span className="text-gray-400">Swap Rate</span>
+                      <div className="text-blue-300 font-medium mt-1">
+                        {item.swapRate} swaps/hr
+                      </div>
+                    </div>
+                    <div className="bg-gray-700/30 rounded p-2">
+                      <span className="text-gray-400">Urgency</span>
+                      <div className={`font-medium mt-1 ${
+                        item.urgencyLevel > 70 ? 'text-red-300' :
+                        item.urgencyLevel > 30 ? 'text-yellow-300' :
+                        'text-green-300'
+                      }`}>
+                        {item.urgencyLevel}%
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 pt-3 border-t border-gray-700">
+                    <div className="flex justify-between items-center text-xs text-gray-400">
+                      <span>Rate History (24h)</span>
+                      <span className="text-gray-300">${item.rateHistory[item.rateHistory.length - 1]}</span>
+                    </div>
+                    <div className="flex items-end justify-between h-8 mt-2 gap-1">
+                      {item.rateHistory.map((rate, idx) => (
+                        <div
+                          key={idx}
+                          className={`w-full rounded-sm ${
+                            rate > item.baseRate ? 'bg-green-500/30' : 'bg-red-500/30'
+                          }`}
+                          style={{
+                            height: `${(rate / Math.max(...item.rateHistory)) * 100}%`
+                          }}
+                        />
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -153,14 +211,15 @@ export default function Index() {
         </div>
       </section>
 
-      <footer className="py-3 bg-gray-900 border-t border-gray-800 text-gray-400 flex-none">
+      {/* Original Footer */}
+      <footer className="py-3 bg-gradient-to-r from-gray-50 via-white to-gray-50 border-t border-gray-100 flex-none">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center text-sm">
+          <div className="flex justify-between items-center text-sm text-gray-500">
             <p>© 2024 OvertimeStaff</p>
             <div className="flex gap-4">
-              <button onClick={() => navigate("/privacy")} className="hover:text-gray-200 transition-colors">Privacy</button>
-              <button onClick={() => navigate("/terms")} className="hover:text-gray-200 transition-colors">Terms</button>
-              <button onClick={() => navigate("/contact")} className="hover:text-gray-200 transition-colors">Contact</button>
+              <button onClick={() => navigate("/privacy")} className="hover:text-brand-600 transition-colors">Privacy</button>
+              <button onClick={() => navigate("/terms")} className="hover:text-brand-600 transition-colors">Terms</button>
+              <button onClick={() => navigate("/contact")} className="hover:text-brand-600 transition-colors">Contact</button>
             </div>
           </div>
         </div>
