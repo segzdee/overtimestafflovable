@@ -1,6 +1,6 @@
 import { User } from "@supabase/supabase-js";
 import { NavigateFunction } from "react-router-dom";
-import { ToastType } from "@/components/ui/toast";
+import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabase";
 import { AuthUser, AIToken } from "./types";
 
@@ -10,7 +10,7 @@ interface AuthOperationsProps {
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
   setAiTokens: React.Dispatch<React.SetStateAction<AIToken[]>>;
   navigate: NavigateFunction;
-  toast: typeof ToastType;
+  toast: typeof toast;
 }
 
 export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: AuthOperationsProps) {
