@@ -1,17 +1,16 @@
-
 import { User } from "@supabase/supabase-js";
 import { NavigateFunction } from "react-router-dom";
-import { Toast } from "@/components/ui/use-toast";
+import { ToastType } from "@/components/ui/toast";
 import { supabase } from "@/lib/supabase";
 import { AuthUser, AIToken } from "./types";
 
 const DEV_PASSWORD = 'king8844';
 
 interface AuthOperationsProps {
-  setUser: (user: AuthUser | null) => void;
-  setAiTokens: (tokens: AIToken[]) => void;
+  setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
+  setAiTokens: React.Dispatch<React.SetStateAction<AIToken[]>>;
   navigate: NavigateFunction;
-  toast: Toast;
+  toast: typeof ToastType;
 }
 
 export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: AuthOperationsProps) {
@@ -151,12 +150,12 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
       }
     };
     
-    setAiTokens(current => [...current, newToken]);
+    setAiTokens((current: AIToken[]) => [...current, newToken]);
     return newToken;
   };
 
   const revokeAiToken = async (tokenId: string) => {
-    setAiTokens(current => 
+    setAiTokens((current: AIToken[]) => 
       current.map(token => 
         token.id === tokenId ? { ...token, isActive: false } : token
       )
@@ -187,7 +186,7 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
 
     if (error) throw error;
 
-    setUser(prev => prev ? { ...prev, ...profileData, profileComplete: true } : null);
+    setUser((prev: AuthUser | null) => prev ? { ...prev, ...profileData, profileComplete: true } : null);
 
     toast({
       title: "Profile Updated",
