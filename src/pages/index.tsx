@@ -1,17 +1,18 @@
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import { Logo } from "@/components/ui/logo";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { TrendingUp, TrendingDown, Clock } from "lucide-react";
+import { Building2, Users, UserCog, Building } from "lucide-react";
 
 export default function Index() {
   const { updates } = useMarketUpdates();
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "OvertimeStaff - Connect with Hospitality Jobs and Staff";
+    document.title = "OvertimeStaff - AI Meets Hospitality";
     
     let metaDescription = document.querySelector('meta[name="description"]');
     if (!metaDescription) {
@@ -20,217 +21,145 @@ export default function Index() {
       document.head.appendChild(metaDescription);
     }
     metaDescription.setAttribute('content', 
-      'Connect with hospitality jobs and staff. Real-time marketplace for shift workers, companies, and agencies. AI-powered matching for perfect fits.'
+      'From unfilled shifts to finding the right staff, OVERTIMESTAFF Platform connects agencies, hotels, and businesses with AI-driven solutions.'
     );
   }, []);
 
   const userTypes = [
     {
-      title: "Shift Workers",
-      description: "Find flexible shifts that match your skills and schedule",
-      path: "/register",
+      title: "Staffing Agency",
+      description: "Manage your workforce and client relationships",
+      icon: <Building2 className="w-8 h-8 text-purple-500" />,
+      path: "/login",
       gradient: "from-purple-500 to-purple-600"
     },
     {
-      title: "Companies",
-      description: "Post shifts and find reliable staff for your business",
-      path: "/register",
-      gradient: "from-blue-500 to-blue-600"
+      title: "Hotels & Businesses",
+      description: "Find reliable staff for your shifts",
+      icon: <Building className="w-8 h-8 text-purple-500" />,
+      path: "/login",
+      gradient: "from-purple-500 to-purple-600"
     },
     {
-      title: "Agencies",
-      description: "Manage your workforce and expand your client base",
-      path: "/register",
-      gradient: "from-green-500 to-green-600"
+      title: "Shift Workers",
+      description: "Find flexible work opportunities",
+      icon: <Users className="w-8 h-8 text-purple-500" />,
+      path: "/login",
+      gradient: "from-purple-500 to-purple-600"
+    },
+    {
+      title: "Platform Admin",
+      description: "Manage the platform and users",
+      icon: <UserCog className="w-8 h-8 text-purple-500" />,
+      path: "/login",
+      gradient: "from-purple-500 to-purple-600"
     }
   ];
 
-  const marketData = updates.map(update => {
-    const isIncreased = Math.random() > 0.5;
-    const changePercent = (Math.random() * 5 + 1).toFixed(2);
-    const baseRate = parseInt(update.rate.replace(/[^0-9]/g, ''));
-    const swapRate = Math.floor(Math.random() * 20) + 5;
-    const urgencyLevel = Math.floor(Math.random() * 100);
-    const isNew = Math.random() > 0.7;
-    return {
-      ...update,
-      change: isIncreased ? `+${changePercent}%` : `-${changePercent}%`,
-      isPositive: isIncreased,
-      volume: Math.floor(Math.random() * 100) + 20,
-      baseRate,
-      swapRate,
-      urgencyLevel,
-      isNew,
-      rateHistory: [
-        baseRate * 0.95,
-        baseRate * 0.98,
-        baseRate,
-        baseRate * 1.02,
-        baseRate * 1.05
-      ].map(rate => Math.round(rate))
-    };
-  });
-
   return (
-    <div className="h-screen overflow-hidden bg-gradient-to-br from-brand-50 via-white to-brand-50 flex flex-col">
-      <section className="relative px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 text-center bg-gradient-to-r from-purple-50 via-white to-blue-50 flex-none">
+    <div className="min-h-screen flex flex-col">
+      {/* Header */}
+      <header className="flex justify-between items-center px-6 py-4 border-b">
         <Logo />
-        <h1 className="mt-4 text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">
-          The Future of Hospitality Staffing
-        </h1>
-        <p className="mt-3 sm:mt-4 text-base sm:text-lg leading-7 text-gray-600 max-w-2xl mx-auto">
-          Connect with the perfect staff or shifts in real-time. Powered by AI for smarter matches.
-        </p>
-        <div className="mt-6 sm:mt-8 flex items-center justify-center gap-x-4">
-          <Button onClick={() => navigate("/register")} size="lg" 
-            className="bg-gradient-to-r from-brand-500 to-purple-500 hover:from-brand-600 hover:to-purple-600">
-            Get Started
+        <div className="flex gap-4">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate("/find-shifts")}
+          >
+            Find Extra Shifts
           </Button>
-          <Button variant="outline" onClick={() => navigate("/find-shifts")} size="lg">
-            Browse Shifts
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate("/find-staff")}
+          >
+            Find Extra Staff
+          </Button>
+          <Button 
+            variant="default"
+            onClick={() => navigate("/register")}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            Sign up
           </Button>
         </div>
-      </section>
+      </header>
 
-      <section className="py-6 sm:py-8 bg-gradient-to-br from-white via-gray-50 to-white flex-none">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">
-            Choose Your Path
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-            {userTypes.map((type) => (
-              <Card key={type.title} 
-                className="relative overflow-hidden hover:shadow-xl transition-shadow">
-                <div className={`absolute inset-0 bg-gradient-to-br ${type.gradient} opacity-10`} />
-                <div className="relative p-4">
-                  <h3 className="text-lg font-semibold mb-2">{type.title}</h3>
-                  <p className="text-gray-600 text-sm mb-4">{type.description}</p>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => navigate(type.path)}
-                    className="w-full bg-gradient-to-r from-brand-50 to-purple-50 hover:from-brand-100 hover:to-purple-100"
-                  >
-                    Join as {type.title}
-                  </Button>
+      {/* Main Content */}
+      <main className="flex-1 px-6 py-12 flex flex-col items-center">
+        <div className="max-w-4xl mx-auto text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">
+            AI Meets Hospitality:
+            <br />
+            Extra Staff, Anytime, Anywhere
+          </h1>
+          <p className="text-gray-600 text-lg">
+            From unfilled shifts to finding the right staff, OVERTIMESTAFF Platform connects agencies, hotels, and businesses with AI-driven solutions.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl">
+          {userTypes.map((type) => (
+            <Card key={type.title} className="relative overflow-hidden hover:shadow-lg transition-all">
+              <div className="p-6 flex flex-col items-center text-center">
+                {type.icon}
+                <h3 className="text-lg font-semibold mt-4 mb-2">{type.title}</h3>
+                <p className="text-gray-600 text-sm mb-4">{type.description}</p>
+                <Button 
+                  onClick={() => navigate(type.path)}
+                  className="w-full bg-gradient-to-r from-purple-500 to-green-500 hover:from-purple-600 hover:to-green-600 text-white"
+                >
+                  LOGIN
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        {/* Live Market Updates */}
+        <div className="w-full max-w-7xl mt-12 bg-gray-900 rounded-lg overflow-hidden">
+          <div className="p-4 flex justify-between items-center">
+            <span className="text-white font-medium">LIVE MARKET UPDATES</span>
+            <span className="text-gray-400 text-sm">7:52:26 AM</span>
+          </div>
+          <div className="flex gap-4 p-4 overflow-x-auto">
+            {updates.slice(0, 4).map((update) => (
+              <div 
+                key={update.id}
+                className={`flex-none w-64 p-4 rounded ${
+                  update.type === 'URGENT' ? 'bg-purple-600' :
+                  update.type === 'NEW' ? 'bg-gray-800' :
+                  update.type === 'SWAP' ? 'bg-gray-800' :
+                  'bg-purple-600'
+                }`}
+              >
+                <div className="text-xs text-gray-300 mb-1">
+                  {update.type}
                 </div>
-              </Card>
+                <div className="text-white font-medium mb-1">
+                  {update.title}
+                </div>
+                <div className="text-sm text-gray-300">
+                  {update.location}
+                </div>
+                <div className="text-xl text-green-400 font-bold mt-2">
+                  {update.rate}
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="flex-1 bg-gradient-to-br from-gray-900 to-gray-800 text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="space-y-1">
-              <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text">
-                Live Hospitality Market
-              </h2>
-              <p className="text-sm text-gray-400">Real-time updates from the hospitality sector</p>
-            </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800/50 border border-gray-700">
-              <Clock className="h-4 w-4 text-green-400 animate-pulse" />
-              <span className="text-sm text-gray-300">Live Updates</span>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {marketData.map((item) => (
-              <Card key={item.id} 
-                className="bg-gray-800/50 backdrop-blur-sm border-gray-700 hover:bg-gray-800/70 transition-all">
-                <div className="p-4 space-y-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-gray-200">{item.title}</h3>
-                        {item.isNew && (
-                          <span className="px-1.5 py-0.5 text-xs font-medium bg-purple-500/20 text-purple-300 rounded-full">
-                            NEW
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-400">{item.location}</p>
-                    </div>
-                    <div className={`flex flex-col items-end ${
-                      item.isPositive ? 'text-green-400' : 'text-red-400'
-                    }`}>
-                      <div className="flex items-center gap-1">
-                        {item.isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                        <span className="font-medium">{item.change}</span>
-                      </div>
-                      <span className="text-xs text-gray-400">24h change</span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center py-2 border-y border-gray-700/50">
-                    <div className="space-y-1">
-                      <span className="text-xs text-gray-400">Current Rate</span>
-                      <div className="text-2xl font-bold text-gray-100">${item.baseRate}</div>
-                    </div>
-                    <div className="text-right space-y-1">
-                      <span className="text-xs text-gray-400">Volume</span>
-                      <div className="font-medium text-gray-300">{item.volume} shifts</div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-lg bg-gray-700/30 p-2.5">
-                      <div className="text-xs text-gray-400 mb-1">Swap Rate</div>
-                      <div className="text-sm">
-                        <span className="font-medium text-blue-300">{item.swapRate}</span>
-                        <span className="text-gray-400 text-xs ml-1">swaps/hr</span>
-                      </div>
-                    </div>
-                    <div className="rounded-lg bg-gray-700/30 p-2.5">
-                      <div className="text-xs text-gray-400 mb-1">Urgency</div>
-                      <div className="text-sm">
-                        <span className={`font-medium ${
-                          item.urgencyLevel > 70 ? 'text-red-300' :
-                          item.urgencyLevel > 30 ? 'text-yellow-300' :
-                          'text-green-300'
-                        }`}>{item.urgencyLevel}%</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center text-xs mb-2">
-                      <span className="text-gray-400">Rate History (24h)</span>
-                      <span className="text-gray-300 font-medium">
-                        ${item.rateHistory[item.rateHistory.length - 1]}
-                      </span>
-                    </div>
-                    <div className="flex items-end gap-0.5 h-10">
-                      {item.rateHistory.map((rate, idx) => (
-                        <div
-                          key={idx}
-                          className={`w-full rounded-sm transition-all duration-300 ${
-                            rate > item.baseRate ? 'bg-green-500/30' : 'bg-red-500/30'
-                          }`}
-                          style={{
-                            height: `${(rate / Math.max(...item.rateHistory)) * 100}%`
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
+          <div className="px-4 py-2 bg-gray-800 text-gray-400 text-sm">
+            Updated every 5 minutes • {updates.length} new positions added today
           </div>
         </div>
-      </section>
+      </main>
 
-      <footer className="py-3 bg-gradient-to-r from-gray-50 via-white to-gray-50 border-t border-gray-100 flex-none">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center text-sm text-gray-500">
-            <p>© 2024 OvertimeStaff</p>
-            <div className="flex gap-4">
-              <button onClick={() => navigate("/privacy")} className="hover:text-brand-600 transition-colors">Privacy</button>
-              <button onClick={() => navigate("/terms")} className="hover:text-brand-600 transition-colors">Terms</button>
-              <button onClick={() => navigate("/contact")} className="hover:text-brand-600 transition-colors">Contact</button>
-            </div>
-          </div>
+      {/* Footer */}
+      <footer className="py-4 px-6 border-t">
+        <div className="flex justify-center gap-8 text-sm text-gray-600">
+          <button onClick={() => navigate("/terms")}>Terms</button>
+          <button onClick={() => navigate("/privacy")}>Privacy</button>
+          <button onClick={() => navigate("/contact")}>Contact</button>
+          <button onClick={() => navigate("/blog")}>Blog</button>
         </div>
       </footer>
     </div>
