@@ -435,6 +435,33 @@ export type Database = {
         }
         Relationships: []
       }
+      role_aliases: {
+        Row: {
+          alias: string
+          base_role: Database["public"]["Enums"]["base_role"]
+          created_at: string
+          id: string
+          is_canonical: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          alias: string
+          base_role: Database["public"]["Enums"]["base_role"]
+          created_at?: string
+          id?: string
+          is_canonical?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          alias?: string
+          base_role?: Database["public"]["Enums"]["base_role"]
+          created_at?: string
+          id?: string
+          is_canonical?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       shifts: {
         Row: {
           created_at: string
@@ -784,6 +811,7 @@ export type Database = {
       }
     }
     Enums: {
+      base_role: "shift-worker" | "agency" | "company" | "aiagent" | "admin"
       clock_status: "pending" | "approved" | "rejected"
       payment_status: "pending" | "paid" | "failed"
       shift_status: "posted" | "picked" | "completed" | "cancelled"

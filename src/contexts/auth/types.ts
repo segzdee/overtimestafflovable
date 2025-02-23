@@ -1,10 +1,11 @@
 
 import { User } from "@supabase/supabase-js";
+import { BaseRole } from "@/lib/types";
 
 export interface AuthUser {
   id: string;
   email: string;
-  role: "admin" | "shift-worker" | "company" | "agency" | "aiagent";
+  role: BaseRole;
   name: string;
   category?: string;
   profileComplete: boolean;
