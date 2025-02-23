@@ -9,8 +9,8 @@ export const register = async (
   password: string,
   role: AuthUser["role"],
   name: string,
-  category?: string,
-  toast: any
+  toast: any,
+  category?: string
 ) => {
   const { data, error } = await supabase.auth.signUp({
     email,

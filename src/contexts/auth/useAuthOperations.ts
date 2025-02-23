@@ -21,7 +21,7 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
     name: string,
     category?: string
   ) => {
-    await register(email, password, role, name, category, toast);
+    await register(email, password, role, name, toast, category);
   };
 
   const handleLogin = async (email: string, password: string) => {
