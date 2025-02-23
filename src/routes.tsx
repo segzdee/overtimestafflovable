@@ -1,6 +1,6 @@
 
 import { lazy, Suspense } from 'react';
-import { Navigate, Routes as RouterRoutes, Route } from 'react-router-dom';
+import { Navigate, Routes as RouterRoutes, Route, Outlet } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
 
 // Lazy load components
@@ -62,7 +62,7 @@ export const Routes = () => (
       }
     />
     
-    <Route path="/dashboard" element={<DashboardLayout />}>
+    <Route path="/dashboard" element={<DashboardLayout children={<Outlet />} />}>
       <Route
         path="shift-worker"
         element={
