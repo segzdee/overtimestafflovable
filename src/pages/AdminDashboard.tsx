@@ -2,7 +2,16 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { AlertTriangle, Clock, XCircle, DollarSign, Users } from "lucide-react";
+import { 
+  AlertTriangle, 
+  Clock, 
+  DollarSign, 
+  Users,
+  TrendingUp,
+  ArrowUpRight,
+  ArrowDownRight
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface WorkerStats {
   id: string;
@@ -20,7 +29,6 @@ export default function AdminDashboard() {
     activeWorkers: 45,
   });
 
-  // Stub data - will be replaced with Supabase queries
   const [topWorkers] = useState<WorkerStats[]>([
     {
       id: '1',
@@ -40,134 +48,188 @@ export default function AdminDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
-
-        <div className="grid gap-4 md:grid-cols-4">
+      <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+        <div className="flex items-center justify-between space-y-2">
+          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-green-500" />
-                Total Earnings
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Total Revenue
               </CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">${analytics.totalEarnings}</div>
-              <p className="text-sm text-muted-foreground">Platform earnings this month</p>
+              <p className="text-xs text-muted-foreground">
+                +20.1% from last month
+              </p>
             </CardContent>
           </Card>
-
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-orange-500" />
-                Active Penalties
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{analytics.activePenalties}</div>
-              <p className="text-sm text-muted-foreground">Late clock-ins this week</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-blue-500" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
                 Active Workers
               </CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{analytics.activeWorkers}</div>
-              <p className="text-sm text-muted-foreground">Workers on shift today</p>
+              <p className="text-xs text-muted-foreground">
+                +12 since last week
+              </p>
             </CardContent>
           </Card>
-
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-brand-600" />
-                Average Rate
-              </CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Average Rate</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">${analytics.avgHourlyRate}/hr</div>
-              <p className="text-sm text-muted-foreground">Average hourly rate</p>
+              <p className="text-xs text-muted-foreground">
+                +2.5% from last month
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Active Penalties
+              </CardTitle>
+              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{analytics.activePenalties}</div>
+              <p className="text-xs text-muted-foreground">
+                -2 from last week
+              </p>
             </CardContent>
           </Card>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Performing Workers</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {topWorkers.map((worker) => (
-                <div 
-                  key={worker.id}
-                  className="flex items-center justify-between p-4 border rounded-lg"
-                >
-                  <div>
-                    <h3 className="font-medium">{worker.name}</h3>
-                    <div className="flex gap-4 mt-1 text-sm text-muted-foreground">
-                      <span>${worker.totalEarnings} earned</span>
-                      <span>{worker.completedShifts} shifts completed</span>
-                      <span>{worker.latePenalties} penalties</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <Card className="col-span-4">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-brand-600" />
-                Late Penalties Structure
-              </CardTitle>
+              <CardTitle>Top Performing Workers</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4 text-sm">
-                <div className="flex justify-between items-center p-2 border-b">
-                  <span>5-15 minutes late</span>
-                  <span className="font-medium">5% penalty</span>
+              <div className="space-y-8">
+                {topWorkers.map((worker) => (
+                  <div key={worker.id} className="flex items-center">
+                    <div className="ml-4 space-y-1">
+                      <p className="text-sm font-medium leading-none">{worker.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {worker.completedShifts} shifts completed
+                      </p>
+                    </div>
+                    <div className="ml-auto font-medium">+${worker.totalEarnings}</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="col-span-3">
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-8">
+                <div className="flex items-center">
+                  <div className="ml-4 space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      New shift posted
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Evening Server • Manhattan
+                    </p>
+                  </div>
+                  <div className="ml-auto font-medium">Just now</div>
                 </div>
-                <div className="flex justify-between items-center p-2 border-b">
-                  <span>15-30 minutes late</span>
-                  <span className="font-medium">10% penalty</span>
-                </div>
-                <div className="flex justify-between items-center p-2">
-                  <span>Over 30 minutes late</span>
-                  <span className="font-medium">25% penalty</span>
+                <div className="flex items-center">
+                  <div className="ml-4 space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      Worker assigned
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      John Smith • Bar Staff
+                    </p>
+                  </div>
+                  <div className="ml-auto font-medium">2h ago</div>
                 </div>
               </div>
             </CardContent>
           </Card>
-
+        </div>
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-brand-600" />
-                Overtime Rates
-              </CardTitle>
+              <CardTitle>Performance Metrics</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4 text-sm">
-                <div className="flex justify-between items-center p-2 border-b">
-                  <span>Regular Hours</span>
-                  <span className="font-medium">Base Rate</span>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between border-b pb-4">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      Shift Completion Rate
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Last 30 days
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold">98%</span>
+                    <ArrowUpRight className="h-4 w-4 text-green-500" />
+                  </div>
                 </div>
-                <div className="flex justify-between items-center p-2 border-b">
-                  <span>Overtime (8+ hours)</span>
-                  <span className="font-medium">1.5x Base Rate</span>
+                <div className="flex items-center justify-between border-b pb-4">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      Worker Satisfaction
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Based on surveys
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold">4.8</span>
+                    <ArrowUpRight className="h-4 w-4 text-green-500" />
+                  </div>
                 </div>
-                <div className="flex justify-between items-center p-2">
-                  <span>Holiday Rate</span>
-                  <span className="font-medium">2x Base Rate</span>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Upcoming Events</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      Staff Training
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Tomorrow at 2:00 PM
+                    </p>
+                  </div>
+                  <div className="ml-auto">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      Monthly Review
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Friday at 11:00 AM
+                    </p>
+                  </div>
+                  <div className="ml-auto">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                  </div>
                 </div>
               </div>
             </CardContent>
