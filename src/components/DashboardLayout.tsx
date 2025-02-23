@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
+import { Link, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -18,7 +19,6 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardLayoutProps {
@@ -35,7 +35,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
     switch (user?.role) {
       case 'agency':
         return [
-          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/agency" },
           { icon: Users, label: "Worker Roster", path: "/workers" },
           { icon: Building2, label: "Clients", path: "/clients" },
           { icon: CalendarDays, label: "Shift Management", path: "/shifts" },
@@ -45,7 +45,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
         ];
       case 'company':
         return [
-          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/company" },
           { icon: CalendarDays, label: "Shift Posts", path: "/shifts" },
           { icon: Users, label: "Applicants", path: "/applicants" },
           { icon: DollarSign, label: "Payments", path: "/payments" },
@@ -55,7 +55,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
         ];
       case 'shift-worker':
         return [
-          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/shift-worker" },
           { icon: Clock, label: "Availability", path: "/availability" },
           { icon: Search, label: "Find Shifts", path: "/find-shifts" },
           { icon: ChevronRight, label: "Performance", path: "/performance" },
@@ -87,23 +87,17 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
             >
               {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
-            <Logo />
+            <Link to="/" className="flex items-center">
+              <Logo />
+            </Link>
           </div>
           <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/find-shifts")}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              Find Extra Shifts
-            </Button>
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/find-staff")}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              Find Extra Staff
-            </Button>
+            <Link to="/find-shifts" className="text-gray-600 hover:text-gray-900">
+              <Button variant="ghost">Find Extra Shifts</Button>
+            </Link>
+            <Link to="/find-staff" className="text-gray-600 hover:text-gray-900">
+              <Button variant="ghost">Find Extra Staff</Button>
+            </Link>
             {user ? (
               <Button 
                 variant="ghost"
@@ -113,13 +107,14 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                 Logout
               </Button>
             ) : (
-              <Button
-                variant="default"
-                onClick={() => navigate("/register")}
-                className="bg-green-600 hover:bg-green-700 text-white"
-              >
-                Sign up
-              </Button>
+              <Link to="/register">
+                <Button
+                  variant="default"
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  Sign up
+                </Button>
+              </Link>
             )}
           </div>
         </div>
@@ -137,22 +132,24 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
           </div>
           <nav className="px-3 py-4 space-y-1">
             {menuItems.map((item) => (
-              <Button
+              <Link 
                 key={item.label}
-                variant="ghost"
-                className={cn(
-                  "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
-                  "focus:bg-white/10 focus:text-white",
-                  "active:bg-white/10 active:text-white"
-                )}
-                onClick={() => {
-                  navigate(item.path);
-                  setSidebarOpen(false);
-                }}
+                to={item.path}
+                className="block"
+                onClick={() => setSidebarOpen(false)}
               >
-                <item.icon className="mr-3 h-4 w-4" />
-                {item.label}
-              </Button>
+                <Button
+                  variant="ghost"
+                  className={cn(
+                    "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
+                    "focus:bg-white/10 focus:text-white",
+                    "active:bg-white/10 active:text-white"
+                  )}
+                >
+                  <item.icon className="mr-3 h-4 w-4" />
+                  {item.label}
+                </Button>
+              </Link>
             ))}
           </nav>
         </aside>
@@ -174,10 +171,10 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 py-6">
         <div className="container mx-auto px-4 flex justify-center gap-8 text-sm text-gray-600">
-          <button onClick={() => navigate("/terms")}>Terms</button>
-          <button onClick={() => navigate("/privacy")}>Privacy</button>
-          <button onClick={() => navigate("/contact")}>Contact</button>
-          <button onClick={() => navigate("/blog")}>Blog</button>
+          <Link to="/terms" className="hover:text-gray-900">Terms</Link>
+          <Link to="/privacy" className="hover:text-gray-900">Privacy</Link>
+          <Link to="/contact" className="hover:text-gray-900">Contact</Link>
+          <Link to="/blog" className="hover:text-gray-900">Blog</Link>
         </div>
       </footer>
     </div>
