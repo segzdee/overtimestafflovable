@@ -77,11 +77,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithToken = async (token: string) => {
     try {
-      const data = await verifyToken(token);
-      if (data.user) {
-        const userData = await setUserFromSupabase(data.user);
-        setUser(userData);
+      // Find the AI token in the database
+      const { data: aiToken, error: aiTokenError } = await supabase
+        .from('ai_agents')
+        .select('*')
+        .eq('token', token)
+        .single();
+
+      if (aiTokenError || !aiToken) {
+        throw new Error('Invalid AI token');
       }
+
+      // Get the provider's profile
+      const { data: provider, error: providerError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', aiToken.user_id)
+        .single();
+
+      if (providerError || !provider) {
+        throw new Error('Token provider not found');
+      }
+
+      // Set the user context with the provider's information
+      setUser({
+        ...provider,
+        id: provider.id,
+        isAIAgent: true,
+        providerId: aiToken.user_id
+      });
+
+      // Navigate to the provider's dashboard
+      navigate(`/dashboard/${provider.role}`);
+      
+      toast({
+        title: "AI Login successful",
+        description: `Connected to ${provider.name}'s dashboard`
+      });
     } catch (error) {
       console.error('Error in loginWithToken:', error);
       throw error;

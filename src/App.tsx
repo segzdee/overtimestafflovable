@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,19 +16,17 @@ import CompanyDashboard from "./pages/CompanyDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AgencyDashboard from "./pages/AgencyDashboard";
 import NotFound from "./pages/NotFound";
+import TokenLogin from "./pages/token-login";
 
 const queryClient = new QueryClient();
 
-// Root route handler component
 const RootRoute = () => {
   const { user } = useAuth();
   
   if (user) {
-    // Redirect to appropriate dashboard based on role
     return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
   }
   
-  // Show index page as landing page
   return <Index />;
 };
 
@@ -43,7 +40,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<RootRoute />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/admin-login" element={<AdminLogin />} /> {/* Hidden admin login route */}
+            <Route path="/token-login" element={<TokenLogin />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/register" element={<Register />} />
             <Route path="/find-shifts" element={<FindShifts />} />
             <Route path="/find-staff" element={<FindStaff />} />
@@ -60,7 +58,7 @@ const App = () => (
             <Route
               path="/dashboard/company"
               element={
-                <ProtectedRoute allowedRoles={["company"]}>
+                <ProtectedRoute allowedRoles={["company", "aiagent"]}>
                   <CompanyDashboard />
                 </ProtectedRoute>
               }
@@ -78,7 +76,7 @@ const App = () => (
             <Route
               path="/dashboard/agency"
               element={
-                <ProtectedRoute allowedRoles={["agency"]}>
+                <ProtectedRoute allowedRoles={["agency", "aiagent"]}>
                   <AgencyDashboard />
                 </ProtectedRoute>
               }
