@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -20,6 +20,12 @@ import {
   X,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -27,9 +33,8 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, className }: DashboardLayoutProps) {
-  const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   
   const getMenuItems = () => {
     switch (user?.role) {
@@ -74,70 +79,66 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                     'Staff Portal';
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Fixed Header */}
-      <header className="h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
-        <div className="h-full max-w-screen-2xl mx-auto px-4 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden"
-            >
-              {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
-            <Link to="/" className="flex items-center">
-              <Logo />
-            </Link>
-          </div>
-          <div className="hidden md:flex items-center gap-4">
-            <Link to="/find-shifts">
-              <Button variant="ghost">Find Extra Shifts</Button>
-            </Link>
-            <Link to="/find-staff">
-              <Button variant="ghost">Find Extra Staff</Button>
-            </Link>
-            {user ? (
-              <Button 
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-gray-50">
+        {/* Header */}
+        <header className="h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+          <div className="h-full max-w-screen-2xl mx-auto px-4 flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <Button
                 variant="ghost"
-                onClick={() => logout()}
+                size="icon"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden"
               >
-                Logout
+                {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
-            ) : (
-              <Link to="/register">
-                <Button
-                  variant="default"
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                >
-                  Sign up
-                </Button>
+              <Link to="/" className="flex items-center">
+                <Logo />
               </Link>
-            )}
-          </div>
-        </div>
-      </header>
-
-      {/* Main Layout */}
-      <div className="flex flex-1 pt-16">
-        {/* Sidebar - Fixed on desktop, overlay on mobile */}
-        <aside 
-          className={cn(
-            "fixed lg:relative lg:flex flex-shrink-0",
-            "h-[calc(100vh-4rem)] w-64",
-            "bg-[#0B4A3F] z-40",
-            "transition-transform duration-200 ease-in-out",
-            "lg:translate-x-0",
-            !sidebarOpen && "-translate-x-full"
-          )}
-        >
-          <div className="flex flex-col h-full">
-            <div className="h-16 flex items-center px-6 border-b border-white/10">
-              <p className="text-sm text-white/60">{portalType}</p>
             </div>
-            <nav className="flex-1 overflow-y-auto px-3 py-4">
-              <div className="space-y-1">
+            <div className="hidden md:flex items-center gap-4">
+              <Link to="/find-shifts">
+                <Button variant="ghost">Find Extra Shifts</Button>
+              </Link>
+              <Link to="/find-staff">
+                <Button variant="ghost">Find Extra Staff</Button>
+              </Link>
+              {user ? (
+                <Button 
+                  variant="ghost"
+                  onClick={() => logout()}
+                >
+                  Logout
+                </Button>
+              ) : (
+                <Link to="/register">
+                  <Button
+                    variant="default"
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    Sign up
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Main Layout */}
+        <div className="flex flex-1 pt-16">
+          {/* Sidebar */}
+          <Sidebar className={cn(
+            "fixed lg:relative lg:flex w-64 h-[calc(100vh-4rem)]",
+            "bg-[#0B4A3F] border-r border-[#0B4A3F]/10",
+            "transition-transform duration-200 ease-in-out lg:translate-x-0",
+            !sidebarOpen && "-translate-x-full"
+          )}>
+            <SidebarHeader className="h-16 flex items-center px-6 border-b border-white/10">
+              <p className="text-sm text-white/60">{portalType}</p>
+            </SidebarHeader>
+            <SidebarContent className="p-3">
+              <nav className="space-y-1">
                 {menuItems.map((item) => (
                   <Link 
                     key={item.label}
@@ -156,40 +157,40 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                     </Button>
                   </Link>
                 ))}
+              </nav>
+            </SidebarContent>
+          </Sidebar>
+
+          {/* Mobile Overlay */}
+          {sidebarOpen && (
+            <div
+              className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+
+          {/* Main Content */}
+          <main className="flex-1 min-h-[calc(100vh-4rem)]">
+            <div className="container mx-auto px-4 py-8">
+              <div className={cn("animate-in", className)}>
+                {children}
               </div>
-            </nav>
-          </div>
-        </aside>
+            </div>
+          </main>
+        </div>
 
-        {/* Overlay for mobile sidebar */}
-        {sidebarOpen && (
-          <div
-            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {/* Main Content Area */}
-        <main className="flex-1 min-h-[calc(100vh-4rem)] bg-gray-50">
-          <div className="container mx-auto px-4 py-8">
-            <div className={cn("animate-in", className)}>
-              {children}
+        {/* Footer */}
+        <footer className="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex justify-center gap-8 text-sm text-gray-600">
+              <Link to="/terms" className="hover:text-gray-900">Terms</Link>
+              <Link to="/privacy" className="hover:text-gray-900">Privacy</Link>
+              <Link to="/contact" className="hover:text-gray-900">Contact</Link>
+              <Link to="/blog" className="hover:text-gray-900">Blog</Link>
             </div>
           </div>
-        </main>
+        </footer>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-auto py-6">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center gap-8 text-sm text-gray-600">
-            <Link to="/terms" className="hover:text-gray-900">Terms</Link>
-            <Link to="/privacy" className="hover:text-gray-900">Privacy</Link>
-            <Link to="/contact" className="hover:text-gray-900">Contact</Link>
-            <Link to="/blog" className="hover:text-gray-900">Blog</Link>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </SidebarProvider>
   );
 }
