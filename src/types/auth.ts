@@ -11,6 +11,10 @@ export interface AuthUser {
   phoneNumber?: string;
   specialization?: string;
   staffingCapacity?: number;
+  themePreference: "light" | "dark";
+  lastLogin?: Date;
+  currentCurrency: string;
+  preferredCurrency: string;
 }
 
 export interface AIToken {

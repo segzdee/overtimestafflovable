@@ -355,17 +355,21 @@ export type Database = {
           category: string | null
           commission_rate: number | null
           created_at: string
+          current_currency: string | null
           email: string
           id: string
+          last_login: string | null
           location: Json | null
           name: string
           payment_info: Json | null
           phone_number: string | null
+          preferred_currency: string | null
           profile_complete: boolean | null
           role: string
           specialization: string | null
           staffing_capacity: number | null
           status: Database["public"]["Enums"]["user_status"] | null
+          theme_preference: string | null
           updated_at: string
         }
         Insert: {
@@ -374,17 +378,21 @@ export type Database = {
           category?: string | null
           commission_rate?: number | null
           created_at?: string
+          current_currency?: string | null
           email: string
           id: string
+          last_login?: string | null
           location?: Json | null
           name: string
           payment_info?: Json | null
           phone_number?: string | null
+          preferred_currency?: string | null
           profile_complete?: boolean | null
           role: string
           specialization?: string | null
           staffing_capacity?: number | null
           status?: Database["public"]["Enums"]["user_status"] | null
+          theme_preference?: string | null
           updated_at?: string
         }
         Update: {
@@ -393,17 +401,21 @@ export type Database = {
           category?: string | null
           commission_rate?: number | null
           created_at?: string
+          current_currency?: string | null
           email?: string
           id?: string
+          last_login?: string | null
           location?: Json | null
           name?: string
           payment_info?: Json | null
           phone_number?: string | null
+          preferred_currency?: string | null
           profile_complete?: boolean | null
           role?: string
           specialization?: string | null
           staffing_capacity?: number | null
           status?: Database["public"]["Enums"]["user_status"] | null
+          theme_preference?: string | null
           updated_at?: string
         }
         Relationships: []

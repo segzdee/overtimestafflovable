@@ -28,7 +28,11 @@ export const setUserFromSupabase = async (supabaseUser: User): Promise<AuthUser 
     address: profile.address || undefined,
     phoneNumber: profile.phone_number || undefined,
     specialization: profile.specialization || undefined,
-    staffingCapacity: profile.staffing_capacity || undefined
+    staffingCapacity: profile.staffing_capacity || undefined,
+    themePreference: profile.theme_preference || "light",
+    lastLogin: profile.last_login ? new Date(profile.last_login) : undefined,
+    currentCurrency: profile.current_currency || "USD",
+    preferredCurrency: profile.preferred_currency || "USD"
   };
 };
 
@@ -59,7 +63,10 @@ export const registerUser = async (
           role,
           name,
           category,
-          profile_complete: false
+          profile_complete: false,
+          theme_preference: 'light',
+          current_currency: 'USD',
+          preferred_currency: 'USD'
         }
       ]);
 
@@ -93,11 +100,23 @@ export const loginUser = async (email: string, password: string) => {
 };
 
 export const updateUserProfile = async (userId: string, profileData: Partial<AuthUser>) => {
+  // Convert profileData from camelCase to snake_case for database
+  const dbProfileData = {
+    ...profileData,
+    profile_complete: profileData.profileComplete,
+    agency_name: profileData.agencyName,
+    phone_number: profileData.phoneNumber,
+    staffing_capacity: profileData.staffingCapacity,
+    theme_preference: profileData.themePreference,
+    last_login: profileData.lastLogin,
+    current_currency: profileData.currentCurrency,
+    preferred_currency: profileData.preferredCurrency
+  };
+
   const { error } = await supabase
     .from('profiles')
     .update({
-      ...profileData,
-      profile_complete: true,
+      ...dbProfileData,
       updated_at: new Date().toISOString()
     })
     .eq('id', userId);
