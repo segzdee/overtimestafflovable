@@ -28,7 +28,7 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children, className }: DashboardLayoutProps) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const getMenuItems = () => {
@@ -75,63 +75,86 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile Menu Button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="bg-white shadow-sm"
-        >
-          {sidebarOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </Button>
-      </div>
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+        <div className="flex justify-between items-center px-4 py-2">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden"
+            >
+              {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+            <Logo />
+          </div>
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/find-shifts")}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              Find Extra Shifts
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/find-staff")}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              Find Extra Staff
+            </Button>
+            {user ? (
+              <Button 
+                variant="ghost"
+                onClick={() => logout()}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                Logout
+              </Button>
+            ) : (
+              <Button
+                variant="default"
+                onClick={() => navigate("/register")}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                Sign up
+              </Button>
+            )}
+          </div>
+        </div>
+      </header>
 
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 lg:hidden z-40"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      <div className="flex min-h-screen">
+      <div className="flex pt-16 min-h-screen">
         {/* Sidebar */}
         <aside className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-[#0B4A3F] transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:relative",
+          "fixed inset-y-16 left-0 z-50 w-64 bg-[#0B4A3F] transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:relative",
           "border-r border-[#0B4A3F]/10 shadow-lg",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}>
           <div className="h-16 flex items-center px-6 border-b border-white/10">
-            <Logo />
+            <p className="text-sm text-white/60">{portalType}</p>
           </div>
-          <div className="px-3 py-4">
-            <p className="text-sm text-white/60 px-3 mb-4">{portalType}</p>
-            <nav className="space-y-1">
-              {menuItems.map((item) => (
-                <Button
-                  key={item.label}
-                  variant="ghost"
-                  className={cn(
-                    "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
-                    "focus:bg-white/10 focus:text-white",
-                    "active:bg-white/10 active:text-white"
-                  )}
-                  onClick={() => {
-                    navigate(item.path);
-                    setSidebarOpen(false);
-                  }}
-                >
-                  <item.icon className="mr-3 h-4 w-4" />
-                  {item.label}
-                </Button>
-              ))}
-            </nav>
-          </div>
+          <nav className="px-3 py-4 space-y-1">
+            {menuItems.map((item) => (
+              <Button
+                key={item.label}
+                variant="ghost"
+                className={cn(
+                  "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
+                  "focus:bg-white/10 focus:text-white",
+                  "active:bg-white/10 active:text-white"
+                )}
+                onClick={() => {
+                  navigate(item.path);
+                  setSidebarOpen(false);
+                }}
+              >
+                <item.icon className="mr-3 h-4 w-4" />
+                {item.label}
+              </Button>
+            ))}
+          </nav>
         </aside>
 
         {/* Main Content */}
@@ -147,6 +170,16 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
           </div>
         </main>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 py-6">
+        <div className="container mx-auto px-4 flex justify-center gap-8 text-sm text-gray-600">
+          <button onClick={() => navigate("/terms")}>Terms</button>
+          <button onClick={() => navigate("/privacy")}>Privacy</button>
+          <button onClick={() => navigate("/contact")}>Contact</button>
+          <button onClick={() => navigate("/blog")}>Blog</button>
+        </div>
+      </footer>
     </div>
   );
 }

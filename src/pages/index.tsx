@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
@@ -52,10 +51,21 @@ export default function Index() {
     }
   ];
 
+  const marketUpdates = [
+    { type: 'URGENT', title: 'Executive Chef - Fine Dining', location: 'Dubai, UAE', rate: 35 },
+    { type: 'NEW', title: 'Sommelier', location: 'Valletta, Malta', rate: 30 },
+    { type: 'SWAP', title: 'Head Bartender', location: 'Barcelona, Spain', rate: 28 },
+    { type: 'PREMIUM', title: 'Restaurant Manager', location: 'Cape Town, South Africa', rate: 32 },
+    { type: 'URGENT', title: 'Pastry Chef', location: 'Milan, Italy', rate: 33 },
+    { type: 'NEW', title: 'Events Coordinator', location: 'Toronto, Canada', rate: 35 },
+    { type: 'PREMIUM', title: 'Sushi Master Chef', location: 'New York, USA', rate: 45 },
+    { type: 'SWAP', title: 'Hospitality Manager', location: 'London, UK', rate: 30 }
+  ].slice(0, 4);
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="flex justify-between items-center px-6 py-4">
+      <header className="flex justify-between items-center px-6 py-4 bg-white border-b border-gray-200">
         <Logo />
         <div className="flex gap-4">
           <Button 
@@ -113,23 +123,19 @@ export default function Index() {
           ))}
         </div>
 
-        {/* Live Market Updates */}
+        {/* Market Updates */}
         <div className="w-full max-w-7xl bg-gray-900 rounded-lg overflow-hidden">
           <div className="p-4 flex justify-between items-center">
             <span className="text-gray-400 font-medium">GLOBAL HOSPITALITY PULSE</span>
-            <span className="text-gray-400 text-sm">7:52:26 AM UTC</span>
+            <div className="flex items-center gap-4">
+              <span className="text-gray-400 text-sm">
+                1 USD = 0.85 EUR | 0.79 GBP | 1.35 CAD
+              </span>
+              <span className="text-gray-400 text-sm">7:52:26 AM UTC</span>
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
-            {[
-              { type: 'URGENT', title: 'Executive Chef - Fine Dining', location: 'Dubai, UAE', rate: '$45/hr' },
-              { type: 'NEW', title: 'Sommelier', location: 'Valletta, Malta', rate: '€35/hr' },
-              { type: 'SWAP', title: 'Head Bartender', location: 'Barcelona, Spain', rate: '€32/hr' },
-              { type: 'PREMIUM', title: 'Restaurant Manager', location: 'Cape Town, South Africa', rate: 'R450/hr' },
-              { type: 'URGENT', title: 'Pastry Chef', location: 'Milan, Italy', rate: '€38/hr' },
-              { type: 'NEW', title: 'Events Coordinator', location: 'Toronto, Canada', rate: 'C$40/hr' },
-              { type: 'PREMIUM', title: 'Sushi Master Chef', location: 'New York, USA', rate: '$55/hr' },
-              { type: 'SWAP', title: 'Hospitality Manager', location: 'London, UK', rate: '£35/hr' }
-            ].slice(0, 4).map((update) => (
+            {marketUpdates.map((update) => (
               <div 
                 key={update.title}
                 className={`p-4 rounded ${
@@ -149,23 +155,25 @@ export default function Index() {
                   {update.location}
                 </div>
                 <div className="text-xl text-green-400 font-bold mt-2">
-                  {update.rate}
+                  ${update.rate}/hr
                 </div>
               </div>
             ))}
           </div>
           <div className="px-4 py-2 bg-gray-800 text-gray-400 text-sm">
-            Updated every 5 minutes • Global hospitality opportunities
+            Updated every 5 minutes • Global hospitality opportunities • All rates in USD
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="py-8 flex justify-center gap-8 text-sm text-gray-600">
-        <button onClick={() => navigate("/terms")}>Terms</button>
-        <button onClick={() => navigate("/privacy")}>Privacy</button>
-        <button onClick={() => navigate("/contact")}>Contact</button>
-        <button onClick={() => navigate("/blog")}>Blog</button>
+      <footer className="py-8 bg-white border-t border-gray-200">
+        <div className="container mx-auto flex justify-center gap-8 text-sm text-gray-600">
+          <button onClick={() => navigate("/terms")}>Terms</button>
+          <button onClick={() => navigate("/privacy")}>Privacy</button>
+          <button onClick={() => navigate("/contact")}>Contact</button>
+          <button onClick={() => navigate("/blog")}>Blog</button>
+        </div>
       </footer>
     </div>
   );
