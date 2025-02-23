@@ -246,6 +246,12 @@ export type Database = {
           },
         ]
       }
+      companies: {
+        Row: {}
+        Insert: {}
+        Update: {}
+        Relationships: []
+      }
       documents: {
         Row: {
           content: string | null
