@@ -5,7 +5,7 @@ import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import { Logo } from "@/components/ui/logo";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { Building2, Users, UserCog, Building } from "lucide-react";
+import { CircleUser, Building2, Building, Robot } from "lucide-react";
 
 export default function Index() {
   const { updates } = useMarketUpdates();
@@ -27,28 +27,28 @@ export default function Index() {
 
   const userTypes = [
     {
-      title: "Staffing Agency",
-      description: "Manage your workforce and client relationships",
+      title: "Shift Worker",
+      description: "Clock-in",
+      icon: <CircleUser className="w-10 h-10 text-purple-500" />,
+      path: "/login"
+    },
+    {
+      title: "Agency",
+      description: "Manage Staff",
       icon: <Building2 className="w-10 h-10 text-purple-500" />,
       path: "/login"
     },
     {
-      title: "Hotels & Businesses",
-      description: "Find reliable staff for your shifts",
+      title: "Company",
+      description: "Post Shifts",
       icon: <Building className="w-10 h-10 text-purple-500" />,
       path: "/login"
     },
     {
-      title: "Shift Workers",
-      description: "Find flexible work opportunities",
-      icon: <Users className="w-10 h-10 text-purple-500" />,
-      path: "/login"
-    },
-    {
-      title: "Platform Admin",
-      description: "Manage the platform and users",
-      icon: <UserCog className="w-10 h-10 text-purple-500" />,
-      path: "/login"
+      title: "AI Agents",
+      description: "Token Auth",
+      icon: <Robot className="w-10 h-10 text-purple-500" />,
+      path: "/login-token"
     }
   ];
 
