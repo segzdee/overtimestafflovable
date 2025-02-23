@@ -5,7 +5,7 @@ import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import { Logo } from "@/components/ui/logo";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { CircleUser, Building2, Building, Robot } from "lucide-react";
+import { CircleUser, Building2, Building, Bot } from "lucide-react";
 
 export default function Index() {
   const { updates } = useMarketUpdates();
@@ -47,7 +47,7 @@ export default function Index() {
     {
       title: "AI Agents",
       description: "Token Auth",
-      icon: <Robot className="w-10 h-10 text-purple-500" />,
+      icon: <Bot className="w-10 h-10 text-purple-500" />,
       path: "/login-token"
     }
   ];
