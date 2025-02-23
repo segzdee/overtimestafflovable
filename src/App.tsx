@@ -18,17 +18,17 @@ const queryClient = new QueryClient({
 });
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <TooltipProvider>
-        <AuthProvider>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
           <Toaster />
           <Sonner />
           <Routes />
-        </AuthProvider>
-      </TooltipProvider>
-    </BrowserRouter>
-  </QueryClientProvider>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </BrowserRouter>
 );
 
 export default App;
