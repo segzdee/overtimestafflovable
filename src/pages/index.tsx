@@ -21,7 +21,7 @@ export default function Index() {
       document.head.appendChild(metaDescription);
     }
     metaDescription.setAttribute('content', 
-      'From unfilled shifts to finding the right staff, OVERTIMESTAFF Platform connects agencies, hotels, and businesses with AI-driven solutions.'
+      'Got extra time? Need extra shifts? Connect with hospitality opportunities worldwide through our AI-powered platform.'
     );
   }, []);
 
@@ -86,12 +86,12 @@ export default function Index() {
       <main className="flex-1 px-6 py-12 flex flex-col items-center">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="text-4xl font-bold mb-4">
-            AI Meets Hospitality:
+            Got extra time? Need extra shifts?
             <br />
-            Extra Staff, Anytime, Anywhere
+            No dinner staff cover? John cancelled?
           </h1>
           <p className="text-gray-600 text-lg">
-            From unfilled shifts to finding the right staff, OVERTIMESTAFF Platform connects agencies, hotels, and businesses with AI-driven solutions.
+            We connect people with extra time to hospitality companies and agencies with extra shifts —using smart AI to make it all happen easily and effortlessly. Sign up. Sign in ——— Post shifts. Pick up shifts.
           </p>
         </div>
 
@@ -116,16 +116,20 @@ export default function Index() {
         {/* Live Market Updates */}
         <div className="w-full max-w-7xl bg-gray-900 rounded-lg overflow-hidden">
           <div className="p-4 flex justify-between items-center">
-            <span className="text-gray-400 font-medium">LIVE MARKET UPDATES</span>
-            <span className="text-gray-400 text-sm">7:52:26 AM</span>
+            <span className="text-gray-400 font-medium">GLOBAL HOSPITALITY PULSE</span>
+            <span className="text-gray-400 text-sm">7:52:26 AM UTC</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
             {[
-              { type: 'URGENT', title: 'Kitchen Staff Needed', location: 'Downtown', rate: '$35/hr' },
-              { type: 'NEW', title: 'Server Position', location: 'Midtown', rate: '$25/hr' },
-              { type: 'SWAP', title: 'Bartender Shift', location: 'Upper East', rate: '$30/hr' },
-              { type: 'PREMIUM', title: 'Night Manager', location: 'Financial District', rate: '$40/hr' }
-            ].map((update) => (
+              { type: 'URGENT', title: 'Executive Chef - Fine Dining', location: 'Dubai, UAE', rate: '$45/hr' },
+              { type: 'NEW', title: 'Sommelier', location: 'Valletta, Malta', rate: '€35/hr' },
+              { type: 'SWAP', title: 'Head Bartender', location: 'Barcelona, Spain', rate: '€32/hr' },
+              { type: 'PREMIUM', title: 'Restaurant Manager', location: 'Cape Town, South Africa', rate: 'R450/hr' },
+              { type: 'URGENT', title: 'Pastry Chef', location: 'Milan, Italy', rate: '€38/hr' },
+              { type: 'NEW', title: 'Events Coordinator', location: 'Toronto, Canada', rate: 'C$40/hr' },
+              { type: 'PREMIUM', title: 'Sushi Master Chef', location: 'New York, USA', rate: '$55/hr' },
+              { type: 'SWAP', title: 'Hospitality Manager', location: 'London, UK', rate: '£35/hr' }
+            ].slice(0, 4).map((update) => (
               <div 
                 key={update.title}
                 className={`p-4 rounded ${
@@ -151,7 +155,7 @@ export default function Index() {
             ))}
           </div>
           <div className="px-4 py-2 bg-gray-800 text-gray-400 text-sm">
-            Updated every 5 minutes • 0 new positions added today
+            Updated every 5 minutes • Global hospitality opportunities
           </div>
         </div>
       </main>
