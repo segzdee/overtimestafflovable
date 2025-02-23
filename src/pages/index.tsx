@@ -45,7 +45,6 @@ export default function Index() {
     }
   ];
 
-  // Transform market updates with more data types
   const marketData = updates.map(update => {
     const isIncreased = Math.random() > 0.5;
     const changePercent = (Math.random() * 5 + 1).toFixed(2);
@@ -120,16 +119,18 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Enhanced Stock Market Style Section */}
       <section className="flex-1 bg-gradient-to-br from-gray-900 to-gray-800 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text">
-              Live Hospitality Market
-            </h2>
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-gray-400" />
-              <span className="text-sm text-gray-400">Live Updates</span>
+            <div className="space-y-1">
+              <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text">
+                Live Hospitality Market
+              </h2>
+              <p className="text-sm text-gray-400">Real-time updates from the hospitality sector</p>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800/50 border border-gray-700">
+              <Clock className="h-4 w-4 text-green-400 animate-pulse" />
+              <span className="text-sm text-gray-300">Live Updates</span>
             </div>
           </div>
           
@@ -137,64 +138,73 @@ export default function Index() {
             {marketData.map((item) => (
               <Card key={item.id} 
                 className="bg-gray-800/50 backdrop-blur-sm border-gray-700 hover:bg-gray-800/70 transition-all">
-                <div className="p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
+                <div className="p-4 space-y-4">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-gray-200">{item.title}</h3>
                         {item.isNew && (
-                          <span className="px-1.5 py-0.5 text-xs font-medium bg-purple-500/20 text-purple-300 rounded">
+                          <span className="px-1.5 py-0.5 text-xs font-medium bg-purple-500/20 text-purple-300 rounded-full">
                             NEW
                           </span>
                         )}
                       </div>
                       <p className="text-xs text-gray-400">{item.location}</p>
                     </div>
-                    <span className={`flex items-center gap-1 text-sm ${
+                    <div className={`flex flex-col items-end ${
                       item.isPositive ? 'text-green-400' : 'text-red-400'
                     }`}>
-                      {item.isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                      {item.change}
-                    </span>
+                      <div className="flex items-center gap-1">
+                        {item.isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+                        <span className="font-medium">{item.change}</span>
+                      </div>
+                      <span className="text-xs text-gray-400">24h change</span>
+                    </div>
                   </div>
-                  
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-2xl font-bold text-gray-100">${item.baseRate}</span>
-                    <div className="flex flex-col items-end">
+
+                  <div className="flex justify-between items-center py-2 border-y border-gray-700/50">
+                    <div className="space-y-1">
+                      <span className="text-xs text-gray-400">Current Rate</span>
+                      <div className="text-2xl font-bold text-gray-100">${item.baseRate}</div>
+                    </div>
+                    <div className="text-right space-y-1">
                       <span className="text-xs text-gray-400">Volume</span>
-                      <span className="text-sm font-medium text-gray-300">{item.volume} shifts</span>
+                      <div className="font-medium text-gray-300">{item.volume} shifts</div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 mt-2 text-xs">
-                    <div className="bg-gray-700/30 rounded p-2">
-                      <span className="text-gray-400">Swap Rate</span>
-                      <div className="text-blue-300 font-medium mt-1">
-                        {item.swapRate} swaps/hr
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-lg bg-gray-700/30 p-2.5">
+                      <div className="text-xs text-gray-400 mb-1">Swap Rate</div>
+                      <div className="text-sm">
+                        <span className="font-medium text-blue-300">{item.swapRate}</span>
+                        <span className="text-gray-400 text-xs ml-1">swaps/hr</span>
                       </div>
                     </div>
-                    <div className="bg-gray-700/30 rounded p-2">
-                      <span className="text-gray-400">Urgency</span>
-                      <div className={`font-medium mt-1 ${
-                        item.urgencyLevel > 70 ? 'text-red-300' :
-                        item.urgencyLevel > 30 ? 'text-yellow-300' :
-                        'text-green-300'
-                      }`}>
-                        {item.urgencyLevel}%
+                    <div className="rounded-lg bg-gray-700/30 p-2.5">
+                      <div className="text-xs text-gray-400 mb-1">Urgency</div>
+                      <div className="text-sm">
+                        <span className={`font-medium ${
+                          item.urgencyLevel > 70 ? 'text-red-300' :
+                          item.urgencyLevel > 30 ? 'text-yellow-300' :
+                          'text-green-300'
+                        }`}>{item.urgencyLevel}%</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-3 pt-3 border-t border-gray-700">
-                    <div className="flex justify-between items-center text-xs text-gray-400">
-                      <span>Rate History (24h)</span>
-                      <span className="text-gray-300">${item.rateHistory[item.rateHistory.length - 1]}</span>
+                  <div>
+                    <div className="flex justify-between items-center text-xs mb-2">
+                      <span className="text-gray-400">Rate History (24h)</span>
+                      <span className="text-gray-300 font-medium">
+                        ${item.rateHistory[item.rateHistory.length - 1]}
+                      </span>
                     </div>
-                    <div className="flex items-end justify-between h-8 mt-2 gap-1">
+                    <div className="flex items-end gap-0.5 h-10">
                       {item.rateHistory.map((rate, idx) => (
                         <div
                           key={idx}
-                          className={`w-full rounded-sm ${
+                          className={`w-full rounded-sm transition-all duration-300 ${
                             rate > item.baseRate ? 'bg-green-500/30' : 'bg-red-500/30'
                           }`}
                           style={{
@@ -211,7 +221,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Original Footer */}
       <footer className="py-3 bg-gradient-to-r from-gray-50 via-white to-gray-50 border-t border-gray-100 flex-none">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center text-sm text-gray-500">
