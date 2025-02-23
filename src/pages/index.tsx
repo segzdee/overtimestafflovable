@@ -48,17 +48,17 @@ export default function Index() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-brand-50">
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-brand-50 via-white to-brand-50 flex flex-col">
       {/* Hero Section with enhanced gradient */}
-      <section className="relative px-6 lg:px-8 pt-24 pb-12 sm:pt-32 text-center bg-gradient-to-r from-purple-50 via-white to-blue-50">
+      <section className="relative px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 text-center bg-gradient-to-r from-purple-50 via-white to-blue-50 flex-none">
         <Logo />
-        <h1 className="mt-8 text-4xl font-bold tracking-tight bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent sm:text-6xl">
+        <h1 className="mt-4 text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">
           The Future of Hospitality Staffing
         </h1>
-        <p className="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
-          Connect with the perfect staff or shifts in real-time. Powered by AI for smarter matches and better outcomes.
+        <p className="mt-3 sm:mt-4 text-base sm:text-lg leading-7 text-gray-600 max-w-2xl mx-auto">
+          Connect with the perfect staff or shifts in real-time. Powered by AI for smarter matches.
         </p>
-        <div className="mt-10 flex items-center justify-center gap-x-6">
+        <div className="mt-6 sm:mt-8 flex items-center justify-center gap-x-4">
           <Button onClick={() => navigate("/register")} size="lg" 
             className="bg-gradient-to-r from-brand-500 to-purple-500 hover:from-brand-600 hover:to-purple-600">
             Get Started
@@ -69,13 +69,41 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Live Market Updates with single-line belts */}
-      <section className="py-12 bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden">
+      {/* User Types with enhanced gradients */}
+      <section className="py-6 sm:py-8 bg-gradient-to-br from-white via-gray-50 to-white flex-none">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">
+            Choose Your Path
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+            {userTypes.map((type) => (
+              <Card key={type.title} 
+                className="relative overflow-hidden hover:shadow-xl transition-shadow">
+                <div className={`absolute inset-0 bg-gradient-to-br ${type.gradient} opacity-10`} />
+                <div className="relative p-4">
+                  <h3 className="text-lg font-semibold mb-2">{type.title}</h3>
+                  <p className="text-gray-600 text-sm mb-4">{type.description}</p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate(type.path)}
+                    className="w-full bg-gradient-to-r from-brand-50 to-purple-50 hover:from-brand-100 hover:to-purple-100"
+                  >
+                    Join as {type.title}
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Live Market Updates with single-line belts */}
+      <section className="py-6 bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden flex-1 flex flex-col">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">
             Live Market Updates
           </h2>
-          <div className="relative">
+          <div className="relative flex-1 flex flex-col justify-center gap-4">
             {/* Animation belt for urgent shifts */}
             <div className="flex space-x-4 animate-marquee">
               {updates.filter(update => update.type === 'URGENT').map((update) => (
@@ -97,7 +125,7 @@ export default function Index() {
             </div>
 
             {/* Animation belt for swap shifts */}
-            <div className="flex space-x-4 animate-marquee-reverse mt-4">
+            <div className="flex space-x-4 animate-marquee-reverse">
               {updates.filter(update => update.type === 'SWAP').map((update) => (
                 <Card key={update.id} 
                   className="min-w-[250px] p-4 bg-gradient-to-br from-blue-50 to-white border-l-4 border-blue-500 
@@ -117,7 +145,7 @@ export default function Index() {
             </div>
 
             {/* Animation belt for premium shifts */}
-            <div className="flex space-x-4 animate-marquee mt-4">
+            <div className="flex space-x-4 animate-marquee">
               {updates.filter(update => update.type === 'PREMIUM').map((update) => (
                 <Card key={update.id} 
                   className="min-w-[250px] p-4 bg-gradient-to-br from-green-50 to-white border-l-4 border-green-500 
@@ -144,39 +172,11 @@ export default function Index() {
         </div>
       </section>
 
-      {/* User Types with enhanced gradients */}
-      <section className="py-16 bg-gradient-to-br from-white via-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">
-            Choose Your Path
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {userTypes.map((type) => (
-              <Card key={type.title} 
-                className="relative overflow-hidden hover:shadow-xl transition-shadow animate-fade-in">
-                <div className={`absolute inset-0 bg-gradient-to-br ${type.gradient} opacity-10`} />
-                <div className="relative p-6">
-                  <h3 className="text-xl font-semibold mb-4">{type.title}</h3>
-                  <p className="text-gray-600 mb-6">{type.description}</p>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => navigate(type.path)}
-                    className="w-full bg-gradient-to-r from-brand-50 to-purple-50 hover:from-brand-100 hover:to-purple-100"
-                  >
-                    Join as {type.title}
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Tiny Footer */}
-      <footer className="py-4 bg-gradient-to-r from-gray-50 via-white to-gray-50 border-t border-gray-100">
+      <footer className="py-3 bg-gradient-to-r from-gray-50 via-white to-gray-50 border-t border-gray-100 flex-none">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center text-sm text-gray-500">
-            <p>© 2024 OvertimeStaff. All rights reserved.</p>
+            <p>© 2024 OvertimeStaff</p>
             <div className="flex gap-4">
               <button onClick={() => navigate("/privacy")} className="hover:text-brand-600">Privacy</button>
               <button onClick={() => navigate("/terms")} className="hover:text-brand-600">Terms</button>
