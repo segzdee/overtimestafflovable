@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
 import { useToast } from "@/components/ui/use-toast";
-import { UserCircle2, Building2, Building, Bot } from "lucide-react";
+import { Building2, Building, UserCircle2, Bot } from "lucide-react";
 import { HeaderNav } from "@/components/layout/HeaderNav";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { LoginCard } from "@/components/auth/LoginCard";
@@ -48,29 +48,31 @@ export default function Index() {
     role: "agency",
     title: "Staffing Agency",
     subtitle: "Manage Multiple Venues and Staff",
-    icon: Building2
+    icon: "/lovable-uploads/efbbf3f0-a91a-47d2-85de-00d7b948e927.png"
   }, {
     role: "company",
     title: "Hotels & Businesses",
     subtitle: "Post shifts and Hire Extra Staff",
-    icon: Building
+    icon: "/lovable-uploads/ede1a429-c69f-4808-8096-319b93115738.png"
   }, {
     role: "shift-worker",
     title: "Shift Workers",
     subtitle: "Clock-in for Extra Shifts",
-    icon: UserCircle2
+    icon: "/lovable-uploads/39c96467-d4a3-4237-b66c-d378be71b320.png"
   }, {
     role: "aiagent",
     title: "AI Agent",
     subtitle: "Activate Agent for Automation",
-    icon: Bot
+    icon: "/lovable-uploads/b606326d-d87b-4432-8872-3b0a6ea483c7.png"
   }];
+
   const handleLoginClick = async (role: string) => {
     setActiveRole(role);
     setLoginDialogOpen(true);
     setErrorMessage(null);
     console.log("Login attempt initiated for role:", role);
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -105,6 +107,7 @@ export default function Index() {
       setIsLoading(false);
     }
   };
+
   return <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
       <HeaderNav mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
       
