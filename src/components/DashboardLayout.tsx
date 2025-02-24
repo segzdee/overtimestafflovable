@@ -81,23 +81,24 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
           variant="ghost"
           size="icon"
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="bg-white shadow-sm"
+          className="bg-white shadow-sm hover:scale-105 transition-transform duration-200"
         >
           {sidebarOpen ? (
-            <X className="h-6 w-6" />
+            <X className="h-6 w-6 transition-transform duration-200 rotate-90" />
           ) : (
-            <Menu className="h-6 w-6" />
+            <Menu className="h-6 w-6 transition-transform duration-200" />
           )}
         </Button>
       </div>
 
       {/* Argon Sidebar */}
       <nav className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-200 ease-in-out lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-all duration-300 ease-in-out lg:translate-x-0",
+        "backdrop-blur-lg backdrop-filter",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="h-20 flex items-center justify-center border-b border-gray-200">
-          <Logo className="h-8" />
+          <Logo className="h-8 transition-transform duration-200 hover:scale-105" />
         </div>
 
         <div className="p-4">
@@ -114,10 +115,11 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                 className={cn(
                   "w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg",
                   "text-[#525f7f] hover:text-[#5e72e4] hover:bg-[#f6f9fc]",
-                  "transition-colors duration-200"
+                  "transition-all duration-200 hover:translate-x-1",
+                  "active:scale-95"
                 )}
               >
-                <item.icon className="h-5 w-5" />
+                <item.icon className="h-5 w-5 transition-transform duration-200 group-hover:scale-110" />
                 {item.label}
               </button>
             ))}
@@ -127,7 +129,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
 
       {/* Main Content */}
       <main className={cn(
-        "min-h-screen transition-all duration-200 ease-in-out",
+        "min-h-screen transition-all duration-300 ease-in-out",
         "lg:ml-64 bg-[#f8f9fe]"
       )}>
         {/* Header */}
@@ -159,7 +161,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 lg:hidden z-40"
+          className="fixed inset-0 bg-black/50 lg:hidden z-40 animate-fadeIn backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
       )}
