@@ -31,19 +31,19 @@ export const MarketUpdates = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-y-auto flex-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 overflow-y-auto flex-1">
           {updates.map((update) => (
             <div
               key={update.id}
-              className={`p-3 rounded-lg border transition-all ${
+              className={`p-2 rounded-lg border transition-all ${
                 update.highlight ? 'bg-purple-900 border-purple-700' : 'bg-gray-800 border-gray-700'
               } ${update.isNew ? 'animate-in fade-in slide-in-from-bottom-5' : ''} ${
                 update.isUpdating ? 'animate-pulse' : ''
               }`}
             >
               <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs font-bold ${
+                <div className="flex items-center gap-1">
+                  <span className={`text-[10px] font-bold ${
                     update.type === 'URGENT' ? 'text-red-400' :
                     update.type === 'PREMIUM' ? 'text-purple-400' :
                     update.type === 'SWAP' ? 'text-orange-400' :
@@ -51,7 +51,7 @@ export const MarketUpdates = () => {
                   }`}>
                     {update.type}
                   </span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded ${
+                  <span className={`text-[8px] px-1 py-0.5 rounded ${
                     update.urgency_level === 'high' ? 'bg-red-900 text-red-200' :
                     update.urgency_level === 'medium' ? 'bg-yellow-900 text-yellow-200' :
                     'bg-green-900 text-green-200'
@@ -59,12 +59,12 @@ export const MarketUpdates = () => {
                     {update.urgency_level.toUpperCase()}
                   </span>
                 </div>
-                <span className="text-sm font-bold text-green-400">{update.rate}</span>
+                <span className="text-[10px] font-bold text-green-400">{update.rate}</span>
               </div>
-              <div className="text-xs font-medium">{update.title}</div>
-              <div className="text-[10px] text-gray-400 mt-0.5">{update.location}</div>
-              <div className="text-[10px] text-gray-500 mt-1 flex items-center gap-1">
-                <MapPin className="w-2.5 h-2.5" />
+              <div className="text-[10px] font-medium leading-tight">{update.title}</div>
+              <div className="text-[8px] text-gray-400 mt-0.5 leading-tight">{update.location}</div>
+              <div className="text-[8px] text-gray-500 mt-1 flex items-center gap-1">
+                <MapPin className="w-2 h-2" />
                 {update.region}
               </div>
             </div>
