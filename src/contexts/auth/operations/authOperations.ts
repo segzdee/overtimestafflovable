@@ -106,7 +106,10 @@ export const devLogin = async (
     email: "dev@example.com",
     role: "admin",
     name: "Developer",
-    profileComplete: true
+    profileComplete: true,
+    verificationStatus: "verified",
+    emailVerified: true,
+    verificationCompletedAt: new Date().toISOString()
   };
 
   setUser(devUser);
