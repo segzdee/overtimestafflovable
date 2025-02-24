@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -33,8 +34,8 @@ export default function FindStaff() {
       </header>
 
       <div className="flex-1 grid lg:grid-cols-2 overflow-hidden">
-        <div className="bg-white h-[calc(100vh-3.5rem)] overflow-y-auto">
-          <div className="p-8 max-w-xl mx-auto">
+        <div className="p-8 bg-white overflow-y-auto">
+          <div className="max-w-xl">
             <h1 className="text-3xl font-bold mb-6">Staff Your Business Smarter</h1>
 
             <div className="space-y-4 mb-8">
@@ -133,8 +134,8 @@ export default function FindStaff() {
           </div>
         </div>
 
-        <div className="bg-gray-50 h-[calc(100vh-3.5rem)] overflow-y-auto">
-          <div className="p-8 max-w-md mx-auto">
+        <div className="bg-gray-50 p-8 overflow-y-auto">
+          <div className="max-w-md mx-auto">
             <h2 className="text-2xl font-bold mb-2">Find Extra Staff</h2>
             <p className="text-gray-600 mb-6">Connect with qualified professionals ready to work.</p>
             

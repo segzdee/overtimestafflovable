@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -33,8 +34,8 @@ export default function FindShifts() {
       </header>
 
       <div className="flex-1 grid lg:grid-cols-2 overflow-hidden">
-        <div className="bg-white h-[calc(100vh-3.5rem)] overflow-y-auto">
-          <div className="p-8 max-w-xl mx-auto">
+        <div className="p-8 bg-white overflow-y-auto">
+          <div className="max-w-xl">
             <h1 className="text-3xl font-bold mb-3">Find Extra Shifts in Top Venues</h1>
             <p className="text-gray-600 mb-6">Join thousands of hospitality professionals accessing premium shifts at leading hotels, restaurants, and events.</p>
 
@@ -132,8 +133,8 @@ export default function FindShifts() {
           </div>
         </div>
 
-        <div className="bg-gray-50 h-[calc(100vh-3.5rem)] overflow-y-auto">
-          <div className="p-8 max-w-md mx-auto space-y-8">
+        <div className="bg-gray-50 p-8 overflow-y-auto">
+          <div className="max-w-md mx-auto space-y-8">
             <div>
               <h2 className="text-xl font-semibold mb-4">How It Works</h2>
               <div className="space-y-4">
