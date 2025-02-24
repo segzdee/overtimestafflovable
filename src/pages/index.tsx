@@ -44,6 +44,7 @@ export default function Index() {
     login,
     loginWithToken
   } = useAuth();
+
   const loginCards = [{
     role: "agency",
     title: "Staffing Agency",
