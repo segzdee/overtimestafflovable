@@ -14,26 +14,64 @@ export const register = async (
   category?: string
 ) => {
   try {
+    // First create the auth user
     const { data: { user }, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          name: name, // Include name in user metadata
+          role: role  // Include role in user metadata
+        }
+      }
     });
 
-    if (signUpError) throw signUpError;
-    if (!user) throw new Error('No user returned from sign up');
+    if (signUpError) {
+      console.error('Signup error:', signUpError);
+      throw signUpError;
+    }
+    
+    if (!user) {
+      throw new Error('No user returned from sign up');
+    }
+
+    console.log('Created auth user:', user.id); // Debug log
 
     // Create the user profile
-    const { error: profileError } = await createUserProfile(
-      user.id,
-      email,
-      role,
-      name
-    );
+    const { error: profileError } = await supabase.from('profiles').insert({
+      id: user.id,
+      email: email,
+      role: role,
+      name: name,
+      profile_complete: false
+    });
 
-    if (profileError) throw profileError;
+    if (profileError) {
+      console.error('Profile creation error:', profileError);
+      // Clean up auth user if profile creation fails
+      await supabase.auth.admin.deleteUser(user.id);
+      throw profileError;
+    }
+
+    console.log('Created user profile'); // Debug log
+
+    // Create notification preferences
+    const { error: prefsError } = await supabase.from('notification_preferences').insert({
+      user_id: user.id,
+      email: true,
+      sms: false,
+      push: true
+    });
+
+    if (prefsError) {
+      console.error('Notification preferences error:', prefsError);
+      throw prefsError;
+    }
+
+    console.log('Created notification preferences'); // Debug log
 
     toast({
-      title: "Success",
+      title: "Account created successfully",
       description: "Please check your email to verify your account",
     });
 
