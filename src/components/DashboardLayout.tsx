@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -73,7 +74,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                     'Staff Portal';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       {/* Mobile Menu Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <Button
@@ -90,6 +91,56 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
         </Button>
       </div>
 
+      {/* Argon Sidebar */}
+      <nav className={cn(
+        "fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-200 ease-in-out lg:translate-x-0",
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        <div className="h-20 flex items-center justify-center border-b border-gray-200">
+          <Logo className="h-8" />
+        </div>
+
+        <div className="p-4">
+          <p className="text-sm font-semibold text-gray-400 uppercase mb-4">{portalType}</p>
+          
+          <div className="space-y-1">
+            {menuItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => {
+                  navigate(item.path);
+                  setSidebarOpen(false);
+                }}
+                className={cn(
+                  "w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg",
+                  "text-gray-600 hover:text-primary hover:bg-gray-50",
+                  "transition-colors duration-200"
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className={cn(
+        "min-h-screen transition-all duration-200 ease-in-out",
+        "lg:ml-64 bg-gray-100"
+      )}>
+        <div className="py-6 px-4 sm:px-6 lg:px-8">
+          <div className={cn(
+            "max-w-7xl mx-auto",
+            "bg-transparent", 
+            className
+          )}>
+            {children}
+          </div>
+        </div>
+      </main>
+
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
@@ -97,51 +148,6 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
           onClick={() => setSidebarOpen(false)}
         />
       )}
-
-      {/* Sidebar */}
-      <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-[#0B4A3F] text-white transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:relative",
-        sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
-        <div className="h-16 flex items-center px-6 border-b border-white/10">
-          <Logo />
-        </div>
-        <div className="px-3 py-2">
-          <p className="text-sm text-white/60 px-3 mb-4">{portalType}</p>
-          <nav className="space-y-1">
-            {menuItems.map((item) => (
-              <Button
-                key={item.label}
-                variant="ghost"
-                className={cn(
-                  "w-full justify-start text-white/70 hover:text-white hover:bg-white/10",
-                  "focus:bg-white/10 focus:text-white",
-                  "active:bg-white/10 active:text-white"
-                )}
-                onClick={() => {
-                  navigate(item.path);
-                  setSidebarOpen(false);
-                }}
-              >
-                <item.icon className="mr-3 h-4 w-4" />
-                {item.label}
-              </Button>
-            ))}
-          </nav>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className={cn(
-        "min-h-screen transition-all duration-200 ease-in-out",
-        "lg:ml-64"
-      )}>
-        <div className="p-4 sm:p-6 lg:p-8">
-          <div className={cn("animate-in", className)}>
-            {children}
-          </div>
-        </div>
-      </main>
     </div>
   );
 }
