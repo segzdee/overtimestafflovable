@@ -18,12 +18,12 @@ export default function FindShifts() {
   };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      <header className="flex justify-between items-center px-4 h-14 bg-white border-b shrink-0">
+    <div className="min-h-screen flex flex-col">
+      <header className="flex justify-between items-center px-6 h-16 bg-white border-b">
         <Link to="/" className="flex items-center gap-2">
           <span className="text-xl font-bold">OVERTIME<span className="text-purple-600">STAFF</span></span>
         </Link>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <Link to="/find-staff" className="text-gray-600 hover:text-gray-900">
             Looking to Hire?
           </Link>
@@ -33,14 +33,16 @@ export default function FindShifts() {
         </div>
       </header>
 
-      <div className="flex-1 grid lg:grid-cols-2 overflow-hidden">
-        <div className="p-8 bg-white overflow-y-auto">
-          <div className="max-w-xl">
-            <h1 className="text-3xl font-bold mb-3">Find Extra Shifts in Top Venues</h1>
-            <p className="text-gray-600 mb-6">Join thousands of hospitality professionals accessing premium shifts at leading hotels, restaurants, and events.</p>
+      <div className="flex-1 grid lg:grid-cols-2 min-h-[calc(100vh-4rem)]">
+        <div className="bg-white p-6 md:p-8 lg:p-12">
+          <div className="max-w-xl mx-auto space-y-8">
+            <div>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">Find Extra Shifts in Top Venues</h1>
+              <p className="text-gray-600">Access premium shifts at leading hotels, restaurants, and events.</p>
+            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4 mb-8">
-              <div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
                 <Input
                   id="name"
@@ -48,9 +50,10 @@ export default function FindShifts() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
+                  className="h-12"
                 />
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -59,9 +62,10 @@ export default function FindShifts() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  className="h-12"
                 />
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
                 <Input
                   id="phone"
@@ -70,144 +74,107 @@ export default function FindShifts() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
+                  className="h-12"
                 />
               </div>
-              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700">
+              <Button type="submit" className="w-full h-12 text-lg bg-purple-600 hover:bg-purple-700">
                 Start Earning Today
               </Button>
             </form>
 
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-purple-600" />
-                <span className="text-sm">Premium Rates</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-purple-600" />
-                <span className="text-sm">Flexible Scheduling</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-purple-600" />
-                <span className="text-sm">Weekly Payouts</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-purple-600" />
-                <span className="text-sm">Top Venues</span>
-              </div>
-            </div>
-
-            <div className="bg-purple-50 p-6 rounded-lg mb-8">
-              <h2 className="font-semibold mb-4">Platform Statistics</h2>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <div className="text-2xl font-bold text-purple-600">500+</div>
-                  <div className="text-sm text-gray-600">Partner Venues</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-purple-600">10K+</div>
-                  <div className="text-sm text-gray-600">Active Staff</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-purple-600">95%</div>
-                  <div className="text-sm text-gray-600">Shift Fill Rate</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-purple-600">$2M+</div>
-                  <div className="text-sm text-gray-600">Weekly Payouts</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <div className="italic text-gray-600 mb-4">
-                "OVERTIMESTAFF has transformed how I work in hospitality. I can pick up shifts that fit my schedule and earn more than ever before."
+            <div className="grid grid-cols-2 gap-6">
+              <div className="flex items-center gap-3">
+                <Trophy className="w-6 h-6 text-purple-600" />
+                <span>Premium Rates</span>
               </div>
               <div className="flex items-center gap-3">
-                <User className="w-10 h-10 text-gray-400" />
-                <div>
-                  <div className="font-semibold">Sarah M.</div>
-                  <div className="text-sm text-gray-600">Event Staff Professional</div>
-                </div>
+                <Clock className="w-6 h-6 text-purple-600" />
+                <span>Flexible Hours</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <DollarSign className="w-6 h-6 text-purple-600" />
+                <span>Weekly Pay</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Building2 className="w-6 h-6 text-purple-600" />
+                <span>Top Venues</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-purple-50 p-6 rounded-xl">
+                <div className="text-2xl font-bold text-purple-600">500+</div>
+                <div className="text-sm text-gray-600">Partner Venues</div>
+              </div>
+              <div className="bg-purple-50 p-6 rounded-xl">
+                <div className="text-2xl font-bold text-purple-600">10K+</div>
+                <div className="text-sm text-gray-600">Active Staff</div>
+              </div>
+              <div className="bg-purple-50 p-6 rounded-xl">
+                <div className="text-2xl font-bold text-purple-600">95%</div>
+                <div className="text-sm text-gray-600">Fill Rate</div>
+              </div>
+              <div className="bg-purple-50 p-6 rounded-xl">
+                <div className="text-2xl font-bold text-purple-600">$2M+</div>
+                <div className="text-sm text-gray-600">Weekly Payouts</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-50 p-8 overflow-y-auto">
+        <div className="bg-gray-50 p-6 md:p-8 lg:p-12">
           <div className="max-w-md mx-auto space-y-8">
             <div>
-              <h2 className="text-xl font-semibold mb-4">How It Works</h2>
+              <h2 className="text-2xl font-bold mb-6">How It Works</h2>
               <div className="space-y-4">
-                <div className="bg-white p-6 rounded-lg">
+                <div className="bg-white p-6 rounded-xl">
                   <div className="flex items-center gap-3 mb-2">
                     <User className="w-5 h-5 text-purple-600" />
                     <h3 className="font-semibold">1. Create Your Profile</h3>
                   </div>
-                  <p className="text-sm text-gray-600">Sign up, add your experience, and complete verification. Get approved within 24 hours.</p>
+                  <p className="text-sm text-gray-600">Sign up and get approved within 24 hours.</p>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg">
+                <div className="bg-white p-6 rounded-xl">
                   <div className="flex items-center gap-3 mb-2">
                     <Building2 className="w-5 h-5 text-purple-600" />
                     <h3 className="font-semibold">2. Browse Opportunities</h3>
                   </div>
-                  <p className="text-sm text-gray-600">Access shifts at top venues. Filter by location, role, and pay rate.</p>
+                  <p className="text-sm text-gray-600">Find shifts that match your preferences.</p>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg">
+                <div className="bg-white p-6 rounded-xl">
                   <div className="flex items-center gap-3 mb-2">
                     <Calendar className="w-5 h-5 text-purple-600" />
                     <h3 className="font-semibold">3. Book Instantly</h3>
                   </div>
-                  <p className="text-sm text-gray-600">Select your preferred shifts and get instant confirmations. No phone calls needed.</p>
+                  <p className="text-sm text-gray-600">Get instant confirmations for your shifts.</p>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg">
+                <div className="bg-white p-6 rounded-xl">
                   <div className="flex items-center gap-3 mb-2">
                     <Trophy className="w-5 h-5 text-purple-600" />
                     <h3 className="font-semibold">4. Earn & Grow</h3>
                   </div>
-                  <p className="text-sm text-gray-600">Get paid weekly. Build your reputation and unlock premium opportunities.</p>
+                  <p className="text-sm text-gray-600">Get paid weekly and build your reputation.</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-purple-600 text-white p-6 rounded-lg">
-              <h3 className="font-semibold mb-4">Platform Features</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-2">
-                  <Building2 className="w-4 h-4" />
-                  <span className="text-sm">Quality Venues</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4" />
-                  <span className="text-sm">Same Week Pay</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Star className="w-4 h-4" />
-                  <span className="text-sm">Rating System</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <BadgeCheck className="w-4 h-4" />
-                  <span className="text-sm">24/7 Support</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-4">Trending Opportunities</h3>
+            <div className="bg-purple-600 text-white p-6 rounded-xl">
+              <h3 className="font-semibold mb-4">Available Positions</h3>
               <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                <div className="flex justify-between items-center">
                   <span>Event Server</span>
-                  <span className="text-purple-600 font-semibold">$25-30/hr</span>
+                  <span className="font-semibold">$25-30/hr</span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                <div className="flex justify-between items-center">
                   <span>Bartender</span>
-                  <span className="text-purple-600 font-semibold">$30-35/hr</span>
+                  <span className="font-semibold">$30-35/hr</span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                <div className="flex justify-between items-center">
                   <span>Hotel Staff</span>
-                  <span className="text-purple-600 font-semibold">$22-28/hr</span>
+                  <span className="font-semibold">$22-28/hr</span>
                 </div>
               </div>
             </div>
