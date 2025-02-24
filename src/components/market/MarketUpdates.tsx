@@ -1,4 +1,3 @@
-
 import { MapPin } from "lucide-react";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 export function MarketUpdates() {
@@ -24,15 +23,15 @@ export function MarketUpdates() {
         </div>
       </div>;
   }
-  return <div className="text-white shadow-xl overflow-hidden flex-1 min-h-0 bg-slate-700 rounded-md">
+  return <div className="text-white shadow-xl overflow-hidden flex-1 min-h-0 rounded-md bg-zinc-400">
       <div className="h-full flex flex-col p-3">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-semibold text-gray-400">LIVE HOSPITALITY INDEX</h3>
+          <h3 className="text-xs font-semibold text-purple-600">LIVE HOSPITALITY INDEX</h3>
           <div className="flex items-center gap-4">
-            <select value={selectedCurrency} onChange={e => setSelectedCurrency(e.target.value)} className="bg-gray-800 text-white text-xs rounded-md border border-gray-700 px-2 py-1">
+            <select value={selectedCurrency} onChange={e => setSelectedCurrency(e.target.value)} className="text-white text-xs rounded-md border border-gray-700 px-2 py-1 bg-purple-600">
               {Object.keys(exchangeRates).map(currency => <option key={currency} value={currency}>{currency}</option>)}
             </select>
-            <span className="text-xs text-gray-400">{lastUpdateTime.toLocaleTimeString()} UTC</span>
+            <span className="text-xs text-slate-950">{lastUpdateTime.toLocaleTimeString()} UTC</span>
           </div>
         </div>
         
@@ -59,8 +58,8 @@ export function MarketUpdates() {
         </div>
         
         <div className="flex items-center justify-between text-[10px] text-gray-400 border-t border-gray-800 pt-2 mt-2">
-          <span>Updated every 5 minutes</span>
-          <span>{newUpdatesCount} new positions added today</span>
+          <span className="text-gray-950">Updated every 5 minutes</span>
+          <span className="text-slate-950">{newUpdatesCount} new positions added today</span>
         </div>
       </div>
     </div>;
