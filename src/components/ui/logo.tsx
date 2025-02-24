@@ -1,12 +1,16 @@
 
-import { Link } from "react-router-dom";
+import React from "react";
 
-export function Logo() {
-  return (
-    <Link to="/" className="flex items-center justify-center gap-2 mb-2">
-      <span className="text-2xl font-bold">
-        OVERTIME<span className="text-purple-600">STAFF</span>
-      </span>
-    </Link>
-  );
+interface LogoProps {
+  className?: string;
 }
+
+export const Logo: React.FC<LogoProps> = ({ className }) => {
+  return (
+    <img
+      src="/favicon.ico"
+      alt="Logo"
+      className={className}
+    />
+  );
+};
