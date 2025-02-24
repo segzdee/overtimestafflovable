@@ -22,10 +22,12 @@ export function EmergencyShiftIndex() {
     });
   };
 
-  // Filter only emergency and swap updates and take first 2
-  const emergencyUpdates = updates.filter(update => 
-    update.type === 'URGENT' || update.type === 'SWAP'
-  ).slice(0, 2);
+  // Filter URGENT and SWAP updates separately
+  const urgentUpdates = updates.filter(update => update.type === 'URGENT').slice(0, 1);
+  const swapUpdates = updates.filter(update => update.type === 'SWAP').slice(0, 1);
+  
+  // Combine them to ensure we always have room for both types
+  const emergencyUpdates = [...urgentUpdates, ...swapUpdates];
 
   if (isLoading) {
     return <div className="bg-slate-800 text-white rounded-xl shadow-xl overflow-hidden flex-1 min-h-0 p-4">
