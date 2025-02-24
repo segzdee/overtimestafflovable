@@ -1,4 +1,5 @@
-import { Navigate } from "react-router-dom";
+
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
 
 interface ProtectedRouteProps {
@@ -8,10 +9,15 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user } = useAuth();
+  const location = useLocation();
   
-  // If not authenticated, redirect to login
+  // If not authenticated, redirect to login with return URL
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate 
+      to="/login" 
+      replace 
+      state={{ from: location.pathname }}
+    />;
   }
   
   // If authenticated but wrong role, redirect to appropriate dashboard

@@ -39,6 +39,11 @@ export const register = async (
 
   } catch (error) {
     console.error('Registration error:', error);
+    toast({
+      variant: "destructive",
+      title: "Registration failed",
+      description: error instanceof Error ? error.message : "An error occurred during registration"
+    });
     throw error;
   }
 };
@@ -49,27 +54,65 @@ export const login = async (
   navigate: NavigateFunction,
   toast: any
 ) => {
-  const { data: { user }, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  try {
+    const { data: { user }, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) throw error;
-  if (!user) throw new Error('No user returned from sign in');
+    if (error) throw error;
+    if (!user) throw new Error('No user returned from sign in');
 
-  // Get user profile to determine where to redirect
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+    // Get user profile to determine where to redirect
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
 
-  if (profile) {
-    // Redirect based on user role
-    navigate(`/dashboard/${profile.role.toLowerCase()}`);
-  } else {
-    // If no profile exists, redirect to login
-    navigate('/login');
+    if (profileError) throw profileError;
+
+    if (profile) {
+      // Show success message
+      toast({
+        title: "Success",
+        description: "Logged in successfully",
+      });
+      
+      // Redirect based on user role
+      switch (profile.role) {
+        case 'shift-worker':
+          navigate('/dashboard/shift-worker');
+          break;
+        case 'company':
+          navigate('/dashboard/company');
+          break;
+        case 'agency':
+          navigate('/dashboard/agency');
+          break;
+        case 'admin':
+          navigate('/dashboard/admin');
+          break;
+        default:
+          navigate('/login');
+      }
+    } else {
+      // If no profile exists, redirect to login
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "User profile not found"
+      });
+      navigate('/login');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    toast({
+      variant: "destructive",
+      title: "Login failed",
+      description: error instanceof Error ? error.message : "Invalid credentials"
+    });
+    throw error;
   }
 };
 
@@ -77,41 +120,53 @@ export const loginWithToken = async (
   token: string,
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>
 ) => {
-  // Implementation for AI agent token login
-  const { data: { user }, error } = await supabase.auth.getUser(token);
-  
-  if (error) throw error;
-  if (!user) throw new Error('Invalid token');
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error) throw error;
+    if (!user) throw new Error('Invalid token');
 
-  // Get the user's profile
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
+    // Get the user's profile
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
 
-  if (!profile) throw new Error('No profile found for token');
+    if (profileError) throw profileError;
+    if (!profile) throw new Error('No profile found for token');
 
-  const defaultNotificationPreferences: NotificationPreferences = {
-    id: 0,
-    userId: profile.id,
-    email: true,
-    sms: false,
-    push: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+    // Get notification preferences
+    const { data: notificationPrefs, error: prefError } = await supabase
+      .from('notification_preferences')
+      .select('*')
+      .eq('user_id', profile.id)
+      .single();
 
-  setUser({
-    id: profile.id,
-    email: profile.email,
-    role: profile.role,
-    name: profile.name,
-    profileComplete: profile.profile_complete,
-    emailVerified: user.email_confirmed_at ? true : false,
-    verificationStatus: 'pending',
-    notificationPreferences: defaultNotificationPreferences
-  });
+    if (prefError && prefError.code !== 'PGRST116') throw prefError;
+
+    setUser({
+      id: profile.id,
+      email: profile.email,
+      role: profile.role,
+      name: profile.name,
+      profileComplete: profile.profile_complete,
+      emailVerified: user.email_confirmed_at ? true : false,
+      verificationStatus: 'pending',
+      notificationPreferences: notificationPrefs || {
+        id: 0,
+        userId: profile.id,
+        email: true,
+        sms: false,
+        push: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    });
+  } catch (error) {
+    console.error('Token login error:', error);
+    throw error;
+  }
 };
 
 export const devLogin = async (
