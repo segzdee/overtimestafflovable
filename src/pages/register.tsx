@@ -15,6 +15,10 @@ export default function Register() {
           <p className="text-center text-gray-600 mb-6">Join OVERTIMESTAFF</p>
           
           <RegisterForm />
+          
+          <p className="mt-4 text-sm text-center text-gray-500">
+            After registering, you'll receive a verification email. Please check your inbox and click the verification link to complete your registration.
+          </p>
         </div>
       </div>
     </div>
