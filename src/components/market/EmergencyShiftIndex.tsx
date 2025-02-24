@@ -1,5 +1,5 @@
 
-import { MapPin, AlertCircle, SwapHorizontal } from "lucide-react";
+import { MapPin, AlertCircle, ArrowLeftRight } from "lucide-react";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 
 export function EmergencyShiftIndex() {
@@ -73,7 +73,7 @@ export function EmergencyShiftIndex() {
                   <span className={`text-xs font-bold flex items-center gap-1 ${
                     update.type === 'URGENT' ? 'text-red-400' : 'text-orange-400'
                   }`}>
-                    {update.type === 'URGENT' ? <AlertCircle className="w-3 h-3" /> : <SwapHorizontal className="w-3 h-3" />}
+                    {update.type === 'URGENT' ? <AlertCircle className="w-3 h-3" /> : <ArrowLeftRight className="w-3 h-3" />}
                     {update.type}
                   </span>
                 </div>
