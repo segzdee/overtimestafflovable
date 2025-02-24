@@ -87,6 +87,7 @@ export function useMarketUpdates() {
   const [lastUpdateTime, setLastUpdateTime] = useState<Date>(new Date());
   const [newUpdatesCount, setNewUpdatesCount] = useState(0);
   const [selectedCurrency, setSelectedCurrency] = useState<string>('EUR');
+  const [isLoading, setIsLoading] = useState(true);
   const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({
     EUR: 1,
     USD: 1.1,
@@ -126,27 +127,34 @@ export function useMarketUpdates() {
   useEffect(() => {
     // Initial fetch of real data
     const fetchUpdates = async () => {
-      const { data, error } = await supabase
-        .from('market_updates')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(8);
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('market_updates')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(8);
 
-      if (data && !error) {
-        const formattedData = data.map(update => ({
-          ...update,
-          isNew: true,
-          rate: formatRate(update.original_rate, selectedCurrency)
-        }));
-        setUpdates(formattedData);
-        setLastUpdateTime(new Date());
+        if (data && !error) {
+          const formattedData = data.map(update => ({
+            ...update,
+            isNew: true,
+            rate: formatRate(update.original_rate, selectedCurrency)
+          }));
+          setUpdates(formattedData);
+          setLastUpdateTime(new Date());
 
-        // Remove isNew flag after animation
-        setTimeout(() => {
-          setUpdates(prevUpdates => 
-            prevUpdates.map(update => ({ ...update, isNew: false }))
-          );
-        }, 300);
+          // Remove isNew flag after animation
+          setTimeout(() => {
+            setUpdates(prevUpdates => 
+              prevUpdates.map(update => ({ ...update, isNew: false }))
+            );
+          }, 300);
+        }
+      } catch (error) {
+        console.error('Error fetching updates:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -261,6 +269,7 @@ export function useMarketUpdates() {
     newUpdatesCount,
     selectedCurrency,
     setSelectedCurrency,
-    exchangeRates
+    exchangeRates,
+    isLoading
   };
 }

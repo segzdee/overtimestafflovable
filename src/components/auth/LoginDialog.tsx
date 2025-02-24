@@ -125,3 +125,5 @@ export const LoginDialog = ({
     </Dialog>
   );
 };
+
+export default LoginDialog;

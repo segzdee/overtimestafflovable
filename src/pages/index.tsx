@@ -9,7 +9,7 @@ import { MobileMenu } from "@/components/layout/MobileMenu";
 import { LoginCard } from "@/components/auth/LoginCard";
 
 // Lazy load components that are not immediately visible
-const LoginDialog = lazy(() => import("@/components/auth/LoginDialog"));
+const LoginDialog = lazy(() => import("@/components/auth/LoginDialog").then(module => ({ default: module.LoginDialog })));
 const MarketUpdates = lazy(() => import("@/components/market/MarketUpdates").then(module => ({ default: module.MarketUpdates })));
 
 // Loading fallback for market updates
