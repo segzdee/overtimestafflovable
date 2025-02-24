@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
@@ -27,6 +28,7 @@ const MarketUpdatesSkeleton = () => <div className="bg-gray-900 text-white round
       </div>
     </div>
   </div>;
+
 export default function Index() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -37,13 +39,8 @@ export default function Index() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
-  const {
-    login,
-    loginWithToken
-  } = useAuth();
+  const { toast } = useToast();
+  const { login, loginWithToken } = useAuth();
 
   const loginCards = [{
     role: "agency",
@@ -84,9 +81,7 @@ export default function Index() {
         console.log("AI Agent login attempt with token");
         await loginWithToken(token);
       } else {
-        console.log("Standard login attempt", {
-          email
-        });
+        console.log("Standard login attempt", { email });
         await login(email, password);
       }
       toast({
@@ -128,7 +123,17 @@ export default function Index() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-          {loginCards.map(card => <LoginCard key={card.role} role={card.role} title={card.title} subtitle={card.subtitle} icon={card.icon} isActive={activeRole === card.role} onClick={handleLoginClick} />)}
+          {loginCards.map(card => (
+            <LoginCard 
+              key={card.role}
+              role={card.role}
+              title={card.title}
+              subtitle={card.subtitle}
+              icon={card.icon}
+              isActive={activeRole === card.role}
+              onClick={handleLoginClick}
+            />
+          ))}
         </div>
 
         <Suspense fallback={<MarketUpdatesSkeleton />}>
@@ -148,7 +153,23 @@ export default function Index() {
       <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center">
         <div className="bg-white p-4 rounded-lg animate-pulse">Loading...</div>
       </div>}>
-        {loginDialogOpen && <LoginDialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen} activeRole={activeRole} token={token} setToken={setToken} email={email} setEmail={setEmail} password={password} setPassword={setPassword} isLoading={isLoading} errorMessage={errorMessage} onSubmit={handleSubmit} loginCards={loginCards} />}
+        {loginDialogOpen && (
+          <LoginDialog
+            open={loginDialogOpen}
+            onOpenChange={setLoginDialogOpen}
+            activeRole={activeRole}
+            token={token}
+            setToken={setToken}
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            isLoading={isLoading}
+            errorMessage={errorMessage}
+            onSubmit={handleSubmit}
+            loginCards={loginCards}
+          />
+        )}
       </Suspense>
     </div>;
 }
