@@ -6,15 +6,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { FileInput } from "@/components/ui/file-input";
 import { useAuth } from "@/contexts/auth";
-import { supabase } from "@/lib/supabase/client";
-import { FileText, Upload } from "lucide-react";
+import { FileText } from "lucide-react";
 
 interface ShiftReportFormData {
   title: string;
   description: string;
   date: string;
   hours: number;
-  attachments?: File[];
+  attachment?: File;
 }
 
 export function ShiftReportForm() {
@@ -98,11 +97,11 @@ export function ShiftReportForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Attachments</label>
         <FileInput
+          label="Attachments"
           accept="image/*,.pdf,.doc,.docx"
-          onChange={(files) => setFormData({ ...formData, attachments: Array.from(files) })}
-          multiple
+          maxSize={5}
+          onFileSelect={(file) => setFormData({ ...formData, attachment: file })}
         />
       </div>
 

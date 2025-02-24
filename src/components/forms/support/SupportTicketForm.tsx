@@ -20,7 +20,7 @@ interface SupportTicketFormData {
   category: string;
   description: string;
   priority: string;
-  attachments?: File[];
+  attachment?: File;
 }
 
 export function SupportTicketForm() {
@@ -116,11 +116,11 @@ export function SupportTicketForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Attachments</label>
         <FileInput
+          label="Attachments"
           accept="image/*,.pdf,.doc,.docx"
-          onChange={(files) => setFormData({ ...formData, attachments: Array.from(files) })}
-          multiple
+          maxSize={5}
+          onFileSelect={(file) => setFormData({ ...formData, attachment: file })}
         />
         <p className="mt-1 text-sm text-gray-500">
           Add screenshots or relevant documents
