@@ -2,6 +2,7 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { AuthUser } from "../types";
 import { supabase } from "@/lib/supabase/client";
+import { NotificationPreferences } from "@/lib/types";
 
 export const setUserFromSupabase = async (
   supabaseUser: any,
@@ -28,6 +29,17 @@ export const setUserFromSupabase = async (
       return;
     }
 
+    // Set default notification preferences
+    const defaultNotificationPreferences: NotificationPreferences = {
+      id: 0, // This will be set by the database
+      userId: profile.id,
+      email: true,
+      sms: false,
+      push: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
     // Set the authenticated user with profile data
     setUser({
       id: profile.id,
@@ -37,7 +49,7 @@ export const setUserFromSupabase = async (
       profileComplete: profile.profile_complete,
       emailVerified: supabaseUser.email_confirmed_at ? true : false,
       verificationStatus: 'pending',
-      notificationPreferences: {}
+      notificationPreferences: defaultNotificationPreferences
     });
     
   } catch (error) {

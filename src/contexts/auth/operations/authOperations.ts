@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase/client";
 import { NavigateFunction } from "react-router-dom";
 import { AuthUser } from "../types";
 import { createUserProfile } from "../utils/authUtils";
+import { NotificationPreferences } from "@/lib/types";
 
 export const register = async (
   email: string,
@@ -91,6 +92,16 @@ export const loginWithToken = async (
 
   if (!profile) throw new Error('No profile found for token');
 
+  const defaultNotificationPreferences: NotificationPreferences = {
+    id: 0,
+    userId: profile.id,
+    email: true,
+    sms: false,
+    push: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
   setUser({
     id: profile.id,
     email: profile.email,
@@ -99,7 +110,7 @@ export const loginWithToken = async (
     profileComplete: profile.profile_complete,
     emailVerified: user.email_confirmed_at ? true : false,
     verificationStatus: 'pending',
-    notificationPreferences: {}
+    notificationPreferences: defaultNotificationPreferences
   });
 };
 
