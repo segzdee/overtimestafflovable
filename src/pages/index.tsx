@@ -67,10 +67,11 @@ export default function Index() {
     navigate("/register");
   };
 
-  const handleLoginClick = (role: string) => {
+  const handleLoginClick = async (role: string) => {
     setActiveRole(role);
     setLoginDialogOpen(true);
     setErrorMessage(null);
+    console.log("Login attempt initiated for role:", role);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,9 +80,13 @@ export default function Index() {
     setIsLoading(true);
     
     try {
+      console.log("Starting login process...");
+      
       if (activeRole === 'aiagent') {
+        console.log("AI Agent login attempt with token");
         await loginWithToken(token);
       } else {
+        console.log("Standard login attempt", { email });
         await login(email, password);
       }
       
@@ -89,8 +94,11 @@ export default function Index() {
         title: "Success",
         description: "Logged in successfully",
       });
+
+      console.log("Login successful, navigating to dashboard");
       navigate(`/dashboard/${activeRole}`);
     } catch (error) {
+      console.error("Login error:", error);
       const message = error instanceof Error ? error.message : "Invalid credentials";
       setErrorMessage(message);
       toast({
