@@ -14,6 +14,9 @@ export function MarketUpdates() {
     isLoading
   } = useMarketUpdates();
 
+  // Limit to 8 updates for display
+  const displayUpdates = updates.slice(0, 8);
+
   const handleItemClick = () => {
     toast({
       title: "Authentication Required",
@@ -49,7 +52,7 @@ export function MarketUpdates() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 overflow-y-auto flex-1">
-          {updates.map(update => <div key={update.id} 
+          {displayUpdates.map(update => <div key={update.id} 
               onClick={handleItemClick}
               className={`p-3 rounded-lg border transition-all cursor-pointer hover:opacity-90 ${update.highlight ? 'bg-purple-900 border-purple-700' : 'bg-gray-800 border-gray-700'} ${update.isNew ? 'animate-in fade-in slide-in-from-bottom-5' : ''} ${update.isUpdating ? 'animate-pulse' : ''}`}>
               <div className="flex items-center justify-between mb-1">
