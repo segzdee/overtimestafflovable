@@ -1,4 +1,3 @@
-
 import { supabase } from "@/lib/supabase/client";
 import { AuthUser } from "../types";
 import { setUserFromSupabase, DEV_PASSWORD } from "../utils/authUtils";
@@ -13,6 +12,8 @@ export const register = async (
   toast: any,
   category?: string
 ) => {
+  console.log("Starting registration process:", { email, role, name, category });
+  
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -21,9 +22,14 @@ export const register = async (
     }
   });
 
-  if (error) throw error;
+  if (error) {
+    console.error("Registration error:", error);
+    throw error;
+  }
 
   if (data.user) {
+    console.log("User registered successfully, creating profile...");
+    
     const { error: profileError } = await supabase
       .from('profiles')
       .insert([
@@ -37,9 +43,13 @@ export const register = async (
         }
       ]);
 
-    if (profileError) throw profileError;
+    if (profileError) {
+      console.error("Profile creation error:", profileError);
+      throw profileError;
+    }
 
-    // Create default notification preferences
+    console.log("Profile created successfully, setting up notification preferences...");
+
     const { error: notificationError } = await supabase
       .from('notification_preferences')
       .insert([
@@ -51,7 +61,12 @@ export const register = async (
         }
       ]);
 
-    if (notificationError) throw notificationError;
+    if (notificationError) {
+      console.error("Notification preferences setup error:", notificationError);
+      throw notificationError;
+    }
+
+    console.log("Registration process completed successfully");
 
     toast({
       title: "Registration successful",
@@ -66,43 +81,66 @@ export const login = async (
   navigate: NavigateFunction,
   toast: any
 ) => {
+  console.log("Starting login process:", { email });
+  
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
   });
 
-  if (error) throw error;
+  if (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
 
   if (data.user) {
-    const { data: profile } = await supabase
+    console.log("User authenticated, fetching profile...");
+    
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', data.user.id)
       .single();
 
-    if (profile && !profile.profile_complete) {
-      navigate(`/dashboard/${profile.role}/complete-profile`);
+    if (profileError) {
+      console.error("Profile fetch error:", profileError);
+      throw profileError;
     }
-  }
 
-  toast({
-    title: "Login successful",
-    description: "Welcome back!"
-  });
+    console.log("Profile fetched:", profile);
+
+    if (profile && !profile.profile_complete) {
+      console.log("Redirecting to complete profile:", `${profile.role}/complete-profile`);
+      navigate(`/dashboard/${profile.role}/complete-profile`);
+    } else {
+      console.log("Login successful, profile is complete");
+    }
+
+    toast({
+      title: "Login successful",
+      description: "Welcome back!"
+    });
+  }
 };
 
 export const loginWithToken = async (
   token: string,
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>
 ) => {
+  console.log("Starting token login process");
+  
   const { data, error } = await supabase.auth.verifyOtp({
     token_hash: token,
     type: 'magiclink'
   });
 
-  if (error) throw error;
+  if (error) {
+    console.error("Token verification error:", error);
+    throw error;
+  }
   
   if (data.user) {
+    console.log("Token verified, setting up user session");
     await setUserFromSupabase(data.user, setUser);
   }
 };
