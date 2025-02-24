@@ -16,13 +16,13 @@ export function EmergencyShiftIndex() {
   // Filter only emergency and swap updates
   const emergencyUpdates = updates.filter(update => 
     update.type === 'URGENT' || update.type === 'SWAP'
-  );
+  ).slice(0, 4); // Limit to 4 cards
 
   if (isLoading) {
     return <div className="bg-slate-800 text-white rounded-xl shadow-xl overflow-hidden flex-1 min-h-0 p-4">
         <div className="animate-pulse space-y-4">
           <div className="h-4 bg-gray-700 rounded w-1/4"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3">
             {[...Array(4)].map((_, i) => <div key={i} className="p-4 bg-gray-700 rounded-lg">
                 <div className="h-4 bg-gray-600 rounded w-3/4 mb-2"></div>
                 <div className="h-4 bg-gray-600 rounded w-1/2"></div>
@@ -58,7 +58,7 @@ export function EmergencyShiftIndex() {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 overflow-y-auto flex-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 overflow-y-auto flex-1">
           {emergencyUpdates.map(update => (
             <div 
               key={update.id} 
