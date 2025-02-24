@@ -3,7 +3,6 @@ import React, { Suspense, lazy } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
 import { useToast } from "@/components/ui/use-toast";
-import { Building2, Building, UserCircle2, Bot } from "lucide-react";
 import { HeaderNav } from "@/components/layout/HeaderNav";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { LoginCard } from "@/components/auth/LoginCard";
@@ -14,6 +13,9 @@ const LoginDialog = lazy(() => import("@/components/auth/LoginDialog").then(modu
 })));
 const MarketUpdates = lazy(() => import("@/components/market/MarketUpdates").then(module => ({
   default: module.MarketUpdates
+})));
+const EmergencyShiftIndex = lazy(() => import("@/components/market/EmergencyShiftIndex").then(module => ({
+  default: module.EmergencyShiftIndex
 })));
 
 // Loading fallback for market updates
@@ -136,9 +138,15 @@ export default function Index() {
           ))}
         </div>
 
-        <Suspense fallback={<MarketUpdatesSkeleton />}>
-          <MarketUpdates />
-        </Suspense>
+        <div className="space-y-3 flex-1 min-h-0 flex flex-col">
+          <Suspense fallback={<MarketUpdatesSkeleton />}>
+            <MarketUpdates />
+          </Suspense>
+          
+          <Suspense fallback={<MarketUpdatesSkeleton />}>
+            <EmergencyShiftIndex />
+          </Suspense>
+        </div>
       </main>
 
       <footer className="h-12 flex items-center justify-center border-t">
