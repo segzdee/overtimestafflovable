@@ -26,7 +26,7 @@ export function MarketUpdates() {
   return <div className="text-white shadow-xl overflow-hidden flex-1 min-h-0 rounded-md bg-gray-600">
       <div className="h-full flex flex-col p-3">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-semibold text-purple-600">LIVE HOSPITALITY INDEX</h3>
+          <h3 className="text-xs font-semibold text-green-400">LIVE HOSPITALITY INDEX</h3>
           <div className="flex items-center gap-4">
             <select value={selectedCurrency} onChange={e => setSelectedCurrency(e.target.value)} className="text-white text-xs rounded-md border border-gray-700 px-2 py-1 bg-purple-600">
               {Object.keys(exchangeRates).map(currency => <option key={currency} value={currency}>{currency}</option>)}

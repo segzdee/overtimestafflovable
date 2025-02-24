@@ -33,7 +33,7 @@ export function EmergencyShiftIndex() {
       <div className="h-full flex flex-col p-3 bg-slate-600">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <h3 className="text-xs font-semibold text-rose-600">EMERGENCY & SHIFT SWAP INDEX</h3>
+            <h3 className="text-xs font-semibold text-green-400">EMERGENCY & SHIFT SWAP INDEX</h3>
             <span className="flex items-center gap-1 text-xs bg-red-900/50 text-red-400 px-2 py-0.5 rounded">
               <AlertCircle className="w-3 h-3" />
               {emergencyUpdates.length} Active
