@@ -1,5 +1,5 @@
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { AuthUser, AIToken } from "../types";
 
 export const updateProfile = async (

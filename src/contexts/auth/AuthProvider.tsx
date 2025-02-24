@@ -2,7 +2,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { AuthContext } from "./AuthContext";
 import { AuthUser, AIToken } from "./types";
 import { useAuthOperations } from "./useAuthOperations";

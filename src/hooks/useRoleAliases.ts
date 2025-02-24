@@ -1,6 +1,6 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { RoleAlias, BaseRole } from '@/lib/types';
 
 export function useRoleAliases() {

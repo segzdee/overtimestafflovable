@@ -1,7 +1,7 @@
 
 import { useParams, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import ShiftWorkerDashboard from '../ShiftWorkerDashboard';
 import CompanyDashboard from '../CompanyDashboard';
 import AdminDashboard from '../AdminDashboard';
