@@ -39,7 +39,7 @@ export default function FindShifts() {
         <div className="bg-white overflow-y-auto">
           <div className="p-4 sm:p-6 md:p-8 lg:p-12 max-w-xl mx-auto space-y-6 sm:space-y-8">
             <div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">Find Extra Shifts in Top Venues</h1>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-4 lg:text-3xl">Find Extra Shifts in Top Venues</h1>
               <p className="text-gray-600 text-sm sm:text-base">Access premium shifts at leading hotels, restaurants, and events.</p>
             </div>
 
@@ -104,7 +104,7 @@ export default function FindShifts() {
         <div className="bg-gray-50 overflow-y-auto">
           <div className="p-4 sm:p-6 md:p-8 lg:p-12 max-w-md mx-auto space-y-6 sm:space-y-8">
             <div>
-              <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">How It Works</h2>
+              <h2 className="text-lg font-bold mb-4 sm:mb-6 sm:text-3xl">How It Works</h2>
               <div className="space-y-3 sm:space-y-4">
                 <div className="bg-white p-4 sm:p-6 rounded-lg sm:rounded-xl">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2">
