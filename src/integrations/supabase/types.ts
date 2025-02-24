@@ -119,6 +119,47 @@ export type Database = {
           },
         ]
       }
+      agency_commission_structures: {
+        Row: {
+          agency_id: string
+          base_rate: number
+          created_at: string | null
+          id: string
+          name: string
+          special_conditions: Json | null
+          updated_at: string | null
+          volume_discounts: Json | null
+        }
+        Insert: {
+          agency_id: string
+          base_rate: number
+          created_at?: string | null
+          id?: string
+          name: string
+          special_conditions?: Json | null
+          updated_at?: string | null
+          volume_discounts?: Json | null
+        }
+        Update: {
+          agency_id?: string
+          base_rate?: number
+          created_at?: string | null
+          id?: string
+          name?: string
+          special_conditions?: Json | null
+          updated_at?: string | null
+          volume_discounts?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agency_commission_structures_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agency_worker_relationships: {
         Row: {
           agency_id: string | null
@@ -489,6 +530,47 @@ export type Database = {
           },
         ]
       }
+      profile_documents: {
+        Row: {
+          document_path: string
+          document_type: string
+          id: string
+          metadata: Json | null
+          profile_id: string
+          uploaded_at: string | null
+          verification_date: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          document_path: string
+          document_type: string
+          id?: string
+          metadata?: Json | null
+          profile_id: string
+          uploaded_at?: string | null
+          verification_date?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          document_path?: string
+          document_type?: string
+          id?: string
+          metadata?: Json | null
+          profile_id?: string
+          uploaded_at?: string | null
+          verification_date?: string | null
+          verified?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_documents_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           address: string | null
@@ -660,6 +742,47 @@ export type Database = {
           {
             foreignKeyName: "shifts_worker_id_fkey"
             columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_members: {
+        Row: {
+          access_level: string
+          company_id: string
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          role: string
+          updated_at: string | null
+        }
+        Insert: {
+          access_level: string
+          company_id: string
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          role: string
+          updated_at?: string | null
+        }
+        Update: {
+          access_level?: string
+          company_id?: string
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          role?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_company_id_fkey"
+            columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
