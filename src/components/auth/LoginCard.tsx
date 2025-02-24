@@ -19,7 +19,7 @@ export const LoginCard = ({
   const isCustomIcon = typeof Icon === 'string';
   return <div className={`group bg-white rounded-lg p-4 shadow-sm border transition-all hover:shadow-md ${isActive ? "ring-2 ring-purple-500" : ""}`}>
       <div className="flex flex-col items-center text-center space-y-2">
-        <div className="p-2 rounded-full bg-gradient-to-r from-purple-50 to-green-50 flex items-center justify-center bg-lime-50">
+        <div className="p-2 rounded-full bg-gradient-to-r from-purple-50 to-green-50 flex items-center justify-center bg-green-200">
           {isCustomIcon ? <img src={Icon} alt={title} className="w-8 h-8 object-contain" onError={e => {
           console.error(`Error loading image: ${Icon}`);
           e.currentTarget.src = '/placeholder.svg';
