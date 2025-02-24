@@ -40,7 +40,7 @@ export function EmergencyShiftIndex() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <select value={selectedCurrency} onChange={e => setSelectedCurrency(e.target.value)} className="text-white text-xs rounded-md border border-gray-600 px-2 py-1 bg-purple-600">
+            <select value={selectedCurrency} onChange={e => setSelectedCurrency(e.target.value)} className="text-white text-xs rounded-md border border-gray-600 px-2 py-1 bg-slate-950">
               {Object.keys(exchangeRates).map(currency => <option key={currency} value={currency}>{currency}</option>)}
             </select>
             <span className="text-xs text-slate-950">

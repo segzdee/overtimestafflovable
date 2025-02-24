@@ -28,7 +28,7 @@ export function MarketUpdates() {
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs font-semibold text-green-400">LIVE HOSPITALITY INDEX</h3>
           <div className="flex items-center gap-4">
-            <select value={selectedCurrency} onChange={e => setSelectedCurrency(e.target.value)} className="text-white text-xs rounded-md border border-gray-700 px-2 py-1 bg-purple-600">
+            <select value={selectedCurrency} onChange={e => setSelectedCurrency(e.target.value)} className="text-white text-xs rounded-md border border-gray-700 px-2 py-1 bg-slate-950">
               {Object.keys(exchangeRates).map(currency => <option key={currency} value={currency}>{currency}</option>)}
             </select>
             <span className="text-xs text-slate-950">{lastUpdateTime.toLocaleTimeString()} UTC</span>
@@ -58,7 +58,7 @@ export function MarketUpdates() {
         </div>
         
         <div className="flex items-center justify-between text-[10px] text-gray-400 border-t border-gray-800 pt-2 mt-2">
-          <span className="text-gray-950">Updated every 5 minutes</span>
+          <span className="text-slate-950">Updated every 5 minutes</span>
           <span className="text-slate-950">{newUpdatesCount} new positions added today</span>
         </div>
       </div>
