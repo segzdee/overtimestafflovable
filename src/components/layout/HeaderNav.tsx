@@ -27,7 +27,7 @@ export const HeaderNav = ({
       </Button>
 
       <nav className="hidden lg:flex items-center gap-6">
-        <Link to="/find-shifts" className="text-gray-600 hover:text-gray-900 transition-colors">Find Extra Shifts</Link>
+        <Link to="/find-shifts" className="text-gray-600 hover:text-gray-900 transition-colors px-[11px]">Find Extra Shifts</Link>
         <Link to="/find-staff" className="text-gray-600 hover:text-gray-900 transition-colors">Find Extra Staff</Link>
         <Button onClick={handleSignUpClick} className="bg-green-600 hover:bg-green-700 transition-colors">Sign up</Button>
       </nav>
