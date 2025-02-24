@@ -2,6 +2,8 @@
 import { User } from "@supabase/supabase-js";
 import { BaseRole } from "@/lib/types";
 
+export type VerificationStatus = 'pending' | 'verified' | 'under_review' | 'rejected';
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -14,6 +16,11 @@ export interface AuthUser {
   phoneNumber?: string;
   specialization?: string;
   staffingCapacity?: number;
+  verificationStatus: VerificationStatus;
+  emailVerified: boolean;
+  verificationSentAt?: string;
+  verificationCompletedAt?: string;
+  reviewNotes?: string;
 }
 
 export interface AIToken {

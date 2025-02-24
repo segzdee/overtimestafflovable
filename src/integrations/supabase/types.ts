@@ -378,6 +378,7 @@ export type Database = {
           created_at: string
           current_currency: string | null
           email: string
+          email_verified: boolean | null
           id: string
           last_login: string | null
           location: Json | null
@@ -386,12 +387,18 @@ export type Database = {
           phone_number: string | null
           preferred_currency: string | null
           profile_complete: boolean | null
+          review_notes: string | null
           role: string
           specialization: string | null
           staffing_capacity: number | null
           status: Database["public"]["Enums"]["user_status"] | null
           theme_preference: string | null
           updated_at: string
+          verification_completed_at: string | null
+          verification_sent_at: string | null
+          verification_status:
+            | Database["public"]["Enums"]["profile_verification_status"]
+            | null
         }
         Insert: {
           address?: string | null
@@ -401,6 +408,7 @@ export type Database = {
           created_at?: string
           current_currency?: string | null
           email: string
+          email_verified?: boolean | null
           id: string
           last_login?: string | null
           location?: Json | null
@@ -409,12 +417,18 @@ export type Database = {
           phone_number?: string | null
           preferred_currency?: string | null
           profile_complete?: boolean | null
+          review_notes?: string | null
           role: string
           specialization?: string | null
           staffing_capacity?: number | null
           status?: Database["public"]["Enums"]["user_status"] | null
           theme_preference?: string | null
           updated_at?: string
+          verification_completed_at?: string | null
+          verification_sent_at?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["profile_verification_status"]
+            | null
         }
         Update: {
           address?: string | null
@@ -424,6 +438,7 @@ export type Database = {
           created_at?: string
           current_currency?: string | null
           email?: string
+          email_verified?: boolean | null
           id?: string
           last_login?: string | null
           location?: Json | null
@@ -432,12 +447,18 @@ export type Database = {
           phone_number?: string | null
           preferred_currency?: string | null
           profile_complete?: boolean | null
+          review_notes?: string | null
           role?: string
           specialization?: string | null
           staffing_capacity?: number | null
           status?: Database["public"]["Enums"]["user_status"] | null
           theme_preference?: string | null
           updated_at?: string
+          verification_completed_at?: string | null
+          verification_sent_at?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["profile_verification_status"]
+            | null
         }
         Relationships: []
       }
@@ -820,6 +841,11 @@ export type Database = {
       base_role: "shift-worker" | "agency" | "company" | "aiagent" | "admin"
       clock_status: "pending" | "approved" | "rejected"
       payment_status: "pending" | "paid" | "failed"
+      profile_verification_status:
+        | "pending"
+        | "verified"
+        | "under_review"
+        | "rejected"
       shift_status: "posted" | "picked" | "completed" | "cancelled"
       subscription_status: "active" | "inactive"
       user_status: "active" | "inactive" | "pending" | "verified"

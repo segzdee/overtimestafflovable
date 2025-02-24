@@ -22,7 +22,12 @@ export const setUserFromSupabase = async (supabaseUser: User, setUser: React.Dis
       address: profile.address,
       phoneNumber: profile.phone_number,
       specialization: profile.specialization,
-      staffingCapacity: profile.staffing_capacity
+      staffingCapacity: profile.staffing_capacity,
+      verificationStatus: profile.verification_status,
+      emailVerified: profile.email_verified,
+      verificationSentAt: profile.verification_sent_at,
+      verificationCompletedAt: profile.verification_completed_at,
+      reviewNotes: profile.review_notes
     });
   }
 };
