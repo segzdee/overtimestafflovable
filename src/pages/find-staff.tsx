@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -18,8 +19,8 @@ export default function FindStaff() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="flex justify-between items-center px-4 h-14 bg-white border-b">
+    <div className="h-screen flex flex-col overflow-hidden">
+      <header className="flex justify-between items-center px-4 h-14 bg-white border-b shrink-0">
         <Link to="/" className="flex items-center gap-2">
           <span className="text-xl font-bold">OVERTIME<span className="text-purple-600">STAFF</span></span>
         </Link>
@@ -33,61 +34,61 @@ export default function FindStaff() {
         </div>
       </header>
 
-      <div className="flex-1 grid lg:grid-cols-2">
+      <div className="flex-1 grid lg:grid-cols-2 overflow-hidden">
         <div className="bg-gradient-to-br from-purple-50 to-green-50 p-6 overflow-y-auto">
           <div className="max-w-xl mx-auto space-y-4">
             <h2 className="text-2xl font-bold">Staff Your Business Smarter</h2>
             
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               <Card>
-                <CardHeader className="space-y-1">
+                <CardHeader className="space-y-1 p-4">
                   <div className="flex items-center gap-2">
                     <UserCheck className="h-5 w-5 text-purple-600" />
                     <CardTitle className="text-base">Verified Professionals</CardTitle>
                   </div>
-                  <CardDescription>Access a pool of pre-vetted, qualified staff ready to work.</CardDescription>
+                  <CardDescription>Access pre-vetted, qualified staff.</CardDescription>
                 </CardHeader>
               </Card>
 
               <Card>
-                <CardHeader className="space-y-1">
+                <CardHeader className="space-y-1 p-4">
                   <div className="flex items-center gap-2">
                     <Zap className="h-5 w-5 text-purple-600" />
                     <CardTitle className="text-base">AI-Powered Matching</CardTitle>
                   </div>
-                  <CardDescription>Our AI ensures perfect matches for your specific needs.</CardDescription>
+                  <CardDescription>Perfect matches for your needs.</CardDescription>
                 </CardHeader>
               </Card>
 
               <Card>
-                <CardHeader className="space-y-1">
+                <CardHeader className="space-y-1 p-4">
                   <div className="flex items-center gap-2">
                     <Shield className="h-5 w-5 text-purple-600" />
                     <CardTitle className="text-base">Risk-Free Hiring</CardTitle>
                   </div>
-                  <CardDescription>All staff are fully insured and background-checked.</CardDescription>
+                  <CardDescription>All staff are insured and verified.</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card>
+                <CardHeader className="p-4">
+                  <h3 className="font-semibold mb-2">Benefits for Businesses</h3>
+                  <ul className="text-sm space-y-1 text-gray-600">
+                    <li className="flex items-center gap-2">✓ No commitments</li>
+                    <li className="flex items-center gap-2">✓ Reduced costs</li>
+                    <li className="flex items-center gap-2">✓ Flexible staffing</li>
+                    <li className="flex items-center gap-2">✓ Quality assured</li>
+                  </ul>
                 </CardHeader>
               </Card>
             </div>
-
-            <Card className="mt-4">
-              <CardHeader>
-                <h3 className="font-semibold">Benefits for Businesses</h3>
-                <ul className="text-sm space-y-1 text-gray-600">
-                  <li className="flex items-center gap-2">✓ No long-term commitments</li>
-                  <li className="flex items-center gap-2">✓ Reduced hiring costs</li>
-                  <li className="flex items-center gap-2">✓ Flexible staffing solutions</li>
-                  <li className="flex items-center gap-2">✓ Quality guaranteed</li>
-                </ul>
-              </CardHeader>
-            </Card>
           </div>
         </div>
 
         <div className="bg-white p-6 overflow-y-auto">
-          <div className="max-w-md mx-auto space-y-8">
+          <div className="max-w-md mx-auto space-y-6">
             <h1 className="text-2xl font-bold mb-2">Find Extra Staff</h1>
-            <p className="text-gray-600 mb-6">Connect with qualified professionals ready to work at your business.</p>
+            <p className="text-gray-600 mb-4">Connect with qualified professionals ready to work.</p>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -127,38 +128,38 @@ export default function FindStaff() {
               </Button>
             </form>
 
-            <div className="pt-8 border-t">
-              <h2 className="text-xl font-semibold mb-4">Why Healthcare Facilities Trust Us</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="pt-6 border-t">
+              <h2 className="text-lg font-semibold mb-3">Why Healthcare Facilities Trust Us</h2>
+              <div className="grid grid-cols-2 gap-3">
                 <Card className="border-purple-100">
-                  <CardHeader>
-                    <ChartBar className="h-8 w-8 text-purple-600 mb-2" />
-                    <CardTitle className="text-base">Cost Efficiency</CardTitle>
-                    <CardDescription>Reduce overtime costs and agency fees</CardDescription>
+                  <CardHeader className="p-4">
+                    <ChartBar className="h-6 w-6 text-purple-600 mb-1" />
+                    <CardTitle className="text-sm">Cost Efficient</CardTitle>
+                    <CardDescription className="text-xs">Reduce costs</CardDescription>
                   </CardHeader>
                 </Card>
                 
                 <Card className="border-purple-100">
-                  <CardHeader>
-                    <Clock className="h-8 w-8 text-purple-600 mb-2" />
-                    <CardTitle className="text-base">Quick Response</CardTitle>
-                    <CardDescription>Fill shifts in as little as 4 hours</CardDescription>
+                  <CardHeader className="p-4">
+                    <Clock className="h-6 w-6 text-purple-600 mb-1" />
+                    <CardTitle className="text-sm">Quick Fill</CardTitle>
+                    <CardDescription className="text-xs">4-hour response</CardDescription>
                   </CardHeader>
                 </Card>
                 
                 <Card className="border-purple-100">
-                  <CardHeader>
-                    <Target className="h-8 w-8 text-purple-600 mb-2" />
-                    <CardTitle className="text-base">Quality Matching</CardTitle>
-                    <CardDescription>AI-powered staff matching system</CardDescription>
+                  <CardHeader className="p-4">
+                    <Target className="h-6 w-6 text-purple-600 mb-1" />
+                    <CardTitle className="text-sm">AI Matching</CardTitle>
+                    <CardDescription className="text-xs">Smart system</CardDescription>
                   </CardHeader>
                 </Card>
                 
                 <Card className="border-purple-100">
-                  <CardHeader>
-                    <Users className="h-8 w-8 text-purple-600 mb-2" />
-                    <CardTitle className="text-base">Reliable Staff</CardTitle>
-                    <CardDescription>Verified and experienced professionals</CardDescription>
+                  <CardHeader className="p-4">
+                    <Users className="h-6 w-6 text-purple-600 mb-1" />
+                    <CardTitle className="text-sm">Reliable</CardTitle>
+                    <CardDescription className="text-xs">Verified staff</CardDescription>
                   </CardHeader>
                 </Card>
               </div>

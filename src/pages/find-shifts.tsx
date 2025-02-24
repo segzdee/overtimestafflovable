@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -18,8 +19,8 @@ export default function FindShifts() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="flex justify-between items-center px-4 h-14 bg-white border-b">
+    <div className="h-screen flex flex-col overflow-hidden">
+      <header className="flex justify-between items-center px-4 h-14 bg-white border-b shrink-0">
         <Link to="/" className="flex items-center gap-2">
           <span className="text-xl font-bold">OVERTIME<span className="text-purple-600">STAFF</span></span>
         </Link>
@@ -33,11 +34,11 @@ export default function FindShifts() {
         </div>
       </header>
 
-      <div className="flex-1 grid lg:grid-cols-2">
+      <div className="flex-1 grid lg:grid-cols-2 overflow-hidden">
         <div className="bg-white p-6 overflow-y-auto">
-          <div className="max-w-md mx-auto space-y-8">
+          <div className="max-w-md mx-auto space-y-6">
             <h1 className="text-2xl font-bold mb-2">Find Extra Shifts</h1>
-            <p className="text-gray-600 mb-6">Join thousands of professionals finding flexible work opportunities.</p>
+            <p className="text-gray-600 mb-4">Join thousands of professionals finding flexible work opportunities.</p>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -77,38 +78,38 @@ export default function FindShifts() {
               </Button>
             </form>
 
-            <div className="pt-8 border-t">
-              <h2 className="text-xl font-semibold mb-4">Why Healthcare Professionals Choose Us</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="pt-6 border-t">
+              <h2 className="text-lg font-semibold mb-3">Why Healthcare Professionals Choose Us</h2>
+              <div className="grid grid-cols-2 gap-3">
                 <Card className="border-green-100">
-                  <CardHeader>
-                    <Award className="h-8 w-8 text-green-600 mb-2" />
-                    <CardTitle className="text-base">Top Pay Rates</CardTitle>
-                    <CardDescription>Earn up to 50% more than standard rates</CardDescription>
+                  <CardHeader className="p-4">
+                    <Award className="h-6 w-6 text-green-600 mb-1" />
+                    <CardTitle className="text-sm">Top Pay Rates</CardTitle>
+                    <CardDescription className="text-xs">Earn up to 50% more</CardDescription>
                   </CardHeader>
                 </Card>
                 
                 <Card className="border-green-100">
-                  <CardHeader>
-                    <BookOpen className="h-8 w-8 text-green-600 mb-2" />
-                    <CardTitle className="text-base">Professional Development</CardTitle>
-                    <CardDescription>Access to training and certification programs</CardDescription>
+                  <CardHeader className="p-4">
+                    <BookOpen className="h-6 w-6 text-green-600 mb-1" />
+                    <CardTitle className="text-sm">Development</CardTitle>
+                    <CardDescription className="text-xs">Training programs</CardDescription>
                   </CardHeader>
                 </Card>
                 
                 <Card className="border-green-100">
-                  <CardHeader>
-                    <BadgeCheck className="h-8 w-8 text-green-600 mb-2" />
-                    <CardTitle className="text-base">Verified Facilities</CardTitle>
-                    <CardDescription>Work at pre-screened, quality locations</CardDescription>
+                  <CardHeader className="p-4">
+                    <BadgeCheck className="h-6 w-6 text-green-600 mb-1" />
+                    <CardTitle className="text-sm">Verified</CardTitle>
+                    <CardDescription className="text-xs">Quality locations</CardDescription>
                   </CardHeader>
                 </Card>
                 
                 <Card className="border-green-100">
-                  <CardHeader>
-                    <Briefcase className="h-8 w-8 text-green-600 mb-2" />
-                    <CardTitle className="text-base">Career Growth</CardTitle>
-                    <CardDescription>Diverse opportunities to advance your career</CardDescription>
+                  <CardHeader className="p-4">
+                    <Briefcase className="h-6 w-6 text-green-600 mb-1" />
+                    <CardTitle className="text-sm">Growth</CardTitle>
+                    <CardDescription className="text-xs">Career advancement</CardDescription>
                   </CardHeader>
                 </Card>
               </div>
@@ -120,49 +121,49 @@ export default function FindShifts() {
           <div className="max-w-xl mx-auto space-y-4">
             <h2 className="text-2xl font-bold">How It Works</h2>
             
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               <Card>
-                <CardHeader className="space-y-1">
+                <CardHeader className="space-y-1 p-4">
                   <div className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-purple-600" />
                     <CardTitle className="text-base">Flexible Hours</CardTitle>
                   </div>
-                  <CardDescription>Choose shifts that fit your schedule. Work when you want, where you want.</CardDescription>
+                  <CardDescription>Choose shifts that fit your schedule.</CardDescription>
                 </CardHeader>
               </Card>
 
               <Card>
-                <CardHeader className="space-y-1">
+                <CardHeader className="space-y-1 p-4">
                   <div className="flex items-center gap-2">
                     <DollarSign className="h-5 w-5 text-purple-600" />
                     <CardTitle className="text-base">Competitive Pay</CardTitle>
                   </div>
-                  <CardDescription>Earn competitive rates with immediate payment options available.</CardDescription>
+                  <CardDescription>Earn competitive rates with immediate payment.</CardDescription>
                 </CardHeader>
               </Card>
 
               <Card>
-                <CardHeader className="space-y-1">
+                <CardHeader className="space-y-1 p-4">
                   <div className="flex items-center gap-2">
                     <Calendar className="h-5 w-5 text-purple-600" />
                     <CardTitle className="text-base">Instant Booking</CardTitle>
                   </div>
-                  <CardDescription>Book shifts instantly through our AI-powered platform.</CardDescription>
+                  <CardDescription>Book shifts through our AI-powered platform.</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card>
+                <CardHeader className="p-4">
+                  <h3 className="font-semibold mb-2">Why Choose OVERTIMESTAFF?</h3>
+                  <ul className="text-sm space-y-1 text-gray-600">
+                    <li className="flex items-center gap-2">✓ No minimum hours</li>
+                    <li className="flex items-center gap-2">✓ Weekly payments</li>
+                    <li className="flex items-center gap-2">✓ Professional development</li>
+                    <li className="flex items-center gap-2">✓ 24/7 support</li>
+                  </ul>
                 </CardHeader>
               </Card>
             </div>
-
-            <Card className="mt-4">
-              <CardHeader>
-                <h3 className="font-semibold">Why Choose OVERTIMESTAFF?</h3>
-                <ul className="text-sm space-y-1 text-gray-600">
-                  <li className="flex items-center gap-2">✓ No minimum hour requirements</li>
-                  <li className="flex items-center gap-2">✓ Weekly payments</li>
-                  <li className="flex items-center gap-2">✓ Professional development opportunities</li>
-                  <li className="flex items-center gap-2">✓ 24/7 support team</li>
-                </ul>
-              </CardHeader>
-            </Card>
           </div>
         </div>
       </div>
