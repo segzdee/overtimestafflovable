@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,13 @@ import { supabase } from "@/lib/supabase/client";
 import { TeamMemberModal } from "@/components/modals/TeamMemberModal";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants/categories";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface TeamMember {
   id?: string;
