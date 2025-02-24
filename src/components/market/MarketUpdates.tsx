@@ -1,3 +1,4 @@
+
 import { MapPin } from "lucide-react";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 export function MarketUpdates() {
