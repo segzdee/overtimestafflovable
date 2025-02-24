@@ -1,5 +1,7 @@
 
 import React from "react";
+import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 interface LogoProps {
   className?: string;
@@ -7,10 +9,13 @@ interface LogoProps {
 
 export const Logo: React.FC<LogoProps> = ({ className }) => {
   return (
-    <img
-      src="/favicon.ico"
-      alt="Logo"
-      className={className}
-    />
+    <Link 
+      to="/" 
+      className={cn("flex items-center justify-center gap-2", className)}
+    >
+      <span className="text-2xl font-bold">
+        OVERTIME<span className="text-primary">STAFF</span>
+      </span>
+    </Link>
   );
 };
