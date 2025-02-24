@@ -1,24 +1,26 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Star, Clock, DollarSign, Building2, User, Trophy, Calendar, BadgeCheck } from "lucide-react";
-
 export default function FindShifts() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const navigate = useNavigate();
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/register', { state: { role: 'shift-worker', email, name, phone } });
+    navigate('/register', {
+      state: {
+        role: 'shift-worker',
+        email,
+        name,
+        phone
+      }
+    });
   };
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <header className="flex justify-between items-center px-4 sm:px-6 h-14 sm:h-16 bg-white border-b">
         <Link to="/" className="flex items-center">
           <span className="text-lg sm:text-xl font-bold whitespace-nowrap">OVERTIME<span className="text-purple-600">STAFF</span></span>
@@ -42,42 +44,19 @@ export default function FindShifts() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-              <div className="space-y-2">
+              <div className="space-y-2 bg-slate-50">
                 <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  placeholder="Enter your full name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="h-10 sm:h-12"
-                />
+                <Input id="name" placeholder="Enter your full name" value={name} onChange={e => setName(e.target.value)} required className="h-10 sm:h-12" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-10 sm:h-12"
-                />
+                <Input id="email" type="email" placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} required className="h-10 sm:h-12" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="Enter your phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
-                  className="h-10 sm:h-12"
-                />
+                <Input id="phone" type="tel" placeholder="Enter your phone number" value={phone} onChange={e => setPhone(e.target.value)} required className="h-10 sm:h-12" />
               </div>
-              <Button type="submit" className="w-full h-10 sm:h-12 text-base sm:text-lg bg-purple-600 hover:bg-purple-700">
+              <Button type="submit" className="w-full h-10 sm:h-12 text-base sm:text-lg bg-purple-600 hover:bg-purple-700 text-slate-50">
                 Start Earning Today
               </Button>
             </form>
@@ -162,7 +141,7 @@ export default function FindShifts() {
             </div>
 
             <div className="bg-purple-600 text-white p-4 sm:p-6 rounded-lg sm:rounded-xl">
-              <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Available Positions</h3>
+              <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base text-slate-50">Available Positions</h3>
               <div className="space-y-2 sm:space-y-3">
                 <div className="flex justify-between items-center text-sm sm:text-base">
                   <span>Event Server</span>
@@ -181,6 +160,5 @@ export default function FindShifts() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }

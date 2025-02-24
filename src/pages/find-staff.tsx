@@ -1,24 +1,26 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Star, Shield, Zap, UserCheck, Clock } from "lucide-react";
-
 export default function FindStaff() {
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [phone, setPhone] = useState("");
   const navigate = useNavigate();
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/register', { state: { role: 'company', email, name: companyName, phone } });
+    navigate('/register', {
+      state: {
+        role: 'company',
+        email,
+        name: companyName,
+        phone
+      }
+    });
   };
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <header className="flex justify-between items-center px-4 sm:px-6 h-14 sm:h-16 bg-white border-b">
         <Link to="/" className="flex items-center">
           <span className="text-lg sm:text-xl font-bold whitespace-nowrap">OVERTIME<span className="text-purple-600">STAFF</span></span>
@@ -98,40 +100,17 @@ export default function FindStaff() {
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="companyName">Company Name</Label>
-                <Input
-                  id="companyName"
-                  placeholder="Enter your company name"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  required
-                  className="h-10 sm:h-12"
-                />
+                <Input id="companyName" placeholder="Enter your company name" value={companyName} onChange={e => setCompanyName(e.target.value)} required className="h-10 sm:h-12" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Business Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your business email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-10 sm:h-12"
-                />
+                <Input id="email" type="email" placeholder="Enter your business email" value={email} onChange={e => setEmail(e.target.value)} required className="h-10 sm:h-12" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="Enter your phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
-                  className="h-10 sm:h-12"
-                />
+                <Input id="phone" type="tel" placeholder="Enter your phone number" value={phone} onChange={e => setPhone(e.target.value)} required className="h-10 sm:h-12" />
               </div>
-              <Button type="submit" className="w-full h-10 sm:h-12 text-base sm:text-lg bg-purple-600 hover:bg-purple-700">
+              <Button type="submit" className="w-full h-10 sm:h-12 text-base sm:text-lg bg-purple-600 hover:bg-purple-700 text-slate-50">
                 Get Started
               </Button>
             </form>
@@ -141,9 +120,7 @@ export default function FindStaff() {
                 <div className="flex justify-between items-start mb-2">
                   <div className="font-semibold text-sm sm:text-base">The Grand Hotel</div>
                   <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
+                    {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-yellow-400 text-yellow-400" />)}
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-gray-600">"Perfect staff matched to our needs. The AI matching system really works!"</p>
@@ -153,9 +130,7 @@ export default function FindStaff() {
                 <div className="flex justify-between items-start mb-2">
                   <div className="font-semibold text-sm sm:text-base">Sunset Restaurant</div>
                   <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
+                    {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-yellow-400 text-yellow-400" />)}
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-gray-600">"Reliable staff, always on time. Makes scheduling so much easier."</p>
@@ -164,6 +139,5 @@ export default function FindStaff() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
