@@ -1,10 +1,9 @@
-
 import { NavigateFunction } from "react-router-dom";
 import { AuthUser, AIToken } from "./types";
 import { setUserFromSupabase } from "./utils/authUtils";
 import { register, login, loginWithToken, devLogin } from "./operations/authOperations";
 import { updateProfile, generateAiToken, revokeAiToken } from "./operations/profileOperations";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 
 interface AuthOperationsProps {
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;

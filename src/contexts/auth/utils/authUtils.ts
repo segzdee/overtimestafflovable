@@ -1,6 +1,6 @@
 
 import { User } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { AuthUser } from "../types";
 
 export const setUserFromSupabase = async (supabaseUser: User, setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>) => {

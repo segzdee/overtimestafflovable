@@ -1,5 +1,5 @@
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { AuthUser } from "../types";
 import { setUserFromSupabase, DEV_PASSWORD } from "../utils/authUtils";
 import { NavigateFunction } from "react-router-dom";
