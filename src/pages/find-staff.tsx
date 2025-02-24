@@ -39,7 +39,7 @@ export default function FindStaff() {
         <div className="bg-white overflow-y-auto">
           <div className="p-4 sm:p-6 md:p-8 lg:p-12 max-w-xl mx-auto space-y-6 sm:space-y-8">
             <div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">Staff Your Business Smarter</h1>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-4 lg:text-3xl">Staff Your Business Smarter</h1>
               <p className="text-gray-600 text-sm sm:text-base">Connect with qualified professionals instantly.</p>
             </div>
 
@@ -93,7 +93,7 @@ export default function FindStaff() {
         <div className="bg-gray-50 overflow-y-auto">
           <div className="p-4 sm:p-6 md:p-8 lg:p-12 max-w-md mx-auto space-y-6 sm:space-y-8">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4">Get Started</h2>
+              <h2 className="text-xl font-bold mb-2 sm:mb-4 sm:text-3xl">Get Started</h2>
               <p className="text-gray-600 text-sm sm:text-base">Fill in your details to access our staffing platform.</p>
             </div>
 
