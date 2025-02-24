@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -60,19 +61,19 @@
   input:invalid, 
   select:invalid, 
   textarea:invalid {
-    @apply ring-2 ring-danger/50 border-danger/50 animate-shake;
+    @apply border-red-500 ring-2 ring-red-500/50 animate-shake;
   }
 
   input:valid, 
   select:valid, 
   textarea:valid {
-    @apply ring-2 ring-success/20 border-success/20;
+    @apply border-green-500 ring-2 ring-green-500/20;
   }
 
   input:focus, 
   select:focus, 
   textarea:focus {
-    @apply ring-2 ring-primary/50 border-primary/50 transition-all duration-200;
+    @apply border-primary ring-2 ring-primary/50 transition-all duration-200;
   }
 }
 
@@ -87,11 +88,11 @@
   }
 
   .argon-button-primary {
-    @apply bg-[#5e72e4] text-white rounded-md px-4 py-2 
-           hover:bg-[#5468e4] transition-all duration-200 
+    @apply bg-primary text-white rounded-md px-4 py-2 
+           hover:bg-primary-600 transition-all duration-200 
            hover:shadow-lg hover:scale-105
            active:scale-95 
-           focus:ring-4 focus:ring-primary/30;
+           focus:ring-4 ring-primary/30;
   }
 
   .argon-button-secondary {
@@ -99,7 +100,7 @@
            hover:bg-gray-100 transition-all duration-200
            hover:shadow-md hover:scale-105
            active:scale-95
-           focus:ring-4 focus:ring-gray-200;
+           focus:ring-4 ring-gray-200;
   }
 
   .argon-input {
@@ -107,7 +108,7 @@
            border border-gray-300 rounded-md 
            transition-all duration-200
            hover:border-primary/50
-           focus:ring-2 focus:ring-primary/50 focus:border-transparent
+           focus:ring-2 ring-primary/50 focus:border-transparent
            placeholder:text-gray-400
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
