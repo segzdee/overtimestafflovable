@@ -77,6 +77,56 @@ export type Database = {
         }
         Relationships: []
       }
+      agencies: {
+        Row: {
+          agency_name: string
+          billing_address: Json | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          id: string
+          license_number: string | null
+          profile_id: string | null
+          service_areas: string[] | null
+          specializations: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          agency_name: string
+          billing_address?: Json | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: string
+          license_number?: string | null
+          profile_id?: string | null
+          service_areas?: string[] | null
+          specializations?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          agency_name?: string
+          billing_address?: Json | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: string
+          license_number?: string | null
+          profile_id?: string | null
+          service_areas?: string[] | null
+          specializations?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agencies_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agency_client_relationships: {
         Row: {
           agency_id: string | null
@@ -198,6 +248,41 @@ export type Database = {
             columns: ["worker_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_usage: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          token_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          token_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          token_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_usage_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "api_tokens"
             referencedColumns: ["id"]
           },
         ]
@@ -336,6 +421,42 @@ export type Database = {
           },
         ]
       }
+      api_tokens: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          last_used_at: string | null
+          name: string
+          permissions: Json
+          token: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_used_at?: string | null
+          name: string
+          permissions?: Json
+          token: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_used_at?: string | null
+          name?: string
+          permissions?: Json
+          token?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       clock_records: {
         Row: {
           clock_id: string
@@ -377,32 +498,109 @@ export type Database = {
           },
         ]
       }
-      companies: {
-        Row: {}
-        Insert: {}
-        Update: {}
-        Relationships: []
-      }
       documents: {
         Row: {
           content: string | null
+          created_at: string | null
+          document_type: Database["public"]["Enums"]["document_type"] | null
           embedding: string | null
           id: number
+          is_public: boolean | null
           metadata: Json | null
+          profile_id: string | null
+          updated_at: string | null
         }
         Insert: {
           content?: string | null
+          created_at?: string | null
+          document_type?: Database["public"]["Enums"]["document_type"] | null
           embedding?: string | null
           id?: number
+          is_public?: boolean | null
           metadata?: Json | null
+          profile_id?: string | null
+          updated_at?: string | null
         }
         Update: {
           content?: string | null
+          created_at?: string | null
+          document_type?: Database["public"]["Enums"]["document_type"] | null
           embedding?: string | null
           id?: number
+          is_public?: boolean | null
           metadata?: Json | null
+          profile_id?: string | null
+          updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "documents_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          company_profile_id: string | null
+          created_at: string | null
+          id: string
+          location: string
+          pay: number
+          required_skills: string[]
+          shift_end: string
+          shift_start: string
+          shift_worker_profile_id: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          company_profile_id?: string | null
+          created_at?: string | null
+          id?: string
+          location: string
+          pay: number
+          required_skills: string[]
+          shift_end: string
+          shift_start: string
+          shift_worker_profile_id?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          company_profile_id?: string | null
+          created_at?: string | null
+          id?: string
+          location?: string
+          pay?: number
+          required_skills?: string[]
+          shift_end?: string
+          shift_start?: string
+          shift_worker_profile_id?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_company_profile_id_fkey"
+            columns: ["company_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_shift_worker_profile_id_fkey"
+            columns: ["shift_worker_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       market_updates: {
         Row: {
@@ -691,6 +889,53 @@ export type Database = {
         }
         Relationships: []
       }
+      shift_workers: {
+        Row: {
+          availability: Json | null
+          certifications: Json | null
+          created_at: string | null
+          experience_years: number | null
+          hourly_rate: number | null
+          id: string
+          preferred_locations: string[] | null
+          profile_id: string | null
+          skills: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          availability?: Json | null
+          certifications?: Json | null
+          created_at?: string | null
+          experience_years?: number | null
+          hourly_rate?: number | null
+          id?: string
+          preferred_locations?: string[] | null
+          profile_id?: string | null
+          skills?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          availability?: Json | null
+          certifications?: Json | null
+          created_at?: string | null
+          experience_years?: number | null
+          hourly_rate?: number | null
+          id?: string
+          preferred_locations?: string[] | null
+          profile_id?: string | null
+          skills?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_workers_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shifts: {
         Row: {
           created_at: string
@@ -747,6 +992,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string | null
+          current_period_end: string
+          current_period_start: string
+          id: string
+          payment_method_id: string | null
+          plan_type: string
+          status: string
+          subscription_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string | null
+          current_period_end: string
+          current_period_start: string
+          id?: string
+          payment_method_id?: string | null
+          plan_type: string
+          status: string
+          subscription_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string | null
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          payment_method_id?: string | null
+          plan_type?: string
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       team_members: {
         Row: {
@@ -899,6 +1186,13 @@ export type Database = {
             }
             Returns: unknown
           }
+      generate_api_token: {
+        Args: {
+          user_id: string
+          token_name: string
+        }
+        Returns: string
+      }
       halfvec_avg: {
         Args: {
           "": number[]
@@ -946,6 +1240,10 @@ export type Database = {
           "": unknown
         }
         Returns: unknown
+      }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
       }
       ivfflat_bit_support: {
         Args: {
@@ -1005,19 +1303,44 @@ export type Database = {
         }
         Returns: string
       }
-      match_documents: {
+      log_agent_usage: {
         Args: {
-          query_embedding: string
-          match_count?: number
-          filter?: Json
+          token_id: string
+          action_type: string
+          details?: Json
         }
-        Returns: {
-          id: number
-          content: string
-          metadata: Json
-          similarity: number
-        }[]
+        Returns: undefined
       }
+      match_documents:
+        | {
+            Args: {
+              query_embedding: string
+              match_count?: number
+              filter?: Json
+            }
+            Returns: {
+              id: number
+              content: string
+              metadata: Json
+              similarity: number
+            }[]
+          }
+        | {
+            Args: {
+              query_embedding: string
+              match_count?: number
+              filter?: Json
+              min_similarity?: number
+            }
+            Returns: {
+              id: number
+              profile_id: string
+              content: string
+              metadata: Json
+              document_type: Database["public"]["Enums"]["document_type"]
+              similarity: number
+            }[]
+          }
       sparsevec_out: {
         Args: {
           "": unknown
@@ -1035,6 +1358,13 @@ export type Database = {
           "": unknown[]
         }
         Returns: number
+      }
+      update_document_embedding: {
+        Args: {
+          document_id: number
+          new_embedding: string
+        }
+        Returns: undefined
       }
       vector_avg: {
         Args: {
@@ -1079,10 +1409,27 @@ export type Database = {
         }
         Returns: number
       }
+      verify_api_token: {
+        Args: {
+          token: string
+        }
+        Returns: {
+          is_valid: boolean
+          user_id: string
+          permissions: Json
+        }[]
+      }
     }
     Enums: {
       base_role: "shift-worker" | "agency" | "company" | "aiagent" | "admin"
       clock_status: "pending" | "approved" | "rejected"
+      document_type:
+        | "job_description"
+        | "worker_profile"
+        | "company_profile"
+        | "agency_profile"
+        | "skills"
+        | "certifications"
       payment_status: "pending" | "paid" | "failed"
       profile_verification_status:
         | "pending"

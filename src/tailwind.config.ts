@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -38,21 +39,23 @@ export default {
           DEFAULT: "#8392ab",
           foreground: "#525f7f",
         },
+        danger: {
+          DEFAULT: "#f5365c",
+          50: "rgba(245, 54, 92, 0.5)",
+          20: "rgba(245, 54, 92, 0.2)",
+        },
+        success: {
+          DEFAULT: "#2dce89",
+          50: "rgba(45, 206, 137, 0.5)",
+          20: "rgba(45, 206, 137, 0.2)",
+        },
         info: {
           DEFAULT: "#11cdef",
           light: "#1171ef",
         },
-        success: {
-          DEFAULT: "#2dce89",
-          light: "#2dce89",
-        },
         warning: {
           DEFAULT: "#fb6340",
           light: "#fbb140",
-        },
-        danger: {
-          DEFAULT: "#f5365c",
-          light: "#f56036",
         },
         gray: {
           100: "#f6f9fc",
@@ -65,7 +68,6 @@ export default {
           800: "#32325d",
           900: "#212529",
         },
-        /* Other Theme Colors */
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -88,6 +90,15 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      ringColor: {
+        'danger': '#f5365c',
+        'success': '#2dce89',
+        'primary': '#5e72e4',
+      },
+      ringOpacity: {
+        '20': '0.2',
+        '50': '0.5',
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -108,16 +119,12 @@ export default {
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-        },
-        fadeIn: {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
+          to: { height: "0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        fadeIn: "fadeIn 0.5s ease-out forwards",
       },
     },
   },
