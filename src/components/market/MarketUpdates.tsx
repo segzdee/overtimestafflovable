@@ -1,5 +1,8 @@
+
 import { MapPin } from "lucide-react";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
+import { toast } from "@/components/ui/use-toast";
+
 export function MarketUpdates() {
   const {
     updates,
@@ -10,6 +13,15 @@ export function MarketUpdates() {
     exchangeRates,
     isLoading
   } = useMarketUpdates();
+
+  const handleItemClick = () => {
+    toast({
+      title: "Authentication Required",
+      description: "Sign in or sign up to view details",
+      variant: "default",
+    });
+  };
+
   if (isLoading) {
     return <div className="bg-gray-900 text-white rounded-xl shadow-xl overflow-hidden flex-1 min-h-0 p-4">
         <div className="animate-pulse space-y-4">
@@ -23,6 +35,7 @@ export function MarketUpdates() {
         </div>
       </div>;
   }
+
   return <div className="text-white shadow-xl overflow-hidden flex-1 min-h-0 rounded-md bg-gray-600">
       <div className="h-full flex flex-col p-3">
         <div className="flex items-center justify-between mb-3">
@@ -36,7 +49,9 @@ export function MarketUpdates() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 overflow-y-auto flex-1">
-          {updates.map(update => <div key={update.id} className={`p-3 rounded-lg border transition-all ${update.highlight ? 'bg-purple-900 border-purple-700' : 'bg-gray-800 border-gray-700'} ${update.isNew ? 'animate-in fade-in slide-in-from-bottom-5' : ''} ${update.isUpdating ? 'animate-pulse' : ''}`}>
+          {updates.map(update => <div key={update.id} 
+              onClick={handleItemClick}
+              className={`p-3 rounded-lg border transition-all cursor-pointer hover:opacity-90 ${update.highlight ? 'bg-purple-900 border-purple-700' : 'bg-gray-800 border-gray-700'} ${update.isNew ? 'animate-in fade-in slide-in-from-bottom-5' : ''} ${update.isUpdating ? 'animate-pulse' : ''}`}>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <span className={`text-xs font-bold ${update.type === 'URGENT' ? 'text-red-400' : update.type === 'PREMIUM' ? 'text-purple-400' : update.type === 'SWAP' ? 'text-orange-400' : 'text-green-400'}`}>

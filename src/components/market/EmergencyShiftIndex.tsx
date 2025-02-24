@@ -1,5 +1,8 @@
+
 import { MapPin, AlertCircle, ArrowLeftRight } from "lucide-react";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
+import { toast } from "@/components/ui/use-toast";
+
 export function EmergencyShiftIndex() {
   const {
     updates,
@@ -11,10 +14,18 @@ export function EmergencyShiftIndex() {
     isLoading
   } = useMarketUpdates();
 
-  // Filter only emergency and swap updates and take first 4
-  const emergencyUpdates = updates.filter(update => update.type === 'URGENT' || update.type === 'SWAP').slice(0, 4); // Limit to 4 cards
+  const handleItemClick = () => {
+    toast({
+      title: "Authentication Required",
+      description: "Sign in or sign up to view details",
+      variant: "default",
+    });
+  };
 
-  console.log('Emergency Updates:', emergencyUpdates); // Debug log
+  // Filter only emergency and swap updates and take first 4
+  const emergencyUpdates = updates.filter(update => 
+    update.type === 'URGENT' || update.type === 'SWAP'
+  ).slice(0, 4); // Limit to 4 cards
 
   if (isLoading) {
     return <div className="bg-slate-800 text-white rounded-xl shadow-xl overflow-hidden flex-1 min-h-0 p-4">
@@ -29,6 +40,7 @@ export function EmergencyShiftIndex() {
         </div>
       </div>;
   }
+
   return <div className="text-white shadow-xl overflow-hidden flex-1 min-h-0 rounded-md bg-zinc-400">
       <div className="h-full flex flex-col p-3 bg-slate-600">
         <div className="flex items-center justify-between mb-3">
@@ -50,7 +62,9 @@ export function EmergencyShiftIndex() {
         </div>
         
         <div className="grid grid-cols-2 gap-3 overflow-y-auto flex-1">
-          {emergencyUpdates.map(update => <div key={update.id} className={`p-3 rounded-lg border transition-all ${update.type === 'URGENT' ? 'bg-red-900/50 border-red-700' : 'bg-orange-900/50 border-orange-700'} ${update.isNew ? 'animate-in fade-in slide-in-from-bottom-5' : ''}`}>
+          {emergencyUpdates.map(update => <div key={update.id} 
+              onClick={handleItemClick}
+              className={`p-3 rounded-lg border transition-all cursor-pointer hover:opacity-90 ${update.type === 'URGENT' ? 'bg-red-900/50 border-red-700' : 'bg-orange-900/50 border-orange-700'} ${update.isNew ? 'animate-in fade-in slide-in-from-bottom-5' : ''}`}>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <span className={`text-xs font-bold flex items-center gap-1 ${update.type === 'URGENT' ? 'text-red-400' : 'text-orange-400'}`}>
