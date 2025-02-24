@@ -20,9 +20,7 @@ export interface MarketUpdate {
   isUpdating?: boolean;
 }
 
-const REGIONS = ['USA', 'Dubai', 'Malta', 'South Africa', 'Italy', 'Spain', 'Canada', 'Europe'];
-
-// Demo data to show immediately
+// Demo data to show immediately while real data loads
 const demoUpdates: MarketUpdate[] = [
   {
     id: '1',
@@ -79,7 +77,7 @@ const demoUpdates: MarketUpdate[] = [
     original_rate: 45,
     currency_rate: 1,
     urgency_level: 'high'
-  },
+  }
 ];
 
 export function useMarketUpdates() {
@@ -87,8 +85,8 @@ export function useMarketUpdates() {
   const [lastUpdateTime, setLastUpdateTime] = useState<Date>(new Date());
   const [newUpdatesCount, setNewUpdatesCount] = useState(0);
   const [selectedCurrency, setSelectedCurrency] = useState<string>('EUR');
-  const [isLoading, setIsLoading] = useState(true);
-  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({
+  const [isLoading, setIsLoading] = useState(false);
+  const [exchangeRates] = useState<Record<string, number>>({
     EUR: 1,
     USD: 1.1,
     GBP: 0.86,
@@ -127,15 +125,20 @@ export function useMarketUpdates() {
   useEffect(() => {
     // Initial fetch of real data
     const fetchUpdates = async () => {
-      setIsLoading(true);
       try {
+        setIsLoading(true);
         const { data, error } = await supabase
           .from('market_updates')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(8);
 
-        if (data && !error) {
+        if (error) {
+          console.error('Error fetching updates:', error);
+          return;
+        }
+
+        if (data && data.length > 0) {
           const formattedData = data.map(update => ({
             ...update,
             isNew: true,
@@ -171,7 +174,6 @@ export function useMarketUpdates() {
         (payload) => {
           console.log('Real-time update received:', payload);
           
-          // Update the list based on the type of change
           if (payload.eventType === 'INSERT') {
             const newUpdate = {
               ...payload.new as MarketUpdate,
@@ -213,48 +215,6 @@ export function useMarketUpdates() {
         }
       )
       .subscribe();
-
-    // Simulate real-time updates for demo purposes (only in development)
-    if (process.env.NODE_ENV === 'development') {
-      const interval = setInterval(() => {
-        const randomUpdate = {
-          id: Math.random().toString(),
-          type: ['URGENT', 'NEW', 'SWAP', 'PREMIUM'][Math.floor(Math.random() * 4)] as MarketUpdate['type'],
-          title: ['Head Chef', 'Sommelier', 'Restaurant Manager', 'Executive Sous Chef'][Math.floor(Math.random() * 4)],
-          location: ['Luxury Hotel', 'Fine Dining', 'Resort & Spa', 'Boutique Restaurant'][Math.floor(Math.random() * 4)],
-          region: REGIONS[Math.floor(Math.random() * REGIONS.length)],
-          original_rate: Math.floor(Math.random() * 30) + 25,
-          currency: 'EUR',
-          currency_rate: 1,
-          highlight: Math.random() > 0.7,
-          created_at: new Date().toISOString(),
-          urgency_level: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as 'low' | 'medium' | 'high',
-          isNew: true
-        };
-
-        const formattedUpdate = {
-          ...randomUpdate,
-          rate: formatRate(randomUpdate.original_rate, selectedCurrency)
-        };
-
-        setUpdates(prev => [formattedUpdate, ...prev.slice(0, -1)]);
-        setNewUpdatesCount(prev => prev + 1);
-        setLastUpdateTime(new Date());
-
-        setTimeout(() => {
-          setUpdates(prevUpdates => 
-            prevUpdates.map(update => 
-              update.id === randomUpdate.id ? { ...update, isNew: false } : update
-            )
-          );
-        }, 300);
-      }, 5000);
-
-      return () => {
-        clearInterval(interval);
-        supabase.removeChannel(channel);
-      };
-    }
 
     fetchUpdates();
     
