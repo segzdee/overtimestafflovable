@@ -74,7 +74,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                     'Staff Portal';
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-[#f8f9fe]">
       {/* Mobile Menu Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <Button
@@ -101,7 +101,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
         </div>
 
         <div className="p-4">
-          <p className="text-sm font-semibold text-gray-400 uppercase mb-4">{portalType}</p>
+          <p className="text-sm font-semibold text-[#8898aa] uppercase mb-4">{portalType}</p>
           
           <div className="space-y-1">
             {menuItems.map((item) => (
@@ -113,7 +113,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                 }}
                 className={cn(
                   "w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg",
-                  "text-gray-600 hover:text-primary hover:bg-gray-50",
+                  "text-[#525f7f] hover:text-[#5e72e4] hover:bg-[#f6f9fc]",
                   "transition-colors duration-200"
                 )}
               >
@@ -128,12 +128,27 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
       {/* Main Content */}
       <main className={cn(
         "min-h-screen transition-all duration-200 ease-in-out",
-        "lg:ml-64 bg-gray-100"
+        "lg:ml-64 bg-[#f8f9fe]"
       )}>
-        <div className="py-6 px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="bg-[#5e72e4] pb-32 pt-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 className="text-white text-2xl font-semibold">{portalType}</h1>
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" className="text-white hover:bg-[#5468e4]">
+                <Bell className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" className="text-white hover:bg-[#5468e4]">
+                <Settings className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-48">
           <div className={cn(
-            "max-w-7xl mx-auto",
-            "bg-transparent", 
+            "bg-white rounded-lg shadow-lg p-6",
             className
           )}>
             {children}
