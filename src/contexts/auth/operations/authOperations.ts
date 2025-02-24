@@ -2,7 +2,6 @@
 import { supabase } from "@/lib/supabase/client";
 import { NavigateFunction } from "react-router-dom";
 import { AuthUser } from "../types";
-import { createUserProfile } from "../utils/authUtils";
 import { NotificationPreferences } from "@/lib/types";
 
 export const register = async (
@@ -20,8 +19,8 @@ export const register = async (
       password,
       options: {
         data: {
-          name: name, // Include name in user metadata
-          role: role  // Include role in user metadata
+          name: name,
+          role: role
         }
       }
     });
@@ -35,25 +34,19 @@ export const register = async (
       throw new Error('No user returned from sign up');
     }
 
-    console.log('Created auth user:', user.id); // Debug log
-
-    // Create the user profile
+    // Create the user profile with retry logic
     const { error: profileError } = await supabase.from('profiles').insert({
       id: user.id,
       email: email,
       role: role,
       name: name,
       profile_complete: false
-    });
+    }).maybeSingle();
 
     if (profileError) {
       console.error('Profile creation error:', profileError);
-      // Clean up auth user if profile creation fails
-      await supabase.auth.admin.deleteUser(user.id);
       throw profileError;
     }
-
-    console.log('Created user profile'); // Debug log
 
     // Create notification preferences
     const { error: prefsError } = await supabase.from('notification_preferences').insert({
@@ -61,14 +54,12 @@ export const register = async (
       email: true,
       sms: false,
       push: true
-    });
+    }).maybeSingle();
 
     if (prefsError) {
       console.error('Notification preferences error:', prefsError);
       throw prefsError;
     }
-
-    console.log('Created notification preferences'); // Debug log
 
     toast({
       title: "Account created successfully",
@@ -106,42 +97,41 @@ export const login = async (
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (profileError) throw profileError;
-
-    if (profile) {
-      // Show success message
-      toast({
-        title: "Success",
-        description: "Logged in successfully",
-      });
-      
-      // Redirect based on user role
-      switch (profile.role) {
-        case 'shift-worker':
-          navigate('/dashboard/shift-worker');
-          break;
-        case 'company':
-          navigate('/dashboard/company');
-          break;
-        case 'agency':
-          navigate('/dashboard/agency');
-          break;
-        case 'admin':
-          navigate('/dashboard/admin');
-          break;
-        default:
-          navigate('/login');
-      }
-    } else {
-      // If no profile exists, redirect to login
+    if (!profile) {
       toast({
         variant: "destructive",
         title: "Error",
         description: "User profile not found"
       });
       navigate('/login');
+      return;
+    }
+
+    // Show success message
+    toast({
+      title: "Success",
+      description: "Logged in successfully",
+    });
+    
+    // Redirect based on user role
+    switch (profile.role) {
+      case 'shift-worker':
+        navigate('/dashboard/shift-worker');
+        break;
+      case 'company':
+        navigate('/dashboard/company');
+        break;
+      case 'agency':
+        navigate('/dashboard/agency');
+        break;
+      case 'admin':
+        navigate('/dashboard/admin');
+        break;
+      default:
+        navigate('/login');
     }
   } catch (error) {
     console.error('Login error:', error);
@@ -169,7 +159,7 @@ export const loginWithToken = async (
       .from('profiles')
       .select('*')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (profileError) throw profileError;
     if (!profile) throw new Error('No profile found for token');
@@ -179,7 +169,7 @@ export const loginWithToken = async (
       .from('notification_preferences')
       .select('*')
       .eq('user_id', profile.id)
-      .single();
+      .maybeSingle();
 
     if (prefError && prefError.code !== 'PGRST116') throw prefError;
 
