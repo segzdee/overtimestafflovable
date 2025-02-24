@@ -1,10 +1,7 @@
-
 import { Logo } from "@/components/ui/logo";
 import { RegisterForm } from "@/components/forms/auth/RegisterForm";
-
 export default function Register() {
-  return (
-    <div className="h-screen flex items-center justify-center bg-gray-50 p-4">
+  return <div className="h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <Logo />
@@ -16,11 +13,10 @@ export default function Register() {
           
           <RegisterForm />
           
-          <p className="mt-3 text-xs text-center text-gray-500">
+          <p className="mt-3 text-xs text-center text-slate-700">
             After registering, you'll receive a verification email. Please check your inbox and click the verification link to complete your registration.
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
