@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from "@/lib/supabase/client";
 
@@ -96,6 +97,11 @@ export function useMarketUpdates() {
   });
 
   const formatRate = (original: number, currency: string): string => {
+    if (!exchangeRates[currency]) {
+      console.error(`Exchange rate not found for currency: ${currency}`);
+      return `${original}/hr`;
+    }
+
     const rate = original * exchangeRates[currency];
     const symbol = currency === 'EUR' ? '€' : 
                   currency === 'USD' ? '$' :
@@ -103,8 +109,19 @@ export function useMarketUpdates() {
                   currency === 'AED' ? 'AED ' :
                   currency === 'ZAR' ? 'R ' :
                   currency === 'CAD' ? 'C$' : '';
+    
     return `${symbol}${Math.round(rate)}/hr`;
   };
+
+  // Update all rates when currency changes
+  useEffect(() => {
+    setUpdates(prevUpdates =>
+      prevUpdates.map(update => ({
+        ...update,
+        rate: formatRate(update.original_rate, selectedCurrency)
+      }))
+    );
+  }, [selectedCurrency]);
 
   useEffect(() => {
     // Initial fetch of real data
