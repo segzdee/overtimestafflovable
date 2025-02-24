@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
@@ -30,7 +29,6 @@ const MarketUpdatesSkeleton = () => <div className="bg-gray-900 text-white round
       </div>
     </div>
   </div>;
-
 export default function Index() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -41,9 +39,13 @@ export default function Index() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { login, loginWithToken } = useAuth();
-
+  const {
+    toast
+  } = useToast();
+  const {
+    login,
+    loginWithToken
+  } = useAuth();
   const loginCards = [{
     role: "agency",
     title: "Staffing Agency",
@@ -65,14 +67,12 @@ export default function Index() {
     subtitle: "Activate Agent for Automation",
     icon: "/lovable-uploads/b606326d-d87b-4432-8872-3b0a6ea483c7.png"
   }];
-
   const handleLoginClick = async (role: string) => {
     setActiveRole(role);
     setLoginDialogOpen(true);
     setErrorMessage(null);
     console.log("Login attempt initiated for role:", role);
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -83,7 +83,9 @@ export default function Index() {
         console.log("AI Agent login attempt with token");
         await loginWithToken(token);
       } else {
-        console.log("Standard login attempt", { email });
+        console.log("Standard login attempt", {
+          email
+        });
         await login(email, password);
       }
       toast({
@@ -105,7 +107,6 @@ export default function Index() {
       setIsLoading(false);
     }
   };
-
   return <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
       <HeaderNav mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
       
@@ -119,23 +120,13 @@ export default function Index() {
           <h2 className="text-xl md:text-2xl font-bold text-gray-900">
             Extra Staff, Anytime, Anywhere
           </h2>
-          <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+          <p className="text-sm max-w-2xl mx-auto text-slate-900">
             Got extra time? Need extra shifts? No dinner staff coverage? John canceled? The Overtimestaff Platform connects people with spare time to hospitality companies and agencies using smart AI Integration.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-          {loginCards.map(card => (
-            <LoginCard 
-              key={card.role}
-              role={card.role}
-              title={card.title}
-              subtitle={card.subtitle}
-              icon={card.icon}
-              isActive={activeRole === card.role}
-              onClick={handleLoginClick}
-            />
-          ))}
+          {loginCards.map(card => <LoginCard key={card.role} role={card.role} title={card.title} subtitle={card.subtitle} icon={card.icon} isActive={activeRole === card.role} onClick={handleLoginClick} />)}
         </div>
 
         <div className="space-y-3 flex-1 min-h-0 flex flex-col">
@@ -161,23 +152,7 @@ export default function Index() {
       <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center">
         <div className="bg-white p-4 rounded-lg animate-pulse">Loading...</div>
       </div>}>
-        {loginDialogOpen && (
-          <LoginDialog
-            open={loginDialogOpen}
-            onOpenChange={setLoginDialogOpen}
-            activeRole={activeRole}
-            token={token}
-            setToken={setToken}
-            email={email}
-            setEmail={setEmail}
-            password={password}
-            setPassword={setPassword}
-            isLoading={isLoading}
-            errorMessage={errorMessage}
-            onSubmit={handleSubmit}
-            loginCards={loginCards}
-          />
-        )}
+        {loginDialogOpen && <LoginDialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen} activeRole={activeRole} token={token} setToken={setToken} email={email} setEmail={setEmail} password={password} setPassword={setPassword} isLoading={isLoading} errorMessage={errorMessage} onSubmit={handleSubmit} loginCards={loginCards} />}
       </Suspense>
     </div>;
 }
