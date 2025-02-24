@@ -9,6 +9,7 @@ import { FormData } from "@/features/agency/types";
 import { AgencyProfile } from "@/features/agency/components/AgencyProfile";
 import { AIAgents } from "@/features/agency/components/AIAgents";
 import { ShiftManagementInfo } from "@/features/agency/components/ShiftManagementInfo";
+import { BulkAssignmentWizard } from "@/features/agency/components/BulkAssignmentWizard";
 
 export default function AgencyDashboard() {
   const { user, logout, updateProfile, generateAiToken, aiTokens, revokeAiToken } = useAuth();
@@ -91,6 +92,8 @@ export default function AgencyDashboard() {
             </Button>
           </div>
         </div>
+
+        <BulkAssignmentWizard />
 
         <AgencyProfile 
           initialData={initialFormData}

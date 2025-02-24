@@ -7,6 +7,7 @@ import { StatsOverview } from "@/features/shift-worker/components/StatsOverview"
 import { AvailableShiftsList } from "@/features/shift-worker/components/AvailableShiftsList";
 import { UrgentShiftsList } from "@/features/shift-worker/components/UrgentShiftsList";
 import { WorkerProfile } from "@/features/shift-worker/components/WorkerProfile";
+import { ShiftEarningsOptimizer } from "@/features/shift-worker/components/ShiftEarningsOptimizer";
 
 export default function ShiftWorkerDashboard() {
   const [badges] = useState(['Top Performer', 'Reliable', 'Experienced']);
@@ -45,6 +46,8 @@ export default function ShiftWorkerDashboard() {
         </div>
 
         <StatsOverview />
+
+        <ShiftEarningsOptimizer />
 
         <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
           <AvailableShiftsList 

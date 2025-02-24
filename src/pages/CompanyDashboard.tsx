@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -6,6 +7,7 @@ import { AlertCircle, Clock, Users, CalendarDays, DollarSign, Bot } from "lucide
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth";
 import { useToast } from "@/components/ui/use-toast";
+import { StaffingCostSimulator } from "@/features/company/components/StaffingCostSimulator";
 
 export default function CompanyDashboard() {
   const { user, generateAiToken } = useAuth();
@@ -20,7 +22,6 @@ export default function CompanyDashboard() {
         title: "AI Agent Activated",
         description: "Your AI agent has been successfully activated. Save this token for future use.",
       });
-      // Here you would typically integrate with a payment processing service
       console.log("AI Agent Token:", token);
     } catch (error) {
       toast({
@@ -38,7 +39,6 @@ export default function CompanyDashboard() {
     if (hoursRemaining < 12) {
       alert('Warning: 50% Cancellation Fee Applies');
     }
-    // Stub: Will be connected to Supabase
     alert('Shift Cancelled');
   };
 
@@ -86,6 +86,8 @@ export default function CompanyDashboard() {
             trend={{ value: "-8% vs last month", positive: false }}
           />
         </div>
+
+        <StaffingCostSimulator />
 
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
