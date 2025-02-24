@@ -3,22 +3,37 @@ import { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
 import { AuthUser } from "../types";
 
-export const setUserFromSupabase = async (supabaseUser: User, setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>) => {
-  console.log("Setting up user from Supabase data:", supabaseUser.id);
+export const setUserFromSupabase = async (
+  supabaseUser: User,
+  setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>
+) => {
+  try {
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', supabaseUser.id)
+      .single();
 
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', supabaseUser.id)
-    .single();
+    if (error) {
+      console.error("Error fetching user profile:", error);
+      throw error;
+    }
 
-  if (error) {
-    console.error("Error fetching user profile:", error);
-    throw error;
-  }
+    if (!profile) {
+      console.warn("No profile found for user:", supabaseUser.id);
+      return;
+    }
 
-  if (profile) {
-    console.log("Profile found, updating user state");
+    // Update the email verification status
+    if (supabaseUser.email_confirmed_at && !profile.email_verified) {
+      await supabase
+        .from('profiles')
+        .update({ email_verified: true })
+        .eq('id', supabaseUser.id);
+      
+      profile.email_verified = true;
+    }
+
     setUser({
       id: supabaseUser.id,
       email: supabaseUser.email!,
@@ -37,8 +52,9 @@ export const setUserFromSupabase = async (supabaseUser: User, setUser: React.Dis
       verificationCompletedAt: profile.verification_completed_at,
       reviewNotes: profile.review_notes
     });
-  } else {
-    console.warn("No profile found for user:", supabaseUser.id);
+  } catch (error) {
+    console.error("Error in setUserFromSupabase:", error);
+    throw error;
   }
 };
 

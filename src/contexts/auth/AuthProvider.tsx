@@ -14,41 +14,71 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
   const operations = useAuthOperations({ setUser, setAiTokens, navigate, toast });
 
   useEffect(() => {
-    console.log("AuthProvider: Checking initial session");
-    
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        console.log("Initial session found, setting up user");
-        operations.setUserFromSupabase(session.user);
-      } else {
-        console.log("No initial session found");
+    // Persist session in localStorage
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        localStorage.setItem('supabase.auth.token', session?.access_token || '');
       }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state change event:", event);
-      
-      if (session?.user) {
-        console.log("Session updated, refreshing user data");
-        await operations.setUserFromSupabase(session.user);
-      } else {
-        console.log("Session ended, clearing user data");
+      if (event === 'SIGNED_OUT') {
+        localStorage.removeItem('supabase.auth.token');
         setUser(null);
       }
     });
 
+    // Check for existing session
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          console.log("Restoring session for user:", session.user.id);
+          await operations.setUserFromSupabase(session.user);
+          
+          // Verify the token is still valid
+          const { error: tokenError } = await supabase.auth.getUser(session.access_token);
+          if (tokenError) {
+            console.log("Invalid session token, signing out");
+            await supabase.auth.signOut();
+            setUser(null);
+          }
+        }
+      } catch (error) {
+        console.error("Session initialization error:", error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+
+    // Refresh session periodically
+    const refreshInterval = setInterval(async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { error } = await supabase.auth.refreshSession();
+        if (error) {
+          console.error("Session refresh error:", error);
+          await supabase.auth.signOut();
+          setUser(null);
+        }
+      }
+    }, 3600000); // Refresh every hour
+
     return () => {
-      console.log("Cleaning up auth subscriptions");
-      subscription.unsubscribe();
+      clearInterval(refreshInterval);
     };
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // Or your loading component
+  }
 
   return (
     <AuthContext.Provider
