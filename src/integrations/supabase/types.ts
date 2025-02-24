@@ -161,6 +161,96 @@ export type Database = {
           },
         ]
       }
+      ai_agent_audit_logs: {
+        Row: {
+          action: string
+          agent_id: string
+          details: string | null
+          id: number
+          ip_address: string | null
+          status: string
+          timestamp: string | null
+        }
+        Insert: {
+          action: string
+          agent_id: string
+          details?: string | null
+          id?: number
+          ip_address?: string | null
+          status: string
+          timestamp?: string | null
+        }
+        Update: {
+          action?: string
+          agent_id?: string
+          details?: string | null
+          id?: number
+          ip_address?: string | null
+          status?: string
+          timestamp?: string | null
+        }
+        Relationships: []
+      }
+      ai_agent_permissions: {
+        Row: {
+          agent_id: string
+          company_id: string
+          created_at: string | null
+          id: number
+          is_active: boolean | null
+          permissions: string[]
+          updated_at: string | null
+        }
+        Insert: {
+          agent_id: string
+          company_id: string
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          permissions: string[]
+          updated_at?: string | null
+        }
+        Update: {
+          agent_id?: string
+          company_id?: string
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          permissions?: string[]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      ai_agent_tokens: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          expires_at: string
+          id: number
+          is_revoked: boolean | null
+          last_used: string | null
+          token: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          expires_at: string
+          id?: number
+          is_revoked?: boolean | null
+          last_used?: string | null
+          token: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          expires_at?: string
+          id?: number
+          is_revoked?: boolean | null
+          last_used?: string | null
+          token?: string
+        }
+        Relationships: []
+      }
       ai_agents: {
         Row: {
           activation_date: string | null
@@ -315,6 +405,36 @@ export type Database = {
           title?: string
           type?: string
           urgency_level?: string | null
+        }
+        Relationships: []
+      }
+      notification_preferences: {
+        Row: {
+          created_at: string | null
+          email: boolean | null
+          id: number
+          push: boolean | null
+          sms: boolean | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: boolean | null
+          id?: number
+          push?: boolean | null
+          sms?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: boolean | null
+          id?: number
+          push?: boolean | null
+          sms?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

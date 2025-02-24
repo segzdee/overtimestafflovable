@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase/client";
 import { AuthUser } from "../types";
 import { setUserFromSupabase, DEV_PASSWORD } from "../utils/authUtils";
 import { NavigateFunction } from "react-router-dom";
+import { NotificationPreferences } from "@/lib/types";
 
 export const register = async (
   email: string,
@@ -37,6 +38,20 @@ export const register = async (
       ]);
 
     if (profileError) throw profileError;
+
+    // Create default notification preferences
+    const { error: notificationError } = await supabase
+      .from('notification_preferences')
+      .insert([
+        {
+          user_id: data.user.id,
+          email: true,
+          sms: false,
+          push: true
+        }
+      ]);
+
+    if (notificationError) throw notificationError;
 
     toast({
       title: "Registration successful",
@@ -109,7 +124,16 @@ export const devLogin = async (
     profileComplete: true,
     verificationStatus: "verified",
     emailVerified: true,
-    verificationCompletedAt: new Date().toISOString()
+    verificationCompletedAt: new Date().toISOString(),
+    notificationPreferences: {
+      id: 0,
+      userId: "dev-user",
+      email: true,
+      sms: false,
+      push: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
   };
 
   setUser(devUser);
@@ -117,5 +141,23 @@ export const devLogin = async (
   toast({
     title: "Developer Access Granted",
     description: "Logged in with developer privileges"
+  });
+};
+
+export const updateNotificationPreferences = async (
+  userId: string,
+  preferences: Partial<NotificationPreferences>,
+  toast: any
+) => {
+  const { error } = await supabase
+    .from('notification_preferences')
+    .update(preferences)
+    .eq('user_id', userId);
+
+  if (error) throw error;
+
+  toast({
+    title: "Preferences Updated",
+    description: "Your notification preferences have been saved."
   });
 };

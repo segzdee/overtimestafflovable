@@ -1,6 +1,5 @@
-
 import { User } from "@supabase/supabase-js";
-import { BaseRole } from "@/lib/types";
+import { BaseRole, NotificationPreferences } from "@/lib/types";
 
 export type VerificationStatus = 'pending' | 'verified' | 'under_review' | 'rejected';
 
@@ -21,6 +20,7 @@ export interface AuthUser {
   verificationSentAt?: string;
   verificationCompletedAt?: string;
   reviewNotes?: string;
+  notificationPreferences?: NotificationPreferences;
 }
 
 export interface AIToken {
@@ -42,6 +42,7 @@ export interface AuthContextType {
   devLogin: (password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (userId: string, profileData: Partial<AuthUser>) => Promise<void>;
+  updateNotificationPreferences: (preferences: Partial<NotificationPreferences>) => Promise<void>;
   generateAiToken: (name: string, userId: string) => Promise<AIToken>;
   revokeAiToken: (token: string) => Promise<void>;
   aiTokens: AIToken[];
