@@ -29,16 +29,31 @@ export const setUserFromSupabase = async (
       return;
     }
 
-    // Set default notification preferences
-    const defaultNotificationPreferences: NotificationPreferences = {
-      id: 0, // This will be set by the database
-      userId: profile.id,
-      email: true,
-      sms: false,
-      push: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+    // Get or create notification preferences
+    let { data: notificationPrefs, error: prefError } = await supabase
+      .from('notification_preferences')
+      .select('*')
+      .eq('user_id', profile.id)
+      .single();
+
+    if (prefError && prefError.code === 'PGRST116') {
+      // If preferences don't exist, create them with defaults
+      const { data: newPrefs, error: createError } = await supabase
+        .from('notification_preferences')
+        .insert({
+          user_id: profile.id,
+          email: true,
+          sms: false,
+          push: true
+        })
+        .select()
+        .single();
+
+      if (createError) throw createError;
+      notificationPrefs = newPrefs;
+    } else if (prefError) {
+      throw prefError;
+    }
 
     // Set the authenticated user with profile data
     setUser({
@@ -49,7 +64,7 @@ export const setUserFromSupabase = async (
       profileComplete: profile.profile_complete,
       emailVerified: supabaseUser.email_confirmed_at ? true : false,
       verificationStatus: 'pending',
-      notificationPreferences: defaultNotificationPreferences
+      notificationPreferences: notificationPrefs
     });
     
   } catch (error) {
@@ -64,11 +79,27 @@ export const createUserProfile = async (
   role: AuthUser["role"],
   name: string
 ): Promise<{ data: any; error: PostgrestError | null }> => {
-  return await supabase.from('profiles').insert({
+  // Create user profile
+  const { error: profileError } = await supabase.from('profiles').insert({
     id: userId,
     email,
     role,
     name,
     profile_complete: false
   });
+
+  if (profileError) return { data: null, error: profileError };
+
+  // Create default notification preferences
+  const { data: prefsData, error: prefsError } = await supabase
+    .from('notification_preferences')
+    .insert({
+      user_id: userId,
+      email: true,
+      sms: false,
+      push: true
+    })
+    .select();
+
+  return { data: prefsData, error: prefsError };
 };

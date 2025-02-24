@@ -354,6 +354,36 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          email: boolean | null
+          id: number
+          push: boolean | null
+          sms: boolean | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: boolean | null
+          id?: number
+          push?: boolean | null
+          sms?: boolean | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: boolean | null
+          id?: number
+          push?: boolean | null
+          sms?: boolean | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
