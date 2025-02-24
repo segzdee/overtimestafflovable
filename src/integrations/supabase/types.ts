@@ -356,50 +356,33 @@ export type Database = {
       }
       profiles: {
         Row: {
-          avatar_url: string | null
-          created_at: string | null
+          created_at: string
           email: string
-          full_name: string | null
           id: string
-          metadata: Json | null
-          phone: string | null
-          status: Database["public"]["Enums"]["tenant_status"] | null
-          tenant_id: string | null
-          updated_at: string | null
+          name: string
+          profile_complete: boolean | null
+          role: string
+          updated_at: string
         }
         Insert: {
-          avatar_url?: string | null
-          created_at?: string | null
+          created_at?: string
           email: string
-          full_name?: string | null
           id: string
-          metadata?: Json | null
-          phone?: string | null
-          status?: Database["public"]["Enums"]["tenant_status"] | null
-          tenant_id?: string | null
-          updated_at?: string | null
+          name: string
+          profile_complete?: boolean | null
+          role: string
+          updated_at?: string
         }
         Update: {
-          avatar_url?: string | null
-          created_at?: string | null
+          created_at?: string
           email?: string
-          full_name?: string | null
           id?: string
-          metadata?: Json | null
-          phone?: string | null
-          status?: Database["public"]["Enums"]["tenant_status"] | null
-          tenant_id?: string | null
-          updated_at?: string | null
+          name?: string
+          profile_complete?: boolean | null
+          role?: string
+          updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       shift_applications: {
         Row: {

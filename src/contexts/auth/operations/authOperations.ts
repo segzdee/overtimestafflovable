@@ -1,8 +1,8 @@
 
 import { supabase } from "@/lib/supabase/client";
-import { AuthUser } from "../types";
-import { setUserFromSupabase, DEV_PASSWORD } from "../utils/authUtils";
 import { NavigateFunction } from "react-router-dom";
+import { AuthUser } from "../types";
+import { createUserProfile } from "../utils/authUtils";
 
 export const register = async (
   email: string,
@@ -12,64 +12,34 @@ export const register = async (
   toast: any,
   category?: string
 ) => {
-  console.log("Starting registration process");
+  try {
+    const { data: { user }, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
-  // First check if user already exists
-  const { data: existingUser } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('email', email)
-    .single();
+    if (signUpError) throw signUpError;
+    if (!user) throw new Error('No user returned from sign up');
 
-  if (existingUser) {
-    throw new Error('An account with this email already exists');
-  }
+    // Create the user profile
+    const { error: profileError } = await createUserProfile(
+      user.id,
+      email,
+      role,
+      name
+    );
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { role, name, category },
-      emailRedirectTo: `${window.location.origin}/verify-email`
-    }
-  });
+    if (profileError) throw profileError;
 
-  if (error) {
-    console.error("Registration error:", error);
+    toast({
+      title: "Success",
+      description: "Please check your email to verify your account",
+    });
+
+  } catch (error) {
+    console.error('Registration error:', error);
     throw error;
   }
-
-  if (!data.user) {
-    throw new Error('Registration failed');
-  }
-
-  // Create profile after successful registration
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .insert([
-      {
-        id: data.user.id,
-        email,
-        role,
-        name,
-        category,
-        email_verified: false,
-        profile_complete: false,
-        verification_status: 'pending'
-      }
-    ]);
-
-  if (profileError) {
-    console.error("Profile creation error:", profileError);
-    throw profileError;
-  }
-
-  toast({
-    title: "Registration successful",
-    description: "Please check your email to verify your account.",
-  });
-
-  return data;
 };
 
 export const login = async (
@@ -78,89 +48,59 @@ export const login = async (
   navigate: NavigateFunction,
   toast: any
 ) => {
-  console.log("Starting login process");
-
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data: { user }, error } = await supabase.auth.signInWithPassword({
     email,
-    password
+    password,
   });
 
-  if (error) {
-    console.error("Login error:", error);
-    throw error;
-  }
+  if (error) throw error;
+  if (!user) throw new Error('No user returned from sign in');
 
-  if (!data.user) {
-    throw new Error('Login failed');
-  }
-
-  // Check email verification status
+  // Get user profile to determine where to redirect
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
-    .eq('id', data.user.id)
+    .select('role')
+    .eq('id', user.id)
     .single();
 
-  if (!profile?.email_verified) {
-    const { error: resendError } = await supabase.auth.resend({
-      type: 'signup',
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/verify-email`
-      }
-    });
-
-    if (!resendError) {
-      toast({
-        title: "Email verification required",
-        description: "We've sent you a new verification email. Please check your inbox.",
-        variant: "warning"
-      });
-    }
-    throw new Error('Please verify your email before logging in');
-  }
-
-  // Update last login timestamp
-  await supabase
-    .from('profiles')
-    .update({ last_login: new Date().toISOString() })
-    .eq('id', data.user.id);
-
-  toast({
-    title: "Login successful",
-    description: "Welcome back!"
-  });
-
-  // Navigate based on profile completion
-  if (!profile.profile_complete) {
-    navigate(`/dashboard/${profile.role}/complete-profile`);
+  if (profile) {
+    // Redirect based on user role
+    navigate(`/dashboard/${profile.role.toLowerCase()}`);
   } else {
-    navigate(`/dashboard/${profile.role}`);
+    // If no profile exists, redirect to login
+    navigate('/login');
   }
-
-  return data;
 };
 
 export const loginWithToken = async (
   token: string,
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>
 ) => {
-  console.log("Starting token login process");
+  // Implementation for AI agent token login
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  
+  if (error) throw error;
+  if (!user) throw new Error('Invalid token');
 
-  const { data, error } = await supabase.auth.verifyOtp({
-    token_hash: token,
-    type: 'magiclink'
+  // Get the user's profile
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) throw new Error('No profile found for token');
+
+  setUser({
+    id: profile.id,
+    email: profile.email,
+    role: profile.role,
+    name: profile.name,
+    profileComplete: profile.profile_complete,
+    emailVerified: user.email_confirmed_at ? true : false,
+    verificationStatus: 'pending',
+    notificationPreferences: {}
   });
-
-  if (error) {
-    console.error("Token verification error:", error);
-    throw error;
-  }
-
-  if (data.user) {
-    console.log("Token verified, setting up user session");
-    await setUserFromSupabase(data.user, setUser);
-  }
 };
 
 export const devLogin = async (
@@ -168,24 +108,6 @@ export const devLogin = async (
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>,
   toast: any
 ) => {
-  if (password !== DEV_PASSWORD) {
-    throw new Error('Invalid development password');
-  }
-
-  const testUser = {
-    id: 'dev-user',
-    email: 'dev@example.com',
-    role: 'agency' as AuthUser['role'],
-    name: 'Dev User',
-    profileComplete: true,
-    emailVerified: true,
-    verificationStatus: 'verified' as AuthUser['verificationStatus']
-  };
-
-  setUser(testUser);
-  
-  toast({
-    title: "Development login successful",
-    description: "Logged in with development account"
-  });
+  // Implementation for dev login if needed
+  throw new Error('Dev login not implemented');
 };
