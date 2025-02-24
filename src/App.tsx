@@ -30,71 +30,73 @@ const queryClient = new QueryClient();
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <div className="h-full">
           <Toaster />
           <Sonner />
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/token-validation" element={<TokenValidation />} />
-            <Route path="/find-shifts" element={<FindShifts />} />
-            <Route path="/find-staff" element={<FindStaff />} />
-            
-            {/* New Public Routes */}
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/blog" element={<Blog />} />
-            
-            {/* Dashboard Routes */}
-            <Route
-              path="/dashboard/shift-worker"
-              element={
-                <ProtectedRoute allowedRoles={["shift-worker"]}>
-                  <ShiftWorkerDashboard />
-                </ProtectedRoute>
-              }
-            />
-            
-            <Route
-              path="/dashboard/company"
-              element={
-                <ProtectedRoute allowedRoles={["company"]}>
-                  <CompanyDashboard />
-                </ProtectedRoute>
-              }
-            />
-            
-            <Route
-              path="/dashboard/admin"
-              element={
-                <ProtectedRoute allowedRoles={["admin"]}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            
-            <Route
-              path="/dashboard/agency"
-              element={
-                <ProtectedRoute allowedRoles={["agency"]}>
-                  <AgencyDashboard />
-                </ProtectedRoute>
-              }
-            />
-            
-            {/* Catch all for 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+          <TooltipProvider>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/token-validation" element={<TokenValidation />} />
+              <Route path="/find-shifts" element={<FindShifts />} />
+              <Route path="/find-staff" element={<FindStaff />} />
+              
+              {/* New Public Routes */}
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/blog" element={<Blog />} />
+              
+              {/* Dashboard Routes */}
+              <Route
+                path="/dashboard/shift-worker"
+                element={
+                  <ProtectedRoute allowedRoles={["shift-worker"]}>
+                    <ShiftWorkerDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              
+              <Route
+                path="/dashboard/company"
+                element={
+                  <ProtectedRoute allowedRoles={["company"]}>
+                    <CompanyDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              
+              <Route
+                path="/dashboard/admin"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              
+              <Route
+                path="/dashboard/agency"
+                element={
+                  <ProtectedRoute allowedRoles={["agency"]}>
+                    <AgencyDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Catch all for 404 */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </TooltipProvider>
+        </div>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 };
 
