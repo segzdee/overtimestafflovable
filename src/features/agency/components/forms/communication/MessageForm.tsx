@@ -73,4 +73,71 @@ export function MessageForm() {
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
                 <SelectContent>
-                
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="subject">Subject</Label>
+            <Input
+              id="subject"
+              value={message.subject}
+              onChange={(e) =>
+                setMessage((prev) => ({ ...prev, subject: e.target.value }))
+              }
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="content">Message</Label>
+            <Textarea
+              id="content"
+              value={message.content}
+              onChange={(e) =>
+                setMessage((prev) => ({ ...prev, content: e.target.value }))
+              }
+              className="min-h-[200px]"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="attachments">Attachments</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="attachments"
+                type="file"
+                multiple
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => document.getElementById("attachments")?.click()}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {message.attachments?.length
+                  ? `${message.attachments.length} files selected`
+                  : "Upload Files"}
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button type="submit">
+              <Send className="h-4 w-4 mr-2" />
+              Send Message
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
