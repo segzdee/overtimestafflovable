@@ -21,6 +21,10 @@ import CompanyDashboard from "./pages/CompanyDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AgencyDashboard from "./pages/AgencyDashboard";
 import NotFound from "./pages/NotFound";
+import Privacy from "./pages/privacy";
+import Terms from "./pages/terms";
+import Contact from "./pages/contact";
+import Blog from "./pages/blog";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +45,12 @@ const App = () => {
             <Route path="/token-validation" element={<TokenValidation />} />
             <Route path="/find-shifts" element={<FindShifts />} />
             <Route path="/find-staff" element={<FindStaff />} />
+            
+            {/* New Public Routes */}
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/blog" element={<Blog />} />
             
             {/* Dashboard Routes */}
             <Route
