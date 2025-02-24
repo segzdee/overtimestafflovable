@@ -39,7 +39,7 @@ export function EmergencyShiftIndex() {
       </div>;
   }
   return <div className="text-white shadow-xl overflow-hidden flex-1 min-h-0 rounded-md bg-zinc-400">
-      <div className="h-full flex flex-col p-3 bg-gray-500">
+      <div className="h-full flex flex-col p-3 bg-gray-700">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <h3 className="text-xs font-semibold text-green-400">EMERGENCY & SHIFT SWAP INDEX</h3>
