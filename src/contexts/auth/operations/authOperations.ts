@@ -140,3 +140,52 @@ export const login = async (
 
   return data;
 };
+
+export const loginWithToken = async (
+  token: string,
+  setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>
+) => {
+  console.log("Starting token login process");
+
+  const { data, error } = await supabase.auth.verifyOtp({
+    token_hash: token,
+    type: 'magiclink'
+  });
+
+  if (error) {
+    console.error("Token verification error:", error);
+    throw error;
+  }
+
+  if (data.user) {
+    console.log("Token verified, setting up user session");
+    await setUserFromSupabase(data.user, setUser);
+  }
+};
+
+export const devLogin = async (
+  password: string,
+  setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>,
+  toast: any
+) => {
+  if (password !== DEV_PASSWORD) {
+    throw new Error('Invalid development password');
+  }
+
+  const testUser = {
+    id: 'dev-user',
+    email: 'dev@example.com',
+    role: 'agency' as AuthUser['role'],
+    name: 'Dev User',
+    profileComplete: true,
+    emailVerified: true,
+    verificationStatus: 'verified' as AuthUser['verificationStatus']
+  };
+
+  setUser(testUser);
+  
+  toast({
+    title: "Development login successful",
+    description: "Logged in with development account"
+  });
+};
