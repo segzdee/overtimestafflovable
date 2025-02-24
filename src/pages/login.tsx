@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
@@ -39,18 +40,18 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="w-full max-w-md space-y-6">
         <div className="text-center">
           <Logo />
-          <h2 className="mt-6 text-2xl font-bold">Welcome back</h2>
-          <p className="mt-2 text-gray-600">
+          <h2 className="mt-4 text-xl font-bold">Welcome back</h2>
+          <p className="mt-1 text-sm text-gray-600">
             Please sign in to your account
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-sm border space-y-4">
+          <div className="space-y-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email
@@ -94,27 +95,27 @@ export default function Login() {
             {isLoading ? "Signing in..." : "Sign in"}
           </Button>
 
-          <div className="text-center">
-            <Link
-              to="/"
-              className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+          <div className="text-center text-sm text-gray-600">
+            Don't have an account?{" "}
+            <Button
+              variant="link"
+              className="p-0 h-auto font-semibold text-purple-600 hover:text-purple-500"
+              onClick={() => navigate("/register")}
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to home
-            </Link>
+              Sign up
+            </Button>
           </div>
         </form>
 
-        <p className="text-center text-sm text-gray-600">
-          Don't have an account?{" "}
-          <Button
-            variant="link"
-            className="p-0 h-auto font-semibold text-purple-600 hover:text-purple-500"
-            onClick={() => navigate("/register")}
+        <div className="text-center">
+          <Link
+            to="/"
+            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
           >
-            Sign up
-          </Button>
-        </p>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to home
+          </Link>
+        </div>
       </div>
     </div>
   );

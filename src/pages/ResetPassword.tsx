@@ -53,18 +53,18 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6">
         <div className="text-center">
           <Logo />
-          <h2 className="mt-6 text-2xl font-bold">Set new password</h2>
-          <p className="mt-2 text-gray-600">
+          <h2 className="mt-4 text-xl font-bold">Set new password</h2>
+          <p className="mt-1 text-sm text-gray-600">
             Please enter your new password below.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-sm border space-y-4">
+          <div className="space-y-3">
             <Input
               type="password"
               placeholder="New password"
