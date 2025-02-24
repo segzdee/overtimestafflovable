@@ -42,8 +42,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider
       value={{
         user,
-        ...operations,
-        aiTokens
+        aiTokens,
+        ...operations
       }}
     >
       {children}

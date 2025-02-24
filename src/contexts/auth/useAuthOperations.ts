@@ -1,9 +1,11 @@
+
 import { NavigateFunction } from "react-router-dom";
 import { AuthUser, AIToken } from "./types";
 import { setUserFromSupabase } from "./utils/authUtils";
 import { register, login, loginWithToken, devLogin } from "./operations/authOperations";
 import { updateProfile, generateAiToken, revokeAiToken } from "./operations/profileOperations";
 import { supabase } from "@/lib/supabase/client";
+import { NotificationPreferences } from "@/lib/types";
 
 interface AuthOperationsProps {
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
@@ -39,6 +41,36 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
     await updateProfile(userId, profileData, setUser, toast);
   };
 
+  const handleUpdateNotificationPreferences = async (preferences: Partial<NotificationPreferences>) => {
+    if (!setUser) return;
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("No user found");
+
+    const { error } = await supabase
+      .from('notification_preferences')
+      .update(preferences)
+      .eq('user_id', user.id);
+
+    if (error) throw error;
+
+    setUser(currentUser => {
+      if (!currentUser) return null;
+      return {
+        ...currentUser,
+        notificationPreferences: {
+          ...currentUser.notificationPreferences,
+          ...preferences
+        } as NotificationPreferences
+      };
+    });
+
+    toast({
+      title: "Preferences Updated",
+      description: "Your notification preferences have been saved."
+    });
+  };
+
   const handleGenerateAiToken = async (name: string, userId: string): Promise<AIToken> => {
     return await generateAiToken(name, userId, setAiTokens);
   };
@@ -67,6 +99,7 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
     devLogin: handleDevLogin,
     logout,
     updateProfile: handleUpdateProfile,
+    updateNotificationPreferences: handleUpdateNotificationPreferences,
     generateAiToken: handleGenerateAiToken,
     revokeAiToken: handleRevokeAiToken
   };
