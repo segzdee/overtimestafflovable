@@ -71,7 +71,8 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
   const menuItems = getMenuItems();
   const portalType = user?.role === 'agency' ? 'Agency Portal' : 
                     user?.role === 'company' ? 'Business Portal' : 
-                    'Staff Portal';
+                    user?.role === 'shift-worker' ? 'Staff Portal' : 
+                    'Portal';
 
   return (
     <div className="min-h-screen bg-[#f8f9fe]">
