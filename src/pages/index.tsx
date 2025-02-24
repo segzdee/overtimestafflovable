@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { Suspense, lazy } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
 import { useToast } from "@/components/ui/use-toast";
@@ -7,18 +7,37 @@ import { UserCircle2, Building2, Building, Bot } from "lucide-react";
 import { HeaderNav } from "@/components/layout/HeaderNav";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { LoginCard } from "@/components/auth/LoginCard";
-import { MarketUpdates } from "@/components/market/MarketUpdates";
-import { LoginDialog } from "@/components/auth/LoginDialog";
+
+// Lazy load components that are not immediately visible
+const LoginDialog = lazy(() => import("@/components/auth/LoginDialog"));
+const MarketUpdates = lazy(() => import("@/components/market/MarketUpdates").then(module => ({ default: module.MarketUpdates })));
+
+// Loading fallback for market updates
+const MarketUpdatesSkeleton = () => (
+  <div className="bg-gray-900 text-white rounded-xl shadow-xl overflow-hidden flex-1 min-h-0 p-4">
+    <div className="animate-pulse space-y-4">
+      <div className="h-4 bg-gray-800 rounded w-1/4"></div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="p-4 bg-gray-800 rounded-lg">
+            <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+            <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 export default function Index() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [token, setToken] = useState("");
-  const [activeRole, setActiveRole] = useState<string | null>(null);
-  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [token, setToken] = React.useState("");
+  const [activeRole, setActiveRole] = React.useState<string | null>(null);
+  const [loginDialogOpen, setLoginDialogOpen] = React.useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -134,7 +153,9 @@ export default function Index() {
           ))}
         </div>
 
-        <MarketUpdates />
+        <Suspense fallback={<MarketUpdatesSkeleton />}>
+          <MarketUpdates />
+        </Suspense>
       </main>
 
       <footer className="h-12 flex items-center justify-center border-t">
@@ -146,21 +167,27 @@ export default function Index() {
         </div>
       </footer>
 
-      <LoginDialog
-        open={loginDialogOpen}
-        onOpenChange={setLoginDialogOpen}
-        activeRole={activeRole}
-        token={token}
-        setToken={setToken}
-        email={email}
-        setEmail={setEmail}
-        password={password}
-        setPassword={setPassword}
-        isLoading={isLoading}
-        errorMessage={errorMessage}
-        onSubmit={handleSubmit}
-        loginCards={loginCards}
-      />
+      <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+        <div className="bg-white p-4 rounded-lg animate-pulse">Loading...</div>
+      </div>}>
+        {loginDialogOpen && (
+          <LoginDialog
+            open={loginDialogOpen}
+            onOpenChange={setLoginDialogOpen}
+            activeRole={activeRole}
+            token={token}
+            setToken={setToken}
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            isLoading={isLoading}
+            errorMessage={errorMessage}
+            onSubmit={handleSubmit}
+            loginCards={loginCards}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }
