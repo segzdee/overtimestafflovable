@@ -31,7 +31,7 @@ export const MarketUpdates = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-y-auto flex-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 overflow-y-auto flex-1">
           {updates.map((update) => (
             <div
               key={update.id}
@@ -78,4 +78,4 @@ export const MarketUpdates = () => {
       </div>
     </div>
   );
-}
+};
