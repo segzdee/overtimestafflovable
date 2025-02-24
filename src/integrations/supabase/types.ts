@@ -457,6 +457,73 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_participants: {
+        Row: {
+          chat_room_id: string | null
+          created_at: string | null
+          id: string
+          last_read_at: string | null
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          chat_room_id?: string | null
+          created_at?: string | null
+          id?: string
+          last_read_at?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          chat_room_id?: string | null
+          created_at?: string | null
+          id?: string
+          last_read_at?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_participants_chat_room_id_fkey"
+            columns: ["chat_room_id"]
+            isOneToOne: false
+            referencedRelation: "chat_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_rooms: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string | null
+          shift_id: string | null
+          type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+          shift_id?: string | null
+          type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+          shift_id?: string | null
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_rooms_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["shift_id"]
+          },
+        ]
+      }
       clock_records: {
         Row: {
           clock_id: string
@@ -539,6 +606,56 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string | null
+          due_date: string | null
+          from_user_id: string | null
+          id: string
+          items: Json | null
+          payment_id: string | null
+          status: string | null
+          to_user_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency?: string | null
+          due_date?: string | null
+          from_user_id?: string | null
+          id?: string
+          items?: Json | null
+          payment_id?: string | null
+          status?: string | null
+          to_user_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string | null
+          due_date?: string | null
+          from_user_id?: string | null
+          id?: string
+          items?: Json | null
+          payment_id?: string | null
+          status?: string | null
+          to_user_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["payment_id"]
           },
         ]
       }
@@ -647,6 +764,36 @@ export type Database = {
         }
         Relationships: []
       }
+      messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          from_user_id: string | null
+          id: string
+          read_at: string | null
+          subject: string | null
+          to_user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          from_user_id?: string | null
+          id?: string
+          read_at?: string | null
+          subject?: string | null
+          to_user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          from_user_id?: string | null
+          id?: string
+          read_at?: string | null
+          subject?: string | null
+          to_user_id?: string | null
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           created_at: string | null
@@ -672,6 +819,36 @@ export type Database = {
           id?: number
           push?: boolean | null
           sms?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      payment_methods: {
+        Row: {
+          created_at: string | null
+          details: Json | null
+          id: string
+          is_default: boolean | null
+          type: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          is_default?: boolean | null
+          type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          is_default?: boolean | null
+          type?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -889,6 +1066,92 @@ export type Database = {
         }
         Relationships: []
       }
+      shift_applications: {
+        Row: {
+          agency_id: string | null
+          application_note: string | null
+          created_at: string | null
+          id: string
+          shift_id: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          agency_id?: string | null
+          application_note?: string | null
+          created_at?: string | null
+          id?: string
+          shift_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          agency_id?: string | null
+          application_note?: string | null
+          created_at?: string | null
+          id?: string
+          shift_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_applications_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["shift_id"]
+          },
+        ]
+      }
+      shift_requirements: {
+        Row: {
+          created_at: string | null
+          id: string
+          importance_level: number | null
+          minimum_experience_years: number | null
+          preferred_certifications: string[] | null
+          shift_id: string | null
+          skill_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          importance_level?: number | null
+          minimum_experience_years?: number | null
+          preferred_certifications?: string[] | null
+          shift_id?: string | null
+          skill_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          importance_level?: number | null
+          minimum_experience_years?: number | null
+          preferred_certifications?: string[] | null
+          shift_id?: string | null
+          skill_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_requirements_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["shift_id"]
+          },
+          {
+            foreignKeyName: "shift_requirements_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "worker_skills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shift_workers: {
         Row: {
           availability: Json | null
@@ -989,6 +1252,41 @@ export type Database = {
             columns: ["worker_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      skill_categories: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          parent_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skill_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "skill_categories"
             referencedColumns: ["id"]
           },
         ]
@@ -1113,6 +1411,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      worker_certifications: {
+        Row: {
+          certification_number: string | null
+          created_at: string | null
+          document_url: string | null
+          expiry_date: string | null
+          id: string
+          issue_date: string | null
+          issuing_body: string | null
+          name: string
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          certification_number?: string | null
+          created_at?: string | null
+          document_url?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuing_body?: string | null
+          name: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          certification_number?: string | null
+          created_at?: string | null
+          document_url?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuing_body?: string | null
+          name?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       worker_profile_skills: {
         Row: {
