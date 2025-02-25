@@ -1,1 +1,17 @@
-project_id = "qdyyfxgonldvghrtjhnn"
+
+project_id = "emtebosiacxihwrfcylr"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage"]
+
+[functions]
+[functions.hello-world]
+verify_jwt = false
+
+[functions.get-profile]
+verify_jwt = true
+
+[functions.update-profile]
+verify_jwt = true
