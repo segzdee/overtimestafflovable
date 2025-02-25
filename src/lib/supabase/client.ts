@@ -21,8 +21,12 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // Helper function to check Supabase connection
 export const checkSupabaseConnection = async () => {
   try {
-    const { data, error } = await supabase.from('profiles').select('count').single();
-    if (error) throw error;
+    // Use a simple health check instead of querying tables
+    const { error } = await supabase.auth.getSession();
+    if (error) {
+      console.error('Supabase connection error:', error);
+      return false;
+    }
     console.log('Supabase connection successful');
     return true;
   } catch (error) {
@@ -30,4 +34,3 @@ export const checkSupabaseConnection = async () => {
     return false;
   }
 };
-

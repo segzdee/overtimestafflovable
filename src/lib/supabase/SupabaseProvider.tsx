@@ -19,13 +19,19 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
         toast({
           variant: "destructive",
           title: "Connection Error",
-          description: "Unable to connect to the database. Please try again later."
+          description: "Please check your internet connection and try again.",
         });
       }
     };
 
+    // Initial check
     checkConnection();
-  }, []);
+
+    // Set up periodic connection checks
+    const interval = setInterval(checkConnection, 30000); // Check every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [toast]);
 
   return (
     <SupabaseContext.Provider value={supabase}>
