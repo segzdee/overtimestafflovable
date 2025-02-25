@@ -1,6 +1,8 @@
+
 import { MapPin, AlertCircle, ArrowLeftRight } from "lucide-react";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import { toast } from "@/components/ui/use-toast";
+
 export function EmergencyShiftIndex() {
   const {
     updates,
@@ -11,6 +13,7 @@ export function EmergencyShiftIndex() {
     exchangeRates,
     isLoading
   } = useMarketUpdates();
+
   const handleItemClick = () => {
     toast({
       title: "Authentication Required",
@@ -25,6 +28,7 @@ export function EmergencyShiftIndex() {
 
   // Combine them to ensure we always have room for both types
   const emergencyUpdates = [...urgentUpdates, ...swapUpdates];
+
   if (isLoading) {
     return <div className="bg-slate-800 text-white rounded-xl shadow-xl overflow-hidden flex-1 min-h-0 p-4">
         <div className="animate-pulse space-y-4">
@@ -38,50 +42,71 @@ export function EmergencyShiftIndex() {
         </div>
       </div>;
   }
-  return <div className="text-white shadow-xl overflow-hidden flex-1 min-h-0 rounded-md bg-zinc-400">
-      <div className="h-full flex flex-col p-3 bg-gray-700">
-        <div className="flex items-center justify-between mb-3">
+
+  return (
+    <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 text-white shadow-xl overflow-hidden flex-1 min-h-0 rounded-lg border border-zinc-700/50">
+      <div className="h-full flex flex-col p-4">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <h3 className="text-xs font-semibold text-green-400">EMERGENCY & SHIFT SWAP INDEX</h3>
-            <span className="flex items-center gap-1 bg-red-900/50 text-red-400 py-0.5 rounded text-center text-xs font-normal px-[6px]">
+            <h3 className="text-xs font-semibold text-emerald-400">EMERGENCY & SHIFT SWAP INDEX</h3>
+            <span className="flex items-center gap-1 bg-red-500/20 text-red-400 py-0.5 rounded-full text-center text-xs font-medium px-2">
               <AlertCircle className="w-3 h-3" />
               {emergencyUpdates.length} Active
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <select value={selectedCurrency} onChange={e => setSelectedCurrency(e.target.value)} className="text-white text-xs border border-gray-600 px-2 bg-slate-950 rounded-sm py-[3px]">
-              {Object.keys(exchangeRates).map(currency => <option key={currency} value={currency}>{currency}</option>)}
+            <select 
+              value={selectedCurrency} 
+              onChange={e => setSelectedCurrency(e.target.value)}
+              className="text-white text-xs bg-zinc-800 border border-zinc-600 px-2 rounded py-1 focus:ring-2 ring-emerald-500/50 outline-none"
+            >
+              {Object.keys(exchangeRates).map(currency => (
+                <option key={currency} value={currency}>{currency}</option>
+              ))}
             </select>
-            <span className="text-xs text-slate-950">
+            <span className="text-xs text-zinc-400">
               {lastUpdateTime.toLocaleTimeString()} UTC
             </span>
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-3 overflow-y-auto flex-1">
-          {emergencyUpdates.map(update => <div key={update.id} onClick={handleItemClick} className="">
-              <div className="flex items-center justify-between mb-1">
+        <div className="grid grid-cols-2 gap-4 overflow-y-auto flex-1">
+          {emergencyUpdates.map(update => (
+            <div 
+              key={update.id} 
+              onClick={handleItemClick}
+              className="bg-zinc-800/50 backdrop-blur-sm rounded-lg p-4 border border-zinc-700/50 hover:border-zinc-600/50 transition-all duration-200 cursor-pointer group"
+            >
+              <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs font-bold flex items-center gap-1 ${update.type === 'URGENT' ? 'text-red-400' : 'text-orange-400'}`}>
-                    {update.type === 'URGENT' ? <AlertCircle className="w-3 h-3" /> : <ArrowLeftRight className="w-3 h-3" />}
+                  <span className={`text-xs font-bold flex items-center gap-1 ${update.type === 'URGENT' ? 'text-red-400' : 'text-amber-400'}`}>
+                    {update.type === 'URGENT' ? (
+                      <AlertCircle className="w-3 h-3" />
+                    ) : (
+                      <ArrowLeftRight className="w-3 h-3" />
+                    )}
                     {update.type}
                   </span>
                 </div>
-                <span className="text-sm font-bold text-green-400">{update.rate}</span>
+                <span className="text-sm font-bold text-emerald-400 group-hover:scale-105 transition-transform">
+                  {update.rate}
+                </span>
               </div>
-              <div className="text-xs font-medium bg-slate-950">{update.title}</div>
-              <div className="text-[10px] text-gray-400 mt-0.5 bg-slate-950">{update.location}</div>
-              <div className="text-[10px] text-gray-500 mt-1 flex items-center gap-1 bg-zinc-600">
-                <MapPin className="w-2.5 h-2.5" />
+              <div className="text-sm font-medium text-zinc-100">{update.title}</div>
+              <div className="text-xs text-zinc-400 mt-1">{update.location}</div>
+              <div className="text-xs text-zinc-500 mt-2 flex items-center gap-1">
+                <MapPin className="w-3 h-3" />
                 {update.region}
               </div>
-            </div>)}
+            </div>
+          ))}
         </div>
         
-        <div className="flex items-center justify-between text-[10px] text-gray-400 border-t border-gray-700 pt-2 mt-2">
-          <span className="text-slate-950 text-left">Emergency updates in real-time</span>
-          <span className="text-slate-950">{emergencyUpdates.length} active emergencies</span>
+        <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-700/50 pt-3 mt-3">
+          <span>Emergency updates in real-time</span>
+          <span>{emergencyUpdates.length} active emergencies</span>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 }
