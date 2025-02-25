@@ -69,9 +69,9 @@ export function EmergencyShiftIndex() {
                 </div>
                 <span className="text-sm font-bold text-green-400">{update.rate}</span>
               </div>
-              <div className="text-xs font-medium">{update.title}</div>
-              <div className="text-[10px] text-gray-400 mt-0.5 bg-gray-600">{update.location}</div>
-              <div className="text-[10px] text-gray-500 mt-1 flex items-center gap-1">
+              <div className="text-xs font-medium bg-slate-950">{update.title}</div>
+              <div className="text-[10px] text-gray-400 mt-0.5 bg-slate-950">{update.location}</div>
+              <div className="text-[10px] text-gray-500 mt-1 flex items-center gap-1 bg-zinc-600">
                 <MapPin className="w-2.5 h-2.5" />
                 {update.region}
               </div>
