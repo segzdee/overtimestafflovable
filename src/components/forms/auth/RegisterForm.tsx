@@ -149,7 +149,7 @@ export function RegisterForm() {
 
       {error && <div className="text-sm text-red-500">{error}</div>}
 
-      <Button type="submit" disabled={loading} className="w-full bg-[#0B4A3F] hover:bg-[#0B4A3F]/90 text-stone-50">
+      <Button type="submit" disabled={loading} className="w-full text-stone-50 bg-violet-900 hover:bg-violet-800">
         {loading ? "Creating Account..." : "Create Account"}
       </Button>
 
