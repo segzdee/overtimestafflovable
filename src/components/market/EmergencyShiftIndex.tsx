@@ -43,13 +43,13 @@ export function EmergencyShiftIndex() {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <h3 className="text-xs font-semibold text-green-400">EMERGENCY & SHIFT SWAP INDEX</h3>
-            <span className="flex items-center gap-1 text-xs bg-red-900/50 text-red-400 px-2 py-0.5 rounded">
+            <span className="flex items-center gap-1 bg-red-900/50 text-red-400 py-0.5 rounded text-center text-xs font-normal px-[6px]">
               <AlertCircle className="w-3 h-3" />
               {emergencyUpdates.length} Active
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <select value={selectedCurrency} onChange={e => setSelectedCurrency(e.target.value)} className="text-white text-xs rounded-md border border-gray-600 px-2 py-1 bg-slate-950">
+            <select value={selectedCurrency} onChange={e => setSelectedCurrency(e.target.value)} className="text-white text-xs border border-gray-600 px-2 bg-slate-950 rounded-sm py-[3px]">
               {Object.keys(exchangeRates).map(currency => <option key={currency} value={currency}>{currency}</option>)}
             </select>
             <span className="text-xs text-slate-950">
@@ -59,7 +59,7 @@ export function EmergencyShiftIndex() {
         </div>
         
         <div className="grid grid-cols-2 gap-3 overflow-y-auto flex-1">
-          {emergencyUpdates.map(update => <div key={update.id} onClick={handleItemClick} className={`p-3 rounded-lg border transition-all cursor-pointer hover:opacity-90 ${update.type === 'URGENT' ? 'bg-red-900/50 border-red-700' : 'bg-orange-900/50 border-orange-700'} ${update.isNew ? 'animate-in fade-in slide-in-from-bottom-5' : ''}`}>
+          {emergencyUpdates.map(update => <div key={update.id} onClick={handleItemClick} className="">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <span className={`text-xs font-bold flex items-center gap-1 ${update.type === 'URGENT' ? 'text-red-400' : 'text-orange-400'}`}>
@@ -70,7 +70,7 @@ export function EmergencyShiftIndex() {
                 <span className="text-sm font-bold text-green-400">{update.rate}</span>
               </div>
               <div className="text-xs font-medium">{update.title}</div>
-              <div className="text-[10px] text-gray-400 mt-0.5">{update.location}</div>
+              <div className="text-[10px] text-gray-400 mt-0.5 bg-gray-600">{update.location}</div>
               <div className="text-[10px] text-gray-500 mt-1 flex items-center gap-1">
                 <MapPin className="w-2.5 h-2.5" />
                 {update.region}
@@ -79,7 +79,7 @@ export function EmergencyShiftIndex() {
         </div>
         
         <div className="flex items-center justify-between text-[10px] text-gray-400 border-t border-gray-700 pt-2 mt-2">
-          <span className="text-slate-950">Emergency updates in real-time</span>
+          <span className="text-slate-950 text-left">Emergency updates in real-time</span>
           <span className="text-slate-950">{emergencyUpdates.length} active emergencies</span>
         </div>
       </div>

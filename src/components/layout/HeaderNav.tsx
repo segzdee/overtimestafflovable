@@ -22,7 +22,7 @@ export const HeaderNav = ({
         <Logo />
       </div>
       
-      <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden bg-green-600 hover:bg-green-500 text-base text-orange-50 font-thin text-center">
+      <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden text-base font-thin text-center rounded-sm px-[3px] py-[3px] text-zinc-50 bg-green-500 hover:bg-green-400">
         {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </Button>
 

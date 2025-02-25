@@ -142,10 +142,10 @@ export default function Index() {
 
       <footer className="h-12 flex items-center justify-center border-t">
         <div className="flex justify-center gap-6 text-xs text-gray-600">
-          <Link to="/terms" className="hover:text-gray-900 transition-colors">Terms</Link>
-          <Link to="/privacy" className="hover:text-gray-900 transition-colors">Privacy</Link>
-          <Link to="/contact" className="hover:text-gray-900 transition-colors">Contact</Link>
-          <Link to="/blog" className="hover:text-gray-900 transition-colors">Blog</Link>
+          <Link to="/terms" className="hover:text-gray-900 transition-colors px-[2px]">Terms</Link>
+          <Link to="/privacy" className="hover:text-gray-900 transition-colors px-[2px]">Privacy</Link>
+          <Link to="/contact" className="hover:text-gray-900 transition-colors px-[2px]">Contact</Link>
+          <Link to="/blog" className="hover:text-gray-900 transition-colors px-[2px]">Blog</Link>
         </div>
       </footer>
 
