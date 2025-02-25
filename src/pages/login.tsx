@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
@@ -6,20 +7,19 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Logo } from "@/components/ui/logo";
 import { ArrowLeft } from "lucide-react";
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
-  const {
-    login
-  } = useAuth();
+  const { toast } = useToast();
+  const { login } = useAuth();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
     try {
       await login(email, password);
       toast({
@@ -38,7 +38,9 @@ export default function Login() {
       setIsLoading(false);
     }
   };
-  return <div className="h-screen flex items-center justify-center bg-gray-50 p-4">
+
+  return (
+    <div className="h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
           <Logo />
@@ -54,40 +56,67 @@ export default function Login() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email
               </label>
-              <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email" required />
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
-              <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password" required />
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+              />
             </div>
           </div>
 
           <div className="flex items-center justify-between">
-            <Link to="/forgot-password" className="text-sm text-purple-600 hover:text-purple-500">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-purple-600 hover:text-purple-500"
+            >
               Forgot password?
             </Link>
           </div>
 
-          <Button type="submit" disabled={isLoading} className="w-full text-slate-50 bg-purple-900 hover:bg-purple-800">
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full text-slate-50 bg-purple-900 hover:bg-purple-800"
+          >
             {isLoading ? "Signing in..." : "Sign in"}
           </Button>
 
           <div className="text-center text-sm text-gray-600">
             Don't have an account?{" "}
-            <Button variant="link" className="p-0 h-auto font-semibold text-purple-600 hover:text-purple-500" onClick={() => navigate("/register")}>
+            <Button
+              variant="link"
+              className="p-0 h-auto font-semibold text-purple-600 hover:text-purple-500"
+              onClick={() => navigate("/register")}
+            >
               Sign up
             </Button>
           </div>
         </form>
 
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
+          <Link
+            to="/"
+            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to home
           </Link>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 }
