@@ -48,12 +48,12 @@ export default function TokenValidation() {
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-sm border space-y-4">
           <Input type="password" placeholder="Enter your AI token" value={token} onChange={e => setToken(e.target.value)} required />
 
-          <Button type="submit" disabled={loading} className="w-full bg-violet-900 hover:bg-violet-800">
+          <Button type="submit" disabled={loading} className="w-full bg-violet-900 hover:bg-violet-800 text-gray-50">
             {loading ? "Validating..." : "Validate Token"}
           </Button>
 
           <div className="text-center">
-            <Button variant="link" className="text-sm text-gray-600" onClick={() => navigate("/login")}>
+            <Button variant="link" onClick={() => navigate("/login")} className="text-sm text-slate-950">
               Return to regular login
             </Button>
           </div>
