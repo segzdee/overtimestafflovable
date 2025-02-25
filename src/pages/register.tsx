@@ -7,7 +7,7 @@ export default function Register() {
           <Logo />
         </div>
 
-        <div className="p-6 rounded-lg shadow-sm border bg-slate-950">
+        <div className="p-6 rounded-lg shadow-sm border bg-neutral-50">
           <h2 className="text-xl font-semibold text-center mb-1">Create Account</h2>
           <p className="text-center text-gray-600 mb-4 text-sm">Join OVERTIMESTAFF</p>
           
