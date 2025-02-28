@@ -1,8 +1,6 @@
-
 import { MapPin } from "lucide-react";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import { toast } from "@/components/ui/use-toast";
-
 export function MarketUpdates() {
   const {
     updates,
@@ -16,15 +14,13 @@ export function MarketUpdates() {
 
   // Limit to 8 updates for display
   const displayUpdates = updates.slice(0, 8);
-
   const handleItemClick = () => {
     toast({
       title: "Authentication Required",
       description: "Sign in or sign up to view details",
-      variant: "default",
+      variant: "default"
     });
   };
-
   if (isLoading) {
     return <div className="bg-gray-900 text-white overflow-hidden flex-1 min-h-0 p-4">
         <div className="animate-pulse space-y-4">
@@ -38,9 +34,8 @@ export function MarketUpdates() {
         </div>
       </div>;
   }
-
   return <div className="text-white overflow-hidden flex-1 h-full">
-      <div className="h-full flex flex-col p-4">
+      <div className="h-full flex flex-col p-4 px-[10px]">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs font-semibold text-green-400">LIVE HOSPITALITY INDEX</h3>
           <div className="flex items-center gap-4">
@@ -52,9 +47,7 @@ export function MarketUpdates() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto flex-1">
-          {displayUpdates.slice(0, 4).map(update => <div key={update.id} 
-              onClick={handleItemClick}
-              className={`p-3 rounded-lg border transition-all cursor-pointer hover:opacity-90 ${update.highlight ? 'bg-purple-900/80 border-purple-700' : 'bg-zinc-800/50 border-zinc-700/50'} ${update.isNew ? 'animate-in fade-in slide-in-from-bottom-5' : ''} ${update.isUpdating ? 'animate-pulse' : ''} hover:border-zinc-600/80`}>
+          {displayUpdates.slice(0, 4).map(update => <div key={update.id} onClick={handleItemClick} className={`p-3 rounded-lg border transition-all cursor-pointer hover:opacity-90 ${update.highlight ? 'bg-purple-900/80 border-purple-700' : 'bg-zinc-800/50 border-zinc-700/50'} ${update.isNew ? 'animate-in fade-in slide-in-from-bottom-5' : ''} ${update.isUpdating ? 'animate-pulse' : ''} hover:border-zinc-600/80`}>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <span className={`text-xs font-bold ${update.type === 'URGENT' ? 'text-red-400' : update.type === 'PREMIUM' ? 'text-purple-400' : update.type === 'SWAP' ? 'text-orange-400' : 'text-green-400'}`}>
