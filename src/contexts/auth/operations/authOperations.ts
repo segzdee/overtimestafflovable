@@ -1,8 +1,31 @@
 
-import { supabase } from "@/lib/supabase/client";
+import { supabase, checkSupabaseConnection } from "@/lib/supabase/client";
 import { NavigateFunction } from "react-router-dom";
 import { AuthUser } from "../types";
 import { NotificationPreferences } from "@/lib/types";
+
+// Helper function to add retry functionality for Supabase operations
+const withRetry = async (operation: () => Promise<any>, maxRetries = 3, delay = 1000) => {
+  let attempts = 0;
+  
+  while (attempts < maxRetries) {
+    try {
+      console.log(`Attempting operation (attempt ${attempts + 1}/${maxRetries})...`);
+      const result = await operation();
+      return result;
+    } catch (error) {
+      console.error(`Operation attempt ${attempts + 1} failed:`, error);
+      attempts++;
+      
+      if (attempts < maxRetries) {
+        console.log(`Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } else {
+        throw error; // Rethrow if all retries failed
+      }
+    }
+  }
+};
 
 export const register = async (
   email: string,
@@ -12,73 +35,70 @@ export const register = async (
   category?: string
 ) => {
   try {
-    // First check Supabase connection before attempting registration
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    console.log("Supabase connection check:", sessionData ? "Connected" : "Not connected", sessionError);
+    // First check Supabase connection with retry logic
+    const connected = await checkSupabaseConnection(3, 1500);
+    if (!connected) {
+      throw new Error('Unable to connect to authentication service. Please check your internet connection and try again.');
+    }
+
+    // First create the auth user with retry logic
+    const signUpOperation = async () => {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name,
+            role: role,
+            category: category
+          },
+          emailRedirectTo: `${window.location.origin}/verify-email`
+        }
+      });
+      
+      if (error) throw error;
+      if (!data.user) throw new Error('No user returned from sign up');
+      
+      return data;
+    };
     
-    if (sessionError) {
-      console.error('Supabase connection error:', JSON.stringify(sessionError, null, 2));
-      throw new Error('Unable to connect to authentication service. Please try again later.');
-    }
-
-    // First create the auth user
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name: name,
-          role: role,
-          category: category
-        },
-        emailRedirectTo: window.location.origin + '/verify-email'
-      }
-    });
-
-    if (signUpError) {
-      console.error('Signup error:', signUpError);
-      console.error('Signup error details:', JSON.stringify(signUpError, null, 2));
-      throw signUpError;
-    }
-    
-    if (!data.user) {
-      throw new Error('No user returned from sign up');
-    }
-
-    // Some Supabase instances will immediately verify users, others will require email verification
-    // Check if the user needs to be verified or not
+    const data = await withRetry(signUpOperation, 3, 1500);
     console.log("Supabase signup response:", data);
 
     try {
       // Create the user profile with retry logic
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        email: email,
-        role: role,
-        name: name,
-        category: category,
-        profile_complete: false
-      });
+      const createProfileOperation = async () => {
+        const { error } = await supabase.from('profiles').insert({
+          id: data.user.id,
+          email: email,
+          role: role,
+          name: name,
+          category: category,
+          profile_complete: false
+        });
+        
+        if (error) throw error;
+        return { success: true };
+      };
+      
+      await withRetry(createProfileOperation, 3, 1000);
+      console.log('Profile created successfully');
 
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        console.error('Profile creation error details:', JSON.stringify(profileError, null, 2));
-        // Don't throw here - we want to continue trying to create notification preferences
-      }
-
-      // Create notification preferences
-      const { error: prefsError } = await supabase.from('notification_preferences').insert({
-        user_id: data.user.id,
-        email: true,
-        sms: false,
-        push: true
-      });
-
-      if (prefsError) {
-        console.error('Notification preferences error:', prefsError);
-        console.error('Notification preferences error details:', JSON.stringify(prefsError, null, 2));
-        // Don't throw here - user is already created
-      }
+      // Create notification preferences with retry logic
+      const createPreferencesOperation = async () => {
+        const { error } = await supabase.from('notification_preferences').insert({
+          user_id: data.user.id,
+          email: true,
+          sms: false,
+          push: true
+        });
+        
+        if (error) throw error;
+        return { success: true };
+      };
+      
+      await withRetry(createPreferencesOperation, 3, 1000);
+      console.log('Notification preferences created successfully');
 
       console.log('Registration completed successfully');
       return data;
@@ -102,40 +122,41 @@ export const login = async (
   toast: any
 ) => {
   try {
-    // Check Supabase connection before attempting login
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    console.log("Supabase connection check:", sessionData ? "Connected" : "Not connected", sessionError);
-    
-    if (sessionError) {
-      console.error('Supabase connection error:', JSON.stringify(sessionError, null, 2));
-      throw new Error('Unable to connect to authentication service. Please try again later.');
+    // Check Supabase connection with retry logic
+    const connected = await checkSupabaseConnection(3, 1500);
+    if (!connected) {
+      throw new Error('Unable to connect to authentication service. Please check your internet connection and try again.');
     }
 
-    const { data: { user }, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) throw error;
-    if (!user) throw new Error('No user returned from sign in');
+    const loginOperation = async () => {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) throw error;
+      if (!data.user) throw new Error('No user returned from sign in');
+      
+      return data;
+    };
+    
+    const { user } = await withRetry(loginOperation, 3, 1500);
 
     // Get user profile to determine where to redirect
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .maybeSingle();
-
-    if (profileError) throw profileError;
-    if (!profile) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "User profile not found"
-      });
-      navigate('/login');
-      return;
-    }
+    const getProfileOperation = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle();
+        
+      if (error) throw error;
+      if (!data) throw new Error('User profile not found');
+      
+      return data;
+    };
+    
+    const profile = await withRetry(getProfileOperation, 3, 1000);
 
     // Show success message
     toast({
@@ -177,38 +198,52 @@ export const loginWithToken = async (
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>
 ) => {
   try {
-    // Check Supabase connection before attempting token login
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    console.log("Supabase connection check:", sessionData ? "Connected" : "Not connected", sessionError);
-    
-    if (sessionError) {
-      console.error('Supabase connection error:', JSON.stringify(sessionError, null, 2));
-      throw new Error('Unable to connect to authentication service. Please try again later.');
+    // Check Supabase connection with retry logic
+    const connected = await checkSupabaseConnection(3, 1500);
+    if (!connected) {
+      throw new Error('Unable to connect to authentication service. Please check your internet connection and try again.');
     }
 
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+    const getUserOperation = async () => {
+      const { data, error } = await supabase.auth.getUser(token);
+      
+      if (error) throw error;
+      if (!data.user) throw new Error('Invalid token');
+      
+      return data;
+    };
     
-    if (error) throw error;
-    if (!user) throw new Error('Invalid token');
+    const { user } = await withRetry(getUserOperation, 3, 1500);
 
-    // Get the user's profile
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .maybeSingle();
+    // Get the user's profile with retry logic
+    const getProfileOperation = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+        
+      if (error) throw error;
+      if (!data) throw new Error('No profile found for token');
+      
+      return data;
+    };
+    
+    const profile = await withRetry(getProfileOperation, 3, 1000);
 
-    if (profileError) throw profileError;
-    if (!profile) throw new Error('No profile found for token');
-
-    // Get notification preferences
-    const { data: notificationPrefs, error: prefError } = await supabase
-      .from('notification_preferences')
-      .select('*')
-      .eq('user_id', profile.id)
-      .maybeSingle();
-
-    if (prefError && prefError.code !== 'PGRST116') throw prefError;
+    // Get notification preferences with retry logic
+    const getPreferencesOperation = async () => {
+      const { data, error } = await supabase
+        .from('notification_preferences')
+        .select('*')
+        .eq('user_id', profile.id)
+        .maybeSingle();
+        
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
+    };
+    
+    const notificationPrefs = await withRetry(getPreferencesOperation, 3, 1000);
 
     setUser({
       id: profile.id,

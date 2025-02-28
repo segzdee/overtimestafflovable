@@ -2,25 +2,62 @@
 import { createContext, useContext, ReactNode, useEffect, useState } from 'react';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { supabase, checkSupabaseConnection } from './client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 const SupabaseContext = createContext<SupabaseClient | undefined>(undefined);
 
 export function SupabaseProvider({ children }: { children: ReactNode }) {
   const [isConnected, setIsConnected] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
   const { toast } = useToast();
 
   useEffect(() => {
     const checkConnection = async () => {
-      const connected = await checkSupabaseConnection();
-      setIsConnected(connected);
-      
-      if (!connected) {
+      setIsChecking(true);
+      try {
+        const connected = await checkSupabaseConnection(3, 2000);
+        setIsConnected(connected);
+        
+        if (!connected && retryCount < 3) {
+          // Attempt to reconnect
+          toast({
+            variant: "default",
+            title: "Reconnecting...",
+            description: "Attempting to reconnect to the server",
+          });
+          
+          setRetryCount(prev => prev + 1);
+          
+          // Wait 3 seconds before retrying
+          setTimeout(() => {
+            checkConnection();
+          }, 3000);
+        } else if (!connected) {
+          toast({
+            variant: "destructive",
+            title: "Connection Error",
+            description: "Please check your internet connection and reload the page",
+          });
+        } else if (connected && retryCount > 0) {
+          // Successfully reconnected
+          toast({
+            title: "Connected",
+            description: "Connection to the server has been restored",
+          });
+          setRetryCount(0);
+        }
+      } catch (error) {
+        console.error("Error checking Supabase connection:", error);
+        setIsConnected(false);
+        
         toast({
           variant: "destructive",
           title: "Connection Error",
-          description: "Please check your internet connection and try again.",
+          description: "Unable to connect to the server. Please try again later.",
         });
+      } finally {
+        setIsChecking(false);
       }
     };
 
@@ -28,10 +65,14 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
     checkConnection();
 
     // Set up periodic connection checks
-    const interval = setInterval(checkConnection, 30000); // Check every 30 seconds
+    const interval = setInterval(() => {
+      if (!isChecking) {
+        checkConnection();
+      }
+    }, 30000); // Check every 30 seconds
 
     return () => clearInterval(interval);
-  }, [toast]);
+  }, [toast, retryCount, isChecking]);
 
   return (
     <SupabaseContext.Provider value={supabase}>
