@@ -1,18 +1,17 @@
+
 import { Logo } from "@/components/ui/logo";
 import { RegisterForm } from "@/components/forms/auth/RegisterForm";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mail } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Mail } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
 export default function Register() {
-  const navigate = useNavigate();
   return <div className="h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <Logo />
         </div>
 
-        <div className="p-6 rounded-lg shadow-sm border bg-neutral-50 relative">
+        <div className="p-6 rounded-lg shadow-sm border bg-neutral-50">
           <h2 className="text-xl font-semibold text-center mb-4">Create Account</h2>
           <p className="text-center text-gray-600 mb-4 text-sm">Join OVERTIMESTAFF</p>
           
@@ -24,13 +23,6 @@ export default function Register() {
           </Alert>
           
           <RegisterForm />
-          
-          <div className="absolute bottom-4 left-6">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="text-gray-600 hover:text-gray-900 text-left px-[4px] rounded-sm">
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              Back to Home
-            </Button>
-          </div>
         </div>
       </div>
     </div>;
