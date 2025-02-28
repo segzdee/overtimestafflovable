@@ -9,7 +9,6 @@ export const register = async (
   password: string,
   role: AuthUser["role"],
   name: string,
-  toast: any,
   category?: string
 ) => {
   try {
@@ -20,7 +19,8 @@ export const register = async (
       options: {
         data: {
           name: name,
-          role: role
+          role: role,
+          category: category
         }
       }
     });
@@ -40,6 +40,7 @@ export const register = async (
       email: email,
       role: role,
       name: name,
+      category: category,
       profile_complete: false
     }).maybeSingle();
 
@@ -61,18 +62,10 @@ export const register = async (
       throw prefsError;
     }
 
-    toast({
-      title: "Account created successfully",
-      description: "Please check your email to verify your account",
-    });
-
+    console.log('Registration completed successfully');
+    
   } catch (error) {
     console.error('Registration error:', error);
-    toast({
-      variant: "destructive",
-      title: "Registration failed",
-      description: error instanceof Error ? error.message : "An error occurred during registration"
-    });
     throw error;
   }
 };

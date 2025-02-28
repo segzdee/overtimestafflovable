@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth";
 import { useToast } from "@/components/ui/use-toast";
-import { Logo } from "@/components/ui/logo";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff } from "lucide-react";
@@ -61,12 +60,20 @@ export function RegisterForm() {
         formData.password, 
         formData.role as "company" | "agency" | "shift-worker" | "admin" | "aiagent", 
         formData.name,
-        toast,
         formData.category
       );
       
-      // Toast is now handled in the register function
+      // Show success message
+      toast({
+        title: "Account created successfully",
+        description: "Please check your email to verify your account",
+      });
     } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "Registration failed",
+        description: err instanceof Error ? err.message : "Failed to create account"
+      });
       setError(err instanceof Error ? err.message : "Failed to create account");
     } finally {
       setLoading(false);

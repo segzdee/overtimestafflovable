@@ -22,7 +22,20 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
     name: string,
     category?: string
   ) => {
-    await register(email, password, role, name, toast, category);
+    try {
+      await register(email, password, role, name, category);
+      toast({
+        title: "Account created successfully",
+        description: "Please check your email to verify your account",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "Failed to create account"
+      });
+      throw error;
+    }
   };
 
   const handleLogin = async (email: string, password: string) => {
