@@ -113,7 +113,7 @@ export default function Index() {
       
       <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
 
-      <main className="flex-1 container mx-auto px-4 py-4 max-w-7xl flex flex-col h-[calc(100vh-3.5rem-3rem)]">
+      <main className="flex-1 container mx-auto px-4 py-4 max-w-7xl flex flex-col">
         <div className="text-center space-y-2 mb-6">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-green-600 bg-clip-text text-purple-700">
             AI Meets Hospitality
@@ -130,7 +130,7 @@ export default function Index() {
           {loginCards.map(card => <LoginCard key={card.role} role={card.role} title={card.title} subtitle={card.subtitle} icon={card.icon} isActive={activeRole === card.role} onClick={handleLoginClick} />)}
         </div>
 
-        <div className="flex-1 min-h-0 bg-gradient-to-br from-gray-900 to-zinc-900 rounded-xl shadow-xl overflow-hidden border border-zinc-700/30">
+        <div className="flex-1 min-h-[300px] bg-gradient-to-br from-gray-900 to-zinc-900 rounded-xl shadow-xl overflow-hidden border border-zinc-700/30">
           <div className="h-full flex flex-col md:flex-row">
             <div className="flex-1 md:border-r border-zinc-700/50">
               <Suspense fallback={<MarketUpdatesSkeleton />}>
@@ -147,7 +147,7 @@ export default function Index() {
         </div>
       </main>
 
-      <footer className="h-12 flex items-center justify-center border-t">
+      <footer className="h-12 flex items-center justify-center border-t mt-4">
         <div className="flex justify-center gap-6 text-xs text-gray-600">
           <Link to="/terms" className="hover:text-gray-900 transition-colors px-[2px]">Terms</Link>
           <Link to="/privacy" className="hover:text-gray-900 transition-colors px-[2px]">Privacy</Link>
