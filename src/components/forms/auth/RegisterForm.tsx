@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/auth";
 import { useToast } from "@/components/ui/use-toast";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Mail } from "lucide-react";
+import { Eye, EyeOff, Mail, Wifi, WifiOff } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants/categories";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -28,6 +28,7 @@ export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [networkError, setNetworkError] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   
@@ -56,7 +57,9 @@ export function RegisterForm() {
     
     try {
       setError("");
+      setNetworkError(false);
       setLoading(true);
+      
       await register(
         formData.email, 
         formData.password, 
@@ -83,6 +86,15 @@ export function RegisterForm() {
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to create account";
+      
+      // Check if this is a network error
+      if (errorMessage.includes('Unable to connect') || 
+          errorMessage.includes('network') ||
+          errorMessage.includes('connection') ||
+          errorMessage.includes('Load failed')) {
+        setNetworkError(true);
+      }
+      
       toast({
         variant: "destructive",
         title: "Registration failed",
@@ -94,6 +106,12 @@ export function RegisterForm() {
     }
   };
   
+  const retryRegistration = () => {
+    setNetworkError(false);
+    setError("");
+    handleSubmit(new Event('submit') as unknown as React.FormEvent);
+  };
+  
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {successMessage && (
@@ -102,6 +120,29 @@ export function RegisterForm() {
           <AlertTitle className="text-green-800">Email Verification Required</AlertTitle>
           <AlertDescription className="text-green-700">
             {successMessage}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {networkError && (
+        <Alert className="bg-orange-50 border-orange-200">
+          <WifiOff className="h-4 w-4 text-orange-600" />
+          <AlertTitle className="text-orange-800">Connection Error</AlertTitle>
+          <AlertDescription className="text-orange-700">
+            Unable to connect to the authentication service. This may be due to:
+            <ul className="list-disc ml-5 mt-2">
+              <li>Network connectivity issues</li>
+              <li>Temporary service unavailability</li>
+            </ul>
+            <Button 
+              type="button"
+              variant="outline" 
+              size="sm"
+              className="mt-2 bg-white"
+              onClick={retryRegistration}
+            >
+              <Wifi className="h-4 w-4 mr-2" /> Try Again
+            </Button>
           </AlertDescription>
         </Alert>
       )}
@@ -239,7 +280,7 @@ export function RegisterForm() {
         </label>
       </div>
 
-      {error && (
+      {error && !networkError && (
         <Alert variant="destructive">
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
@@ -260,6 +301,7 @@ export function RegisterForm() {
           variant="link" 
           className="p-0 h-auto font-normal text-primary hover:text-primary/90" 
           onClick={() => navigate("/login")}
+          type="button"
         >
           Sign in
         </Button>

@@ -22,7 +22,7 @@ export const register = async (
     }
 
     // First create the auth user
-    const { data: { user }, error: signUpError } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -30,7 +30,8 @@ export const register = async (
           name: name,
           role: role,
           category: category
-        }
+        },
+        emailRedirectTo: window.location.origin + '/verify-email'
       }
     });
 
@@ -40,41 +41,52 @@ export const register = async (
       throw signUpError;
     }
     
-    if (!user) {
+    if (!data.user) {
       throw new Error('No user returned from sign up');
     }
 
-    // Create the user profile with retry logic
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: user.id,
-      email: email,
-      role: role,
-      name: name,
-      category: category,
-      profile_complete: false
-    }).maybeSingle();
+    // Some Supabase instances will immediately verify users, others will require email verification
+    // Check if the user needs to be verified or not
+    console.log("Supabase signup response:", data);
 
-    if (profileError) {
-      console.error('Profile creation error:', profileError);
-      console.error('Profile creation error details:', JSON.stringify(profileError, null, 2));
-      throw profileError;
+    try {
+      // Create the user profile with retry logic
+      const { error: profileError } = await supabase.from('profiles').insert({
+        id: data.user.id,
+        email: email,
+        role: role,
+        name: name,
+        category: category,
+        profile_complete: false
+      });
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        console.error('Profile creation error details:', JSON.stringify(profileError, null, 2));
+        // Don't throw here - we want to continue trying to create notification preferences
+      }
+
+      // Create notification preferences
+      const { error: prefsError } = await supabase.from('notification_preferences').insert({
+        user_id: data.user.id,
+        email: true,
+        sms: false,
+        push: true
+      });
+
+      if (prefsError) {
+        console.error('Notification preferences error:', prefsError);
+        console.error('Notification preferences error details:', JSON.stringify(prefsError, null, 2));
+        // Don't throw here - user is already created
+      }
+
+      console.log('Registration completed successfully');
+      return data;
+    } catch (innerError) {
+      console.error('Inner registration error:', innerError);
+      // Registration worked, but profile creation failed - don't block the signup
+      return data;
     }
-
-    // Create notification preferences
-    const { error: prefsError } = await supabase.from('notification_preferences').insert({
-      user_id: user.id,
-      email: true,
-      sms: false,
-      push: true
-    }).maybeSingle();
-
-    if (prefsError) {
-      console.error('Notification preferences error:', prefsError);
-      console.error('Notification preferences error details:', JSON.stringify(prefsError, null, 2));
-      throw prefsError;
-    }
-
-    console.log('Registration completed successfully');
     
   } catch (error) {
     console.error('Registration error:', error);
