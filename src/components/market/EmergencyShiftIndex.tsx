@@ -80,7 +80,7 @@ export function EmergencyShiftIndex() {
             </div>)}
         </div>
         
-        <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-700/50 pt-3 mt-3">
+        <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-700/50 pt-3 mt-3 py-[6px] my-[6px]">
           <span>Emergency updates in real-time</span>
           <span>{emergencyUpdates.length} active emergencies</span>
         </div>
