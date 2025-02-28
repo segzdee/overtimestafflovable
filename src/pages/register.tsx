@@ -15,19 +15,8 @@ export default function Register() {
           <Logo />
         </div>
 
-        <div className="p-6 rounded-lg shadow-sm border bg-neutral-50">
-          <div className="flex items-center mb-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(-1)}
-              className="text-gray-600 hover:text-gray-900 -ml-2"
-            >
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              Back
-            </Button>
-            <h2 className="text-xl font-semibold text-center flex-1 mr-6">Create Account</h2>
-          </div>
+        <div className="p-6 rounded-lg shadow-sm border bg-neutral-50 relative">
+          <h2 className="text-xl font-semibold text-center mb-4">Create Account</h2>
           <p className="text-center text-gray-600 mb-4 text-sm">Join OVERTIMESTAFF</p>
           
           <Alert className="mb-4 bg-blue-50 border-blue-200">
@@ -38,6 +27,18 @@ export default function Register() {
           </Alert>
           
           <RegisterForm />
+          
+          <div className="absolute bottom-4 left-6">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="text-gray-600 hover:text-gray-900 px-2"
+            >
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back to Home
+            </Button>
+          </div>
         </div>
       </div>
     </div>;
