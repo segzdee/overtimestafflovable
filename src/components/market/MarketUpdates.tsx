@@ -39,7 +39,7 @@ export function MarketUpdates() {
       </div>;
   }
 
-  return <div className="text-white shadow-xl overflow-hidden flex-1 min-h-0 rounded-md bg-gray-800">
+  return <div className="text-white shadow-xl overflow-hidden flex-1 min-h-[300px] rounded-md bg-gray-800">
       <div className="h-full flex flex-col p-3">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs font-semibold text-green-400">LIVE HOSPITALITY INDEX</h3>

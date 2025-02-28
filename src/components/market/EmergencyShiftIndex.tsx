@@ -44,7 +44,7 @@ export function EmergencyShiftIndex() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 text-white shadow-xl overflow-hidden flex-1 min-h-0 rounded-lg border border-zinc-700/50">
+    <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 text-white shadow-xl overflow-hidden flex-1 min-h-[250px] rounded-lg border border-zinc-700/50">
       <div className="h-full flex flex-col p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">

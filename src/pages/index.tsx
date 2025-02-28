@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
@@ -129,14 +130,18 @@ export default function Index() {
           {loginCards.map(card => <LoginCard key={card.role} role={card.role} title={card.title} subtitle={card.subtitle} icon={card.icon} isActive={activeRole === card.role} onClick={handleLoginClick} />)}
         </div>
 
-        <div className="space-y-3 flex-1 min-h-0 flex flex-col">
-          <Suspense fallback={<MarketUpdatesSkeleton />}>
-            <MarketUpdates />
-          </Suspense>
+        <div className="space-y-4 flex-1 min-h-0 flex flex-col">
+          <div className="flex-grow">
+            <Suspense fallback={<MarketUpdatesSkeleton />}>
+              <MarketUpdates />
+            </Suspense>
+          </div>
           
-          <Suspense fallback={<MarketUpdatesSkeleton />}>
-            <EmergencyShiftIndex />
-          </Suspense>
+          <div className="flex-grow">
+            <Suspense fallback={<MarketUpdatesSkeleton />}>
+              <EmergencyShiftIndex />
+            </Suspense>
+          </div>
         </div>
       </main>
 
