@@ -68,7 +68,7 @@ export function MarketUpdates() {
             </div>)}
         </div>
         
-        <div className="flex items-center justify-between text-[10px] text-gray-400 border-t border-zinc-700/50 pt-2 mt-2">
+        <div className="flex items-center justify-between text-[10px] text-gray-400 border-t border-zinc-700/50 pt-2 mt-2 py-[6px]">
           <span className="text-gray-400">Updated every 5 minutes</span>
           <span className="text-gray-400">{newUpdatesCount} new positions added today</span>
         </div>
