@@ -1,8 +1,6 @@
-
 import { MapPin, AlertCircle, ArrowLeftRight } from "lucide-react";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import { toast } from "@/components/ui/use-toast";
-
 export function EmergencyShiftIndex() {
   const {
     updates,
@@ -13,7 +11,6 @@ export function EmergencyShiftIndex() {
     exchangeRates,
     isLoading
   } = useMarketUpdates();
-
   const handleItemClick = () => {
     toast({
       title: "Authentication Required",
@@ -28,7 +25,6 @@ export function EmergencyShiftIndex() {
 
   // Combine them to ensure we always have room for both types
   const emergencyUpdates = [...urgentUpdates, ...swapUpdates];
-
   if (isLoading) {
     return <div className="overflow-hidden flex-1 min-h-0 p-4">
         <div className="animate-pulse space-y-4">
@@ -42,10 +38,8 @@ export function EmergencyShiftIndex() {
         </div>
       </div>;
   }
-
-  return (
-    <div className="text-white overflow-hidden flex-1 h-full">
-      <div className="h-full flex flex-col p-4">
+  return <div className="text-white overflow-hidden flex-1 h-full">
+      <div className="h-full flex flex-col p-4 px-[10px]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <h3 className="text-xs font-semibold text-emerald-400">EMERGENCY & SHIFT SWAP INDEX</h3>
@@ -55,14 +49,8 @@ export function EmergencyShiftIndex() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <select 
-              value={selectedCurrency} 
-              onChange={e => setSelectedCurrency(e.target.value)}
-              className="text-white text-xs bg-zinc-800 border border-zinc-600 px-2 rounded py-1 focus:ring-2 ring-emerald-500/50 outline-none"
-            >
-              {Object.keys(exchangeRates).map(currency => (
-                <option key={currency} value={currency}>{currency}</option>
-              ))}
+            <select value={selectedCurrency} onChange={e => setSelectedCurrency(e.target.value)} className="text-white text-xs bg-zinc-800 border border-zinc-600 px-2 rounded py-1 focus:ring-2 ring-emerald-500/50 outline-none">
+              {Object.keys(exchangeRates).map(currency => <option key={currency} value={currency}>{currency}</option>)}
             </select>
             <span className="text-xs text-zinc-400">
               {lastUpdateTime.toLocaleTimeString()} UTC
@@ -71,20 +59,11 @@ export function EmergencyShiftIndex() {
         </div>
         
         <div className="space-y-4 overflow-y-auto flex-1">
-          {emergencyUpdates.map(update => (
-            <div 
-              key={update.id} 
-              onClick={handleItemClick}
-              className="bg-zinc-800/50 backdrop-blur-sm rounded-lg p-4 border border-zinc-700/50 hover:border-zinc-600/50 transition-all duration-200 cursor-pointer group"
-            >
+          {emergencyUpdates.map(update => <div key={update.id} onClick={handleItemClick} className="bg-zinc-800/50 backdrop-blur-sm rounded-lg p-4 border border-zinc-700/50 hover:border-zinc-600/50 transition-all duration-200 cursor-pointer group">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className={`text-xs font-bold flex items-center gap-1 ${update.type === 'URGENT' ? 'text-red-400' : 'text-amber-400'}`}>
-                    {update.type === 'URGENT' ? (
-                      <AlertCircle className="w-3 h-3" />
-                    ) : (
-                      <ArrowLeftRight className="w-3 h-3" />
-                    )}
+                    {update.type === 'URGENT' ? <AlertCircle className="w-3 h-3" /> : <ArrowLeftRight className="w-3 h-3" />}
                     {update.type}
                   </span>
                 </div>
@@ -98,8 +77,7 @@ export function EmergencyShiftIndex() {
                 <MapPin className="w-3 h-3" />
                 {update.region}
               </div>
-            </div>
-          ))}
+            </div>)}
         </div>
         
         <div className="flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-700/50 pt-3 mt-3">
@@ -107,6 +85,5 @@ export function EmergencyShiftIndex() {
           <span>{emergencyUpdates.length} active emergencies</span>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
