@@ -51,6 +51,16 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-sm border space-y-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/')}
+            className="text-gray-600 hover:text-gray-900 -ml-2 mb-2"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to home
+          </Button>
+          
           <div className="space-y-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -106,16 +116,6 @@ export default function Login() {
             </Button>
           </div>
         </form>
-
-        <div className="text-center">
-          <Link
-            to="/"
-            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to home
-          </Link>
-        </div>
       </div>
     </div>
   );

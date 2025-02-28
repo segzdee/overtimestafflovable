@@ -6,6 +6,7 @@ import { Logo } from "@/components/ui/logo";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -64,6 +65,16 @@ export default function ResetPassword() {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-sm border space-y-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            className="text-gray-600 hover:text-gray-900 -ml-2 mb-2"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back
+          </Button>
+          
           <div className="space-y-3">
             <Input
               type="password"

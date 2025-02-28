@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,6 +6,8 @@ import { Logo } from "@/components/ui/logo";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
+import { ArrowLeft } from "lucide-react";
+
 export default function TokenValidation() {
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
@@ -46,6 +49,16 @@ export default function TokenValidation() {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-sm border space-y-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            className="text-gray-600 hover:text-gray-900 -ml-2 mb-2"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back
+          </Button>
+          
           <Input type="password" placeholder="Enter your AI token" value={token} onChange={e => setToken(e.target.value)} required />
 
           <Button type="submit" disabled={loading} className="w-full bg-violet-900 hover:bg-violet-800 text-gray-50">
