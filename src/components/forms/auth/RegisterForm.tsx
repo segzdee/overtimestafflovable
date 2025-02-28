@@ -7,8 +7,9 @@ import { useAuth } from "@/contexts/auth";
 import { useToast } from "@/components/ui/use-toast";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants/categories";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export function RegisterForm() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,17 +66,29 @@ export function RegisterForm() {
       );
       
       // Show success message
+      setSuccessMessage("Account created successfully! Please check your email to verify your account before logging in.");
       toast({
         title: "Account created successfully",
         description: "Please check your email to verify your account",
       });
+      
+      // Clear the form
+      setFormData({
+        email: "",
+        password: "",
+        confirmPassword: "",
+        role: "",
+        category: "",
+        name: ""
+      });
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to create account";
       toast({
         variant: "destructive",
         title: "Registration failed",
-        description: err instanceof Error ? err.message : "Failed to create account"
+        description: errorMessage
       });
-      setError(err instanceof Error ? err.message : "Failed to create account");
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -82,6 +96,16 @@ export function RegisterForm() {
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {successMessage && (
+        <Alert className="bg-green-50 border-green-200">
+          <Mail className="h-4 w-4 text-green-600" />
+          <AlertTitle className="text-green-800">Email Verification Required</AlertTitle>
+          <AlertDescription className="text-green-700">
+            {successMessage}
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">I am a</label>
         <Select 
@@ -215,7 +239,12 @@ export function RegisterForm() {
         </label>
       </div>
 
-      {error && <div className="text-sm text-red-500">{error}</div>}
+      {error && (
+        <Alert variant="destructive">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
       <Button 
         type="submit" 

@@ -1,145 +1,109 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import { Loader2 } from "lucide-react";
-import { useAuth } from "@/contexts/auth";
+import { Logo } from "@/components/ui/logo";
+import { CheckCircle, XCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
+  const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>('loading');
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { user } = useAuth();
-  const [verifying, setVerifying] = useState(true);
-  const [resending, setResending] = useState(false);
 
   useEffect(() => {
     const verifyEmail = async () => {
-      const token = searchParams.get("token");
-      const type = searchParams.get("type");
-
-      if (!token || !type) {
-        toast({
-          variant: "destructive",
-          title: "Verification Failed",
-          description: "Invalid verification link."
-        });
-        setVerifying(false);
-        return;
-      }
-
       try {
+        const token = searchParams.get('token');
+        const type = searchParams.get('type');
+        
+        if (!token || type !== 'signup') {
+          setVerificationStatus('error');
+          setErrorMessage("Invalid verification link. Please check your email and try again.");
+          return;
+        }
+
+        // Check with Supabase if this token is valid
         const { error } = await supabase.auth.verifyOtp({
           token_hash: token,
-          type: type as any
+          type: 'signup'
         });
 
-        if (error) throw error;
-
-        toast({
-          title: "Email Verified",
-          description: "Your email has been successfully verified."
-        });
-        
-        // Navigate to dashboard after successful verification
-        navigate("/dashboard");
+        if (error) {
+          console.error('Verification error:', error);
+          setVerificationStatus('error');
+          setErrorMessage(error.message || "Failed to verify email. The link may be expired.");
+        } else {
+          setVerificationStatus('success');
+        }
       } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Verification Failed",
-          description: error instanceof Error ? error.message : "An error occurred"
-        });
-        setVerifying(false);
+        console.error('Verification error:', error);
+        setVerificationStatus('error');
+        setErrorMessage("An unexpected error occurred during verification.");
       }
     };
 
     verifyEmail();
-  }, [searchParams, navigate, toast]);
-
-  const handleResendVerification = async () => {
-    if (!user?.email) return;
-    
-    setResending(true);
-    try {
-      const { error } = await supabase.auth.resend({
-        type: "signup",
-        email: user.email
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Verification Email Sent",
-        description: "Please check your inbox for the verification link."
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to resend verification email"
-      });
-    } finally {
-      setResending(false);
-    }
-  };
+  }, [searchParams]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div className="h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <Logo />
         </div>
 
-        <div className="bg-white p-8 rounded-lg shadow-sm border">
-          <h2 className="text-2xl font-semibold text-center mb-2">
-            Email Verification
-          </h2>
-          
-          {verifying ? (
-            <div className="text-center">
-              <Loader2 className="animate-spin h-8 w-8 mx-auto mb-4" />
-              <p className="text-gray-600">Verifying your email...</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-center text-gray-600">
-                {user?.email ? (
-                  <>
-                    We sent a verification link to <br />
-                    <span className="font-medium">{user.email}</span>
-                  </>
-                ) : (
-                  "Please verify your email to continue"
-                )}
+        <div className="p-6 rounded-lg shadow-sm border bg-white text-center">
+          {verificationStatus === 'loading' && (
+            <>
+              <h2 className="text-xl font-semibold mb-4">Verifying Your Email</h2>
+              <div className="flex justify-center my-6">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              </div>
+              <p className="text-gray-600">Please wait while we verify your email...</p>
+            </>
+          )}
+
+          {verificationStatus === 'success' && (
+            <>
+              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold mb-4">Email Verified Successfully!</h2>
+              <p className="text-gray-600 mb-6">
+                Your email has been successfully verified. You can now log in to your account.
               </p>
-
-              <Button
-                onClick={handleResendVerification}
-                variant="outline"
-                className="w-full"
-                disabled={resending}
+              <Button 
+                className="w-full text-stone-50 bg-violet-900 hover:bg-violet-800"
+                onClick={() => navigate('/login')}
               >
-                {resending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  "Resend Verification Email"
-                )}
+                Proceed to Login
               </Button>
+            </>
+          )}
 
-              <Button
-                onClick={() => navigate("/login")}
-                variant="link"
-                className="w-full"
-              >
-                Back to Login
-              </Button>
-            </div>
+          {verificationStatus === 'error' && (
+            <>
+              <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold mb-4">Verification Failed</h2>
+              <p className="text-red-600 mb-6">
+                {errorMessage}
+              </p>
+              <div className="space-y-3">
+                <Button 
+                  className="w-full text-stone-50 bg-violet-900 hover:bg-violet-800"
+                  onClick={() => navigate('/login')}
+                >
+                  Go to Login
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => navigate('/register')}
+                >
+                  Register Again
+                </Button>
+              </div>
+            </>
           )}
         </div>
       </div>

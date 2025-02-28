@@ -2,8 +2,9 @@
 import { Logo } from "@/components/ui/logo";
 import { RegisterForm } from "@/components/forms/auth/RegisterForm";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -29,11 +30,14 @@ export default function Register() {
           </div>
           <p className="text-center text-gray-600 mb-4 text-sm">Join OVERTIMESTAFF</p>
           
-          <RegisterForm />
+          <Alert className="mb-4 bg-blue-50 border-blue-200">
+            <Mail className="h-4 w-4 mr-2 text-blue-600" />
+            <AlertDescription className="text-blue-700">
+              After registering, you'll receive a verification email. Please check your inbox and click the verification link to complete your registration.
+            </AlertDescription>
+          </Alert>
           
-          <p className="mt-3 text-xs text-center text-slate-700">
-            After registering, you'll receive a verification email. Please check your inbox and click the verification link to complete your registration.
-          </p>
+          <RegisterForm />
         </div>
       </div>
     </div>;
