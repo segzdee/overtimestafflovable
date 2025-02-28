@@ -35,7 +35,7 @@ export function MarketUpdates() {
       </div>;
   }
   return <div className="text-white overflow-hidden flex-1 h-full">
-      <div className="h-full flex flex-col p-4 px-[10px]">
+      <div className="h-full flex flex-col p-4 px-[10px] py-[10px]">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs font-semibold text-green-400">LIVE HOSPITALITY INDEX</h3>
           <div className="flex items-center gap-4">
