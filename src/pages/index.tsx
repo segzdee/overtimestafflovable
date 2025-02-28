@@ -130,17 +130,19 @@ export default function Index() {
           {loginCards.map(card => <LoginCard key={card.role} role={card.role} title={card.title} subtitle={card.subtitle} icon={card.icon} isActive={activeRole === card.role} onClick={handleLoginClick} />)}
         </div>
 
-        <div className="space-y-4 flex-1 min-h-0 flex flex-col">
-          <div className="flex-grow">
-            <Suspense fallback={<MarketUpdatesSkeleton />}>
-              <MarketUpdates />
-            </Suspense>
-          </div>
-          
-          <div className="flex-grow">
-            <Suspense fallback={<MarketUpdatesSkeleton />}>
-              <EmergencyShiftIndex />
-            </Suspense>
+        <div className="flex-1 min-h-0 bg-gradient-to-br from-gray-900 to-zinc-900 rounded-xl shadow-xl overflow-hidden border border-zinc-700/30">
+          <div className="h-full flex flex-col md:flex-row">
+            <div className="flex-1 md:border-r border-zinc-700/50">
+              <Suspense fallback={<MarketUpdatesSkeleton />}>
+                <MarketUpdates />
+              </Suspense>
+            </div>
+            
+            <div className="flex-1">
+              <Suspense fallback={<MarketUpdatesSkeleton />}>
+                <EmergencyShiftIndex />
+              </Suspense>
+            </div>
           </div>
         </div>
       </main>

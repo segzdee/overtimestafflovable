@@ -30,10 +30,10 @@ export function EmergencyShiftIndex() {
   const emergencyUpdates = [...urgentUpdates, ...swapUpdates];
 
   if (isLoading) {
-    return <div className="bg-slate-800 text-white rounded-xl shadow-xl overflow-hidden flex-1 min-h-0 p-4">
+    return <div className="overflow-hidden flex-1 min-h-0 p-4">
         <div className="animate-pulse space-y-4">
           <div className="h-4 bg-gray-700 rounded w-1/4"></div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             {[...Array(2)].map((_, i) => <div key={i} className="p-4 bg-gray-700 rounded-lg">
                 <div className="h-4 bg-gray-600 rounded w-3/4 mb-2"></div>
                 <div className="h-4 bg-gray-600 rounded w-1/2"></div>
@@ -44,7 +44,7 @@ export function EmergencyShiftIndex() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 text-white shadow-xl overflow-hidden flex-1 min-h-[250px] rounded-lg border border-zinc-700/50">
+    <div className="text-white overflow-hidden flex-1 h-full">
       <div className="h-full flex flex-col p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -70,7 +70,7 @@ export function EmergencyShiftIndex() {
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-4 overflow-y-auto flex-1">
+        <div className="space-y-4 overflow-y-auto flex-1">
           {emergencyUpdates.map(update => (
             <div 
               key={update.id} 
