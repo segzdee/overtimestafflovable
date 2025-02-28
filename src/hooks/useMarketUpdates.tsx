@@ -9,8 +9,20 @@ export function useMarketUpdates() {
   const [lastUpdateTime, setLastUpdateTime] = useState<Date>(new Date());
   const [newUpdatesCount, setNewUpdatesCount] = useState(0);
   const [selectedCurrency, setSelectedCurrency] = useState<string>('EUR');
+  const [selectedRegion, setSelectedRegion] = useState<string>('All');
   const [isLoading, setIsLoading] = useState(true);
   const [exchangeRates] = useState<ExchangeRates>(DEFAULT_EXCHANGE_RATES);
+
+  // Get unique regions for filtering
+  const regions = ['All', ...Array.from(new Set(demoUpdates.map(update => {
+    // Extract country from region
+    const regionParts = update.region.split(',');
+    if (regionParts.length > 1) {
+      return regionParts[1].trim(); // Return country name
+    }
+    // For entries without country in region field, use the full region
+    return update.region;
+  })))];
 
   // Update all rates when currency changes
   useEffect(() => {
@@ -27,8 +39,15 @@ export function useMarketUpdates() {
       try {
         setIsLoading(true);
         
-        // Instead of fetching data, use the demo data directly
-        const formattedUpdates = demoUpdates.map(update => ({
+        // Filter updates based on selected region
+        let filteredUpdates = demoUpdates;
+        if (selectedRegion !== 'All') {
+          filteredUpdates = demoUpdates.filter(update => 
+            update.region.includes(selectedRegion)
+          );
+        }
+        
+        const formattedUpdates = filteredUpdates.map(update => ({
           ...update,
           rate: formatRate(update.original_rate, selectedCurrency, exchangeRates),
           isNew: false
@@ -45,11 +64,18 @@ export function useMarketUpdates() {
     };
 
     const simulateNewUpdate = () => {
-      const randomIndex = Math.floor(Math.random() * demoUpdates.length);
+      // Only simulate updates for the selected region
+      const eligibleUpdates = selectedRegion === 'All' 
+        ? demoUpdates 
+        : demoUpdates.filter(update => update.region.includes(selectedRegion));
+      
+      if (eligibleUpdates.length === 0) return;
+      
+      const randomIndex = Math.floor(Math.random() * eligibleUpdates.length);
       const newUpdate = {
-        ...demoUpdates[randomIndex],
+        ...eligibleUpdates[randomIndex],
         id: `new-${Date.now()}`,
-        rate: formatRate(demoUpdates[randomIndex].original_rate, selectedCurrency, exchangeRates),
+        rate: formatRate(eligibleUpdates[randomIndex].original_rate, selectedCurrency, exchangeRates),
         isNew: true
       };
       
@@ -72,7 +98,7 @@ export function useMarketUpdates() {
     const interval = setInterval(simulateNewUpdate, 30000);
     
     return () => clearInterval(interval);
-  }, [selectedCurrency, exchangeRates]);
+  }, [selectedCurrency, exchangeRates, selectedRegion]);
 
   return {
     updates,
@@ -80,6 +106,9 @@ export function useMarketUpdates() {
     newUpdatesCount,
     selectedCurrency,
     setSelectedCurrency,
+    selectedRegion,
+    setSelectedRegion,
+    regions,
     exchangeRates,
     isLoading
   };

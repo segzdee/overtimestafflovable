@@ -1,7 +1,7 @@
-
 import { MarketUpdate } from '../types/marketUpdate';
 
 export const demoUpdates: MarketUpdate[] = [
+  // Original Dubai entries
   {
     id: '1',
     type: 'URGENT',
@@ -30,6 +30,140 @@ export const demoUpdates: MarketUpdate[] = [
     currency_rate: 1,
     urgency_level: 'medium'
   },
+  
+  // Malta entries
+  {
+    id: '11',
+    type: 'URGENT',
+    title: 'Executive Chef - Luxury Hotel',
+    location: 'Marriott Hotel & Spa',
+    rate: '€42/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Valletta, Malta',
+    currency: 'EUR',
+    original_rate: 42,
+    currency_rate: 1,
+    urgency_level: 'high'
+  },
+  {
+    id: '12',
+    type: 'PREMIUM',
+    title: 'F&B Manager - 5-Star Resort',
+    location: 'Azure Beach Resort',
+    rate: '€38/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'St. Julian\'s, Malta',
+    currency: 'EUR',
+    original_rate: 38,
+    currency_rate: 1,
+    urgency_level: 'medium'
+  },
+  {
+    id: '13',
+    type: 'SWAP',
+    title: 'Head Bartender - Cocktail Bar',
+    location: 'The Thirsty Barracuda',
+    rate: '€32/hr',
+    highlight: false,
+    created_at: new Date().toISOString(),
+    region: 'Sliema, Malta',
+    currency: 'EUR',
+    original_rate: 32,
+    currency_rate: 1,
+    urgency_level: 'medium'
+  },
+  
+  // Spain entries
+  {
+    id: '14',
+    type: 'URGENT',
+    title: 'Sous Chef - Michelin Restaurant',
+    location: 'Casa del Mar',
+    rate: '€40/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Barcelona, Spain',
+    currency: 'EUR',
+    original_rate: 40,
+    currency_rate: 1,
+    urgency_level: 'high'
+  },
+  {
+    id: '15',
+    type: 'PREMIUM',
+    title: 'Head Sommelier - Fine Dining',
+    location: 'Vinitus Barcelona',
+    rate: '€36/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Barcelona, Spain',
+    currency: 'EUR',
+    original_rate: 36,
+    currency_rate: 1,
+    urgency_level: 'medium'
+  },
+  {
+    id: '16',
+    type: 'SWAP',
+    title: 'Restaurant Manager - Urgent Cover',
+    location: 'El Paradiso Beach Club',
+    rate: '€35/hr',
+    highlight: false,
+    created_at: new Date().toISOString(),
+    region: 'Ibiza, Spain',
+    currency: 'EUR',
+    original_rate: 35,
+    currency_rate: 1,
+    urgency_level: 'medium'
+  },
+  
+  // Italy entries
+  {
+    id: '17',
+    type: 'URGENT',
+    title: 'Pizza Chef - Authentic Pizzeria',
+    location: 'Ristorante Da Vinci',
+    rate: '€34/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Rome, Italy',
+    currency: 'EUR',
+    original_rate: 34,
+    currency_rate: 1,
+    urgency_level: 'high'
+  },
+  {
+    id: '18',
+    type: 'PREMIUM',
+    title: 'Pastry Chef - 5-Star Hotel',
+    location: 'Grand Hotel Tremezzo',
+    rate: '€39/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Lake Como, Italy',
+    currency: 'EUR',
+    original_rate: 39,
+    currency_rate: 1,
+    urgency_level: 'medium'
+  },
+  {
+    id: '19',
+    type: 'SWAP',
+    title: 'Head Waiter - Luxury Restaurant',
+    location: 'Ristorante Savini',
+    rate: '€28/hr',
+    highlight: false,
+    created_at: new Date().toISOString(),
+    region: 'Milan, Italy',
+    currency: 'EUR',
+    original_rate: 28,
+    currency_rate: 1,
+    urgency_level: 'low'
+  },
+  
+  // Keep some of the other original entries
   {
     id: '3',
     type: 'URGENT',
