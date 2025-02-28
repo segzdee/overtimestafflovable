@@ -1,8 +1,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://emtebosiacxihwrfcylr.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtdGVib3NpYWN4aWh3cmZjeWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk4NzQwNDAsImV4cCI6MjA1NTQ1MDA0MH0.i1oNvzxBJcZWfM14Ye-q5nwiLOtSHoVCCfDjcOjk4Ck';
+const supabaseUrl = 'https://qdyyfxgonldvghrtjhnn.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkeXlmeGdvbmxkdmdocnRqaG5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA0MDAzMTMsImV4cCI6MjA1NTk3NjMxM30.eS660marbWwss7pQFbMUBJ_e2mhH7JBJvaP7Kr3ZU0M';
 
 // Create a single instance of the Supabase client with improved configuration
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -13,7 +13,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
   global: {
     headers: {
-      'X-Client-Info': 'lovable-web'
+      'X-Client-Info': 'overtimestaffapp-web'
     }
   },
   db: {
