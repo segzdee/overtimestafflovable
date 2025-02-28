@@ -7,7 +7,7 @@ export const fetchMarketUpdates = async (
   currency: string,
   exchangeRates: ExchangeRates
 ): Promise<MarketUpdate[]> => {
-  // Instead of doing an actual fetch, return the demo data
+  // Use demo data instead of fetching
   return demoUpdates.map(update => ({
     ...update,
     rate: formatRate(update.original_rate, currency, exchangeRates)
@@ -17,24 +17,20 @@ export const fetchMarketUpdates = async (
 export const subscribeToMarketUpdates = (
   currency: string,
   exchangeRates: ExchangeRates,
-  onNewUpdate: (update: MarketUpdate) => void,
-  onUpdateMarket: (update: MarketUpdate) => void
+  onNewUpdate: (update: MarketUpdate) => void
 ) => {
-  // Simulate updates coming in every 30 seconds
+  // Simulate updates every 30 seconds
   const interval = setInterval(() => {
     const randomIndex = Math.floor(Math.random() * demoUpdates.length);
-    const randomUpdate = { 
+    const newUpdate = {
       ...demoUpdates[randomIndex],
       id: `update-${Date.now()}`,
       rate: formatRate(demoUpdates[randomIndex].original_rate, currency, exchangeRates),
       isNew: true
     };
-    
-    onNewUpdate(randomUpdate);
+    onNewUpdate(newUpdate);
   }, 30000);
   
-  // Return a cleanup function
-  return () => {
-    clearInterval(interval);
-  };
+  // Return cleanup function
+  return () => clearInterval(interval);
 };
