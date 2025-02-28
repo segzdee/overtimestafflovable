@@ -12,6 +12,15 @@ export const register = async (
   category?: string
 ) => {
   try {
+    // First check Supabase connection before attempting registration
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    console.log("Supabase connection check:", sessionData ? "Connected" : "Not connected", sessionError);
+    
+    if (sessionError) {
+      console.error('Supabase connection error:', JSON.stringify(sessionError, null, 2));
+      throw new Error('Unable to connect to authentication service. Please try again later.');
+    }
+
     // First create the auth user
     const { data: { user }, error: signUpError } = await supabase.auth.signUp({
       email,
@@ -27,6 +36,7 @@ export const register = async (
 
     if (signUpError) {
       console.error('Signup error:', signUpError);
+      console.error('Signup error details:', JSON.stringify(signUpError, null, 2));
       throw signUpError;
     }
     
@@ -46,6 +56,7 @@ export const register = async (
 
     if (profileError) {
       console.error('Profile creation error:', profileError);
+      console.error('Profile creation error details:', JSON.stringify(profileError, null, 2));
       throw profileError;
     }
 
@@ -59,6 +70,7 @@ export const register = async (
 
     if (prefsError) {
       console.error('Notification preferences error:', prefsError);
+      console.error('Notification preferences error details:', JSON.stringify(prefsError, null, 2));
       throw prefsError;
     }
 
@@ -66,6 +78,7 @@ export const register = async (
     
   } catch (error) {
     console.error('Registration error:', error);
+    console.error('Registration error details:', JSON.stringify(error, null, 2));
     throw error;
   }
 };
@@ -77,6 +90,15 @@ export const login = async (
   toast: any
 ) => {
   try {
+    // Check Supabase connection before attempting login
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    console.log("Supabase connection check:", sessionData ? "Connected" : "Not connected", sessionError);
+    
+    if (sessionError) {
+      console.error('Supabase connection error:', JSON.stringify(sessionError, null, 2));
+      throw new Error('Unable to connect to authentication service. Please try again later.');
+    }
+
     const { data: { user }, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -128,6 +150,7 @@ export const login = async (
     }
   } catch (error) {
     console.error('Login error:', error);
+    console.error('Login error details:', JSON.stringify(error, null, 2));
     toast({
       variant: "destructive",
       title: "Login failed",
@@ -142,6 +165,15 @@ export const loginWithToken = async (
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>
 ) => {
   try {
+    // Check Supabase connection before attempting token login
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    console.log("Supabase connection check:", sessionData ? "Connected" : "Not connected", sessionError);
+    
+    if (sessionError) {
+      console.error('Supabase connection error:', JSON.stringify(sessionError, null, 2));
+      throw new Error('Unable to connect to authentication service. Please try again later.');
+    }
+
     const { data: { user }, error } = await supabase.auth.getUser(token);
     
     if (error) throw error;
@@ -186,6 +218,7 @@ export const loginWithToken = async (
     });
   } catch (error) {
     console.error('Token login error:', error);
+    console.error('Token login error details:', JSON.stringify(error, null, 2));
     throw error;
   }
 };
