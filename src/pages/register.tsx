@@ -1,14 +1,11 @@
-
 import { Logo } from "@/components/ui/logo";
 import { RegisterForm } from "@/components/forms/auth/RegisterForm";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-
 export default function Register() {
   const navigate = useNavigate();
-  
   return <div className="h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
@@ -29,12 +26,7 @@ export default function Register() {
           <RegisterForm />
           
           <div className="absolute bottom-4 left-6">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="text-gray-600 hover:text-gray-900 px-2"
-            >
+            <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="text-gray-600 hover:text-gray-900 text-left px-[4px] rounded-sm">
               <ArrowLeft className="h-4 w-4 mr-1" />
               Back to Home
             </Button>
