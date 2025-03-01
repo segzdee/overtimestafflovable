@@ -36,6 +36,37 @@ export default function VerifyEmail() {
           setErrorMessage(error.message || "Failed to verify email. The link may be expired.");
         } else {
           setVerificationStatus('success');
+          // Get current user after verification
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          if (user) {
+            // Redirect based on user role after a short delay
+            setTimeout(() => {
+              let redirectUrl = "/dashboard";
+              
+              // Get user role from user metadata
+              const role = user.user_metadata?.role || 'shift-worker';
+              
+              switch (role) {
+                case "shift-worker":
+                  redirectUrl = "/dashboard/shift-worker";
+                  break;
+                case "agency":
+                  redirectUrl = "/dashboard/agency";
+                  break;
+                case "company":
+                  redirectUrl = "/dashboard/company";
+                  break;
+                case "admin":
+                  redirectUrl = "/dashboard/admin";
+                  break;
+                default:
+                  redirectUrl = "/login";
+              }
+              
+              navigate(redirectUrl);
+            }, 2000); // 2 second delay to show success message
+          }
         }
       } catch (error) {
         console.error('Verification error:', error);
@@ -45,7 +76,7 @@ export default function VerifyEmail() {
     };
 
     verifyEmail();
-  }, [searchParams]);
+  }, [searchParams, navigate]);
 
   return (
     <div className="h-screen flex items-center justify-center bg-gray-50 p-4">
@@ -70,14 +101,11 @@ export default function VerifyEmail() {
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
               <h2 className="text-xl font-semibold mb-4">Email Verified Successfully!</h2>
               <p className="text-gray-600 mb-6">
-                Your email has been successfully verified. You can now log in to your account.
+                Your email has been successfully verified. You'll be redirected to your dashboard in a moment.
               </p>
-              <Button 
-                className="w-full text-stone-50 bg-violet-900 hover:bg-violet-800"
-                onClick={() => navigate('/login')}
-              >
-                Proceed to Login
-              </Button>
+              <div className="flex justify-center my-6">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
             </>
           )}
 
