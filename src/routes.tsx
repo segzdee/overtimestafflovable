@@ -1,6 +1,6 @@
 
 import { createBrowserRouter } from "react-router-dom";
-import App from "./App";
+import Index from "./pages/index";
 import Register from "./pages/register";
 import Login from "./pages/login";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -19,7 +19,7 @@ import ShiftWorkerDashboard from "./pages/ShiftWorkerDashboard";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Index />,
   },
   {
     path: "/register",
