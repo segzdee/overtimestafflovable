@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { 
   Calendar, 
@@ -31,7 +32,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default function CompanyDashboard() {
-  const { user, generateAiToken } = useAuth();
+  const { user, generateAiToken, logout } = useAuth();
   const { toast } = useToast();
   const [isActivatingAI, setIsActivatingAI] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -133,7 +134,7 @@ export default function CompanyDashboard() {
         <div className="p-4 border-t border-gray-700">
           <button 
             className="flex items-center w-full px-4 py-2 text-left text-gray-400 hover:bg-gray-800 rounded"
-            onClick={() => user && user.logout && user.logout()}
+            onClick={logout}
           >
             <LogOut size={20} className="mr-3" />
             <span>Logout</span>
