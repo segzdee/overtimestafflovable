@@ -17,10 +17,10 @@ interface StatsCardProps {
 
 export function StatsCard({ title, value, description, icon, trend, className }: StatsCardProps) {
   return (
-    <Card className={cn("p-4 sm:p-6", className)}>
+    <Card className={cn("p-4 sm:p-6 hover:shadow-md transition-shadow duration-300", className)}>
       <div className="flex items-center gap-4">
         {icon && (
-          <div className="rounded-full p-2 bg-gray-100/50">
+          <div className="rounded-full p-2 bg-primary/10">
             {icon}
           </div>
         )}
