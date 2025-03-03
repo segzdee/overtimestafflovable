@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { 
   Calendar, 
@@ -17,11 +18,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { Shift } from "@/features/shift-worker/types";
 
 export default function ShiftWorkerDashboard() {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  
   const [badges] = useState(['Top Performer', 'Reliable', 'Experienced']);
   const [preferences] = useState({
     location: 'NY',
@@ -56,17 +56,6 @@ export default function ShiftWorkerDashboard() {
     { date: '2023-06-12', event: 'Completed shift at Midtown Cafe', amount: 105 }
   ]);
 
-  const sidebarItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: <BarChart size={20} /> },
-    { id: 'shifts', label: 'My Shifts', icon: <Calendar size={20} /> },
-    { id: 'earnings', label: 'Earnings', icon: <DollarSign size={20} /> },
-    { id: 'profile', label: 'Profile', icon: <User size={20} /> },
-    { id: 'companies', label: 'Companies', icon: <Briefcase size={20} /> },
-    { id: 'teams', label: 'Teams', icon: <Users size={20} /> },
-    { id: 'messages', label: 'Messages', icon: <MessageSquare size={20} /> },
-    { id: 'settings', label: 'Settings', icon: <Settings size={20} /> }
-  ];
-
   const upcomingShifts = [
     { id: 1, company: 'Grand Hotel', date: 'Mar 4, 2025', time: '8:00 AM - 4:00 PM', role: 'Server', pay: '$140' },
     { id: 2, company: 'City Bistro', date: 'Mar 5, 2025', time: '5:00 PM - 11:00 PM', role: 'Bartender', pay: '$130' },
@@ -97,192 +86,171 @@ export default function ShiftWorkerDashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <div className="w-64 bg-gray-900 text-white flex flex-col">
-        <div className="p-4 border-b border-gray-700">
-          <h1 className="text-xl font-bold">OvertimeStaff</h1>
-          <p className="text-gray-400 text-sm">Shift Worker Portal</p>
+    <DashboardLayout>
+      {/* Stats Overview Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white rounded-lg shadow p-4">
+          <h2 className="text-sm font-medium text-gray-500">This Week's Hours</h2>
+          <div className="flex items-center mt-2">
+            <Clock size={20} className="text-indigo-600 mr-2" />
+            <span className="text-xl sm:text-2xl font-bold">{weeklyProgress.current}</span>
+            <span className="ml-1 text-sm text-gray-500">/ {weeklyProgress.target} hrs</span>
+          </div>
+          <div className="mt-2">
+            <Progress value={weeklyProgress.percentage} className="h-2" indicatorClassName="bg-indigo-600" />
+          </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto">
-          <nav className="mt-2">
-            {sidebarItems.map(item => (
-              <button
-                key={item.id}
-                className={`flex items-center w-full px-4 py-3 text-left ${
-                  activeTab === item.id ? 'bg-gray-800' : 'hover:bg-gray-800'
-                }`}
-                onClick={() => setActiveTab(item.id)}
-              >
-                <span className="mr-3 text-gray-400">{item.icon}</span>
-                <span>{item.label}</span>
-              </button>
+        <div className="bg-white rounded-lg shadow p-4">
+          <h2 className="text-sm font-medium text-gray-500">Weekly Earnings</h2>
+          <div className="flex items-center mt-2">
+            <DollarSign size={20} className="text-green-600 mr-2" />
+            <span className="text-xl sm:text-2xl font-bold">$405.00</span>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-lg shadow p-4">
+          <h2 className="text-sm font-medium text-gray-500">Available Shifts</h2>
+          <div className="flex items-center mt-2">
+            <Calendar size={20} className="text-blue-600 mr-2" />
+            <span className="text-xl sm:text-2xl font-bold">{availableShifts.length}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Upcoming Shifts and Recent Earnings */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base sm:text-lg font-medium">Upcoming Shifts</h2>
+            <button className="text-xs sm:text-sm text-indigo-600">View All</button>
+          </div>
+          <div className="space-y-3">
+            {upcomingShifts.map(shift => (
+              <div key={shift.id} className="border-b pb-3 last:border-0">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start">
+                  <div>
+                    <h3 className="font-medium">{shift.company}</h3>
+                    <p className="text-xs sm:text-sm text-gray-500">{shift.date} • {shift.time}</p>
+                    <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mt-1 inline-block">
+                      {shift.role}
+                    </span>
+                  </div>
+                  <div className="text-right mt-2 sm:mt-0">
+                    <span className="font-medium text-green-600">{shift.pay}</span>
+                  </div>
+                </div>
+              </div>
             ))}
-          </nav>
+          </div>
         </div>
         
-        <div className="p-4 border-t border-gray-700">
-          <button className="flex items-center w-full px-4 py-2 text-left text-gray-400 hover:bg-gray-800 rounded">
-            <LogOut size={20} className="mr-3" />
-            <span>Logout</span>
-          </button>
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base sm:text-lg font-medium">Recent Earnings</h2>
+            <button className="text-xs sm:text-sm text-indigo-600">View All</button>
+          </div>
+          <div className="space-y-3">
+            {recentEarnings.map(earning => (
+              <div key={earning.id} className="border-b pb-3 last:border-0">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start">
+                  <div>
+                    <h3 className="font-medium">{earning.company}</h3>
+                    <p className="text-xs sm:text-sm text-gray-500">{earning.date} • {earning.hours} hrs</p>
+                  </div>
+                  <div className="text-right mt-2 sm:mt-0">
+                    <span className="font-medium text-green-600">{earning.amount}</span>
+                    <p className="text-xs text-gray-500">{earning.status}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white shadow-sm flex items-center justify-between p-4">
-          <div>
-            <h1 className="text-xl font-semibold">Dashboard</h1>
-            <p className="text-sm text-gray-500">Welcome back, Alex</p>
+      {/* Available Shifts Section */}
+      <div className="bg-white rounded-lg shadow p-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
+          <h2 className="text-base sm:text-lg font-medium mb-2 sm:mb-0">Available Shifts</h2>
+          <div className="w-full sm:w-auto flex space-x-2">
+            <button className="text-xs sm:text-sm bg-indigo-600 text-white px-3 py-1 rounded">Filter</button>
+            <button className="text-xs sm:text-sm text-indigo-600">View All</button>
           </div>
-          
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <Bell size={20} className="text-gray-500" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
-                3
-              </span>
-            </div>
-            <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
-              A
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 overflow-y-auto p-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-sm font-medium text-gray-500">This Week's Hours</h2>
-              <div className="flex items-center mt-2">
-                <Clock size={20} className="text-indigo-600 mr-2" />
-                <span className="text-2xl font-bold">{weeklyProgress.current}</span>
-                <span className="ml-1 text-sm text-gray-500">/ {weeklyProgress.target} hrs</span>
-              </div>
-              <div className="mt-2">
-                <Progress value={weeklyProgress.percentage} className="h-2" indicatorClassName="bg-indigo-600" />
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-sm font-medium text-gray-500">Weekly Earnings</h2>
-              <div className="flex items-center mt-2">
-                <DollarSign size={20} className="text-green-600 mr-2" />
-                <span className="text-2xl font-bold">$405.00</span>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-sm font-medium text-gray-500">Available Shifts</h2>
-              <div className="flex items-center mt-2">
-                <Calendar size={20} className="text-blue-600 mr-2" />
-                <span className="text-2xl font-bold">{availableShifts.length}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-medium">Upcoming Shifts</h2>
-                <button className="text-sm text-indigo-600">View All</button>
-              </div>
-              <div className="space-y-3">
-                {upcomingShifts.map(shift => (
-                  <div key={shift.id} className="border-b pb-3 last:border-0">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-medium">{shift.company}</h3>
-                        <p className="text-sm text-gray-500">{shift.date} • {shift.time}</p>
-                        <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mt-1 inline-block">
-                          {shift.role}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-medium text-green-600">{shift.pay}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-medium">Recent Earnings</h2>
-                <button className="text-sm text-indigo-600">View All</button>
-              </div>
-              <div className="space-y-3">
-                {recentEarnings.map(earning => (
-                  <div key={earning.id} className="border-b pb-3 last:border-0">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-medium">{earning.company}</h3>
-                        <p className="text-sm text-gray-500">{earning.date} • {earning.hours} hrs</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-medium text-green-600">{earning.amount}</span>
-                        <p className="text-xs text-gray-500">{earning.status}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium">Available Shifts</h2>
-              <div>
-                <button className="text-sm bg-indigo-600 text-white px-3 py-1 rounded mr-2">Filter</button>
-                <button className="text-sm text-indigo-600">View All</button>
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pay</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+        </div>
+        
+        {/* Responsive Table */}
+        <div className="overflow-x-auto -mx-4 sm:mx-0">
+          <div className="inline-block min-w-full align-middle px-4 sm:px-0">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                  <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
+                  <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                  <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pay</th>
+                  <th scope="col" className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {availableShifts.map(shift => (
+                  <tr key={shift.id}>
+                    <td className="px-3 py-3 whitespace-nowrap">
+                      <div className="font-medium text-gray-900">{shift.company}</div>
+                    </td>
+                    <td className="px-3 py-3 whitespace-nowrap">
+                      <div className="text-xs sm:text-sm text-gray-900">{shift.date}</div>
+                      <div className="text-xs text-gray-500">{shift.time}</div>
+                    </td>
+                    <td className="px-3 py-3 whitespace-nowrap">
+                      <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
+                        {shift.role}
+                      </span>
+                    </td>
+                    <td className="px-3 py-3 whitespace-nowrap text-xs sm:text-sm font-medium text-green-600">
+                      {shift.pay}
+                    </td>
+                    <td className="px-3 py-3 whitespace-nowrap text-right">
+                      <button 
+                        className="text-xs bg-indigo-600 text-white px-3 py-1 rounded touch-target"
+                        onClick={() => handleApplyShift(shift.id.toString())}
+                      >
+                        Apply
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {availableShifts.map(shift => (
-                    <tr key={shift.id}>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="font-medium text-gray-900">{shift.company}</div>
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{shift.date}</div>
-                        <div className="text-sm text-gray-500">{shift.time}</div>
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
-                          {shift.role}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-600">
-                        {shift.pay}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-right">
-                        <button 
-                          className="text-xs bg-indigo-600 text-white px-3 py-1 rounded"
-                          onClick={() => handleApplyShift(shift.id.toString())}
-                        >
-                          Apply
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </main>
+        </div>
+        
+        {/* Mobile Card View (visible on xs screens only) */}
+        <div className="block sm:hidden mt-4 space-y-4">
+          {availableShifts.map(shift => (
+            <div key={shift.id} className="border rounded-lg p-3 shadow-sm">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-medium">{shift.company}</h3>
+                  <p className="text-xs text-gray-500 mt-1">{shift.date} • {shift.time}</p>
+                  <div className="flex items-center mt-2">
+                    <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-2">
+                      {shift.role}
+                    </span>
+                    <span className="text-xs font-medium text-green-600">{shift.pay}</span>
+                  </div>
+                </div>
+                <button 
+                  className="text-xs bg-indigo-600 text-white px-3 py-1 rounded touch-target"
+                  onClick={() => handleApplyShift(shift.id.toString())}
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
