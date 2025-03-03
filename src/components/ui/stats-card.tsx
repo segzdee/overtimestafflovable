@@ -25,7 +25,7 @@ export function StatsCard({ title, value, description, icon, trend, className }:
           </div>
         )}
         <div className="space-y-1">
-          <p className="text-sm font-medium text-muted-foreground">
+          <p className="text-sm font-medium text-gray-400">
             {title}
           </p>
           <div className="flex items-baseline gap-2">
@@ -35,14 +35,14 @@ export function StatsCard({ title, value, description, icon, trend, className }:
             {trend && (
               <span className={cn(
                 "text-xs sm:text-sm",
-                trend.positive ? "text-green-600" : "text-red-600"
+                trend.positive ? "text-green-500" : "text-red-500"
               )}>
                 {trend.value}
               </span>
             )}
           </div>
           {description && (
-            <p className="text-xs sm:text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-gray-500">
               {description}
             </p>
           )}
