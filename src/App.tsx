@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { DevModeToggle } from "./components/DevModeToggle";
 
 // Pages
 import Index from "./pages/index";
@@ -93,6 +94,9 @@ const App = () => {
               {/* Catch all for 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            
+            {/* Add DevModeToggle component */}
+            <DevModeToggle />
           </TooltipProvider>
         </div>
       </QueryClientProvider>

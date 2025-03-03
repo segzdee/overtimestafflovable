@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { SupabaseProvider } from '@/lib/supabase/SupabaseProvider';
+import { DevModeProvider } from '@/contexts/dev/DevModeContext';
 import { Toaster } from '@/components/ui/toaster';
 import App from './App';
 import './index.css';
@@ -23,8 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
     <React.StrictMode>
       <BrowserRouter>
         <SupabaseProvider>
-          <App />
-          <Toaster />
+          <DevModeProvider>
+            <App />
+            <Toaster />
+          </DevModeProvider>
         </SupabaseProvider>
       </BrowserRouter>
     </React.StrictMode>
