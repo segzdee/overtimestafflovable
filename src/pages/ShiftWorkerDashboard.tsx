@@ -12,7 +12,8 @@ import { Progress } from "@/components/ui/progress";
 import { 
   Bell, 
   CalendarDays, 
-  Clock, 
+  Clock,
+  DollarSign, 
   FileText, 
   TrendingUp,
   CheckCircle2
