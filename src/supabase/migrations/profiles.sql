@@ -4,6 +4,8 @@ create table public.profiles (
   email text unique not null,
   role text not null check (role in ('admin', 'shift-worker', 'company', 'agency', 'aiagent')),
   name text not null,
+  verification_status text check (verification_status in ('verified', 'pending', 'rejected')),
+  category text,
   profile_complete boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
