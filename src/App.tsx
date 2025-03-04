@@ -42,7 +42,7 @@ const App = () => {
           <TooltipProvider>
             <Routes>
               {/* Public Routes */}
-              <Route path="/" element={<UserTypeSelection />} />
+              <Route path="/" element={<Index />} />
               <Route path="/register" element={<UserTypeSelection />} />
               <Route path="/register/:userType" element={<Register />} />
               <Route path="/registration-success" element={<RegistrationSuccess />} />
