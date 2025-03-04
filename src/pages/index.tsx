@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Logo } from '@/components/ui/logo';
 import { Button } from '@/components/ui/button';
@@ -16,10 +15,11 @@ export default function Home() {
         <div className="container mx-auto px-4 flex justify-between items-center">
           <Logo />
           
-          {/* Mobile menu button */}
+          {/* Mobile menu button - Now with green color */}
           <button 
-            className="md:hidden p-2 text-gray-600 focus:outline-none"
+            className="md:hidden p-2 text-green-600 hover:text-green-700 focus:outline-none transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {mobileMenuOpen ? (
               <X className="h-6 w-6" />
@@ -42,7 +42,7 @@ export default function Home() {
           </div>
         </div>
         
-        {/* Mobile Menu Dropdown */}
+        {/* Mobile Menu Dropdown - Improved visibility and animation */}
         {mobileMenuOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-md z-10 animate-fadeIn">
             <div className="py-3 px-4 flex flex-col space-y-3">
@@ -102,7 +102,7 @@ export default function Home() {
                     <p className="text-xs md:text-sm text-gray-500 mb-2 md:mb-4">Manage Multiple Venues and Staff</p>
                   </div>
                   <Link to="/login?type=agency" className="w-full">
-                    <Button className="w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white hover:from-purple-600 hover:to-purple-800 text-xs md:text-sm py-1 md:py-2">
+                    <Button className="w-full bg-gradient-to-r from-green-500 to-green-700 text-white hover:from-green-600 hover:to-green-800 text-xs md:text-sm py-1 md:py-2">
                       LOGIN
                     </Button>
                   </Link>
@@ -112,7 +112,7 @@ export default function Home() {
               {/* Hotels & Businesses Card */}
               <Card className="bg-white shadow-sm hover:shadow-md transition-shadow border border-gray-100 h-full">
                 <CardContent className="p-2 md:p-4 flex flex-col items-center justify-between h-full">
-                  <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-full flex items-center justify-center mt-2 md:mt-4 mb-2 md:mb-3">
+                  <div className="w-10 h-10 md:w-12 md:w-12 bg-blue-100 rounded-full flex items-center justify-center mt-2 md:mt-4 mb-2 md:mb-3">
                     <Building className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
                   </div>
                   <div className="text-center">
@@ -120,7 +120,7 @@ export default function Home() {
                     <p className="text-xs md:text-sm text-gray-500 mb-2 md:mb-4">Post shifts and hire Extra Staff</p>
                   </div>
                   <Link to="/login?type=company" className="w-full">
-                    <Button className="w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white hover:from-purple-600 hover:to-purple-800 text-xs md:text-sm py-1 md:py-2">
+                    <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800 text-xs md:text-sm py-1 md:py-2">
                       LOGIN
                     </Button>
                   </Link>
@@ -156,7 +156,7 @@ export default function Home() {
                     <p className="text-xs md:text-sm text-gray-500 mb-2 md:mb-4">Activate Agent for Automation</p>
                   </div>
                   <Link to="/login?type=ai-agent" className="w-full">
-                    <Button className="w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white hover:from-purple-600 hover:to-purple-800 text-xs md:text-sm py-1 md:py-2">
+                    <Button className="w-full bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 text-xs md:text-sm py-1 md:py-2">
                       LOGIN
                     </Button>
                   </Link>
