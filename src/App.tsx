@@ -25,6 +25,7 @@ import Privacy from "./pages/privacy";
 import Terms from "./pages/terms";
 import Contact from "./pages/contact";
 import Blog from "./pages/blog";
+import RegistrationSuccess from "./pages/registration-success";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => {
               <Route path="/terms" element={<Terms />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/registration-success" element={<RegistrationSuccess />} />
               
               {/* Dashboard Routes */}
               <Route
