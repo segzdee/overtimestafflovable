@@ -1,4 +1,5 @@
 
+import { useState, useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
 import { useDevMode } from "@/contexts/dev/DevModeContext";
@@ -12,6 +13,26 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   const { user } = useAuth();
   const location = useLocation();
   const { devMode, selectedRole } = useDevMode();
+  const [loading, setLoading] = useState(true);
+  
+  // Effect to handle loading state
+  useEffect(() => {
+    // We can simply wait a brief moment for auth to initialize
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
+  }
   
   // If in developer mode and a role is selected, bypass authentication
   if (devMode && selectedRole) {
