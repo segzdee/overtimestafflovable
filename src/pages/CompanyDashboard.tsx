@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Calendar, 
@@ -30,11 +29,11 @@ import { Progress } from "@/components/ui/progress";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import AIAgentWidget from "@/components/AIAgentWidget";
 
 export default function CompanyDashboard() {
-  const { user, generateAiToken, logout } = useAuth();
+  const { user, logout } = useAuth();
   const { toast } = useToast();
-  const [isActivatingAI, setIsActivatingAI] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const sidebarItems = [
@@ -77,26 +76,6 @@ export default function CompanyDashboard() {
     { id: 2, agency: 'Elite Hospitality Staff', date: 'Feb 25, 2025', amount: '$1,840.00', shifts: 10, status: 'Processing' },
     { id: 3, agency: 'Quick Temp Solutions', date: 'Feb 20, 2025', amount: '$1,250.00', shifts: 8, status: 'Paid' }
   ];
-
-  const handleActivateAI = async () => {
-    setIsActivatingAI(true);
-    try {
-      const token = await generateAiToken("Company AI Assistant", user?.id || "");
-      toast({
-        title: "AI Agent Activated",
-        description: "Your AI agent has been successfully activated. Save this token for future use.",
-      });
-      console.log("AI Agent Token:", token);
-    } catch (error) {
-      toast({
-        title: "Activation Failed",
-        description: "Failed to activate AI agent. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsActivatingAI(false);
-    }
-  };
 
   const handleCancelShift = async (shiftId: string) => {
     const hoursRemaining = 10; // Stub: Calculate dynamically post-MVP
@@ -150,13 +129,6 @@ export default function CompanyDashboard() {
           </div>
           
           <div className="flex items-center space-x-4">
-            <Button
-              onClick={handleActivateAI}
-              disabled={isActivatingAI}
-              className="bg-teal-600 text-white flex items-center gap-2"
-            >
-              {isActivatingAI ? "Activating..." : "AI Assistant"}
-            </Button>
             <div className="relative">
               <Bell size={20} className="text-gray-500" />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
@@ -410,6 +382,8 @@ export default function CompanyDashboard() {
           </div>
         </main>
       </div>
+      
+      <AIAgentWidget userType="company" entityId={user?.id} />
     </div>
   );
 }

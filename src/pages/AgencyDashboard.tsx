@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Calendar, 
@@ -28,13 +27,13 @@ import { useToast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import AIAgentWidget from "@/components/AIAgentWidget";
 
 export default function AgencyDashboard() {
   const { user, logout } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [filterOpen, setFilterOpen] = useState(false);
-  const [isActivatingAI, setIsActivatingAI] = useState(false);
   
   // Sidebar items
   const sidebarItems = [
@@ -79,24 +78,6 @@ export default function AgencyDashboard() {
     { id: 1, client: 'Beach Resort', date: 'Mar 10, 2025', positions: 'Servers (3), Bartenders (2)', urgency: 'High', status: 'New Request' },
     { id: 2, client: 'Corporate Event', date: 'Mar 15, 2025', positions: 'Event Staff (10)', urgency: 'Medium', status: 'New Request' }
   ];
-
-  const handleActivateAI = async () => {
-    setIsActivatingAI(true);
-    try {
-      toast({
-        title: "AI Agent Activated",
-        description: "Your AI agent has been successfully activated.",
-      });
-    } catch (error) {
-      toast({
-        title: "Activation Failed",
-        description: "Failed to activate AI agent. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsActivatingAI(false);
-    }
-  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -145,13 +126,6 @@ export default function AgencyDashboard() {
           </div>
           
           <div className="flex items-center space-x-4">
-            <Button
-              onClick={handleActivateAI}
-              disabled={isActivatingAI}
-              className="bg-primary text-white flex items-center gap-2"
-            >
-              {isActivatingAI ? "Activating..." : "AI Assistant"}
-            </Button>
             <div className="relative">
               <Bell size={20} className="text-gray-500" />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
@@ -431,6 +405,9 @@ export default function AgencyDashboard() {
           </div>
         </main>
       </div>
+      
+      {/* Add the AI Agent Widget */}
+      <AIAgentWidget userType="agency" entityId={user?.id} />
     </div>
   );
 }
