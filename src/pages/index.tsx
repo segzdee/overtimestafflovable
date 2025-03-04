@@ -14,7 +14,6 @@ export default function Home() {
       {/* Main Content */}
       <div className="flex-grow">
         <HeroSection />
-        <LoginCards />
         <MarketUpdates />
       </div>
 
