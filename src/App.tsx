@@ -106,14 +106,6 @@ const App = () => {
                 }
               />
               
-              <Route path="/admin/*" 
-                element={
-                  <ProtectedRoute allowedRoles={["admin"]}>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              
               {/* Catch all for 404 */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
