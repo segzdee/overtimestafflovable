@@ -11,7 +11,7 @@ const MarketUpdates: React.FC = () => {
                 <span className="px-1 py-0.5 text-[10px] md:text-xs bg-gray-800 rounded text-white">LON</span>
               </div>
             </div>
-            <span className="text-[10px] md:text-xs text-gray-400">9:49:30 PM UTC</span>
+            <span className="text-[10px] md:text-xs text-zinc-50">9:49:30 PM UTC</span>
           </div>
           
           {/* Market updates grid - Responsive and symmetrical */}
@@ -155,10 +155,10 @@ const MarketUpdates: React.FC = () => {
           
           {/* Footer stats */}
           <div className="flex justify-between items-center mt-2 md:mt-3 px-2 text-[8px] md:text-xs text-gray-400">
-            <p className="text-zinc-50">Updated every 5 minutes</p>
-            <p className="text-zinc-50">69 new positions added today</p>
-            <p className="text-zinc-50">Emergency updates in real-time</p>
-            <p className="text-zinc-50">7 active emergencies</p>
+            <p className="text-zinc-50 text-xs">Updated  5 minutes</p>
+            <p className="text-zinc-50 text-xs">69 new positions added </p>
+            <p className="text-zinc-50 text-xs">Emergency in real-time</p>
+            <p className="text-zinc-50 text-xs">7 active emergencies</p>
           </div>
         </div>
       </div>
