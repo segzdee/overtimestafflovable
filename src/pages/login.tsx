@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Logo } from "@/components/ui/logo";
 import { ArrowLeft } from "lucide-react";
+import { PasswordInput } from "@/components/forms/auth/PasswordInput";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -26,7 +27,7 @@ export default function Login() {
         title: "Success",
         description: "Logged in successfully"
       });
-      navigate("/dashboard");
+      // Note: No need to navigate here since the login function in AuthProvider already handles redirection
     } catch (error) {
       const message = error instanceof Error ? error.message : "Invalid credentials";
       toast({
@@ -78,8 +79,7 @@ export default function Login() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
-              <Input
-                type="password"
+              <PasswordInput
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
