@@ -1,167 +1,154 @@
+
 import React from 'react';
+
 const MarketUpdates: React.FC = () => {
-  return <section className="py-2 flex-grow flex items-center justify-center">
+  return (
+    <section className="py-6 md:py-8 lg:py-10">
       <div className="container mx-auto px-4">
-        <div className="bg-gray-900 rounded-lg shadow-md p-2 md:p-4 max-w-5xl mx-auto text-white">
-          <div className="flex justify-between items-center mb-2 md:mb-3 px-2">
-            <div className="flex space-x-2 items-center">
-              <h2 className="text-xs font-semibold text-green-400">LIVE HOSPITALITY INDEX</h2>
-              <div className="flex items-center">
-                <span className="px-1 py-0.5 text-[10px] md:text-xs bg-gray-800 rounded text-white mx-1">FIL</span>
-                <span className="px-1 py-0.5 text-[10px] md:text-xs bg-gray-800 rounded text-white">LON</span>
+        <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 mb-4 md:mb-6 text-center">
+          Live Hospitality Market
+        </h2>
+        
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-xl p-4 md:p-6 max-w-6xl mx-auto text-white overflow-hidden border border-gray-700">
+          <div className="flex justify-between items-center mb-4 px-2">
+            <div className="flex space-x-3 items-center">
+              <h3 className="text-sm font-bold text-green-400 tracking-wider">LIVE HOSPITALITY INDEX</h3>
+              <div className="flex items-center space-x-2">
+                <span className="px-2 py-1 text-xs bg-gray-700 rounded-md text-white">FIL</span>
+                <span className="px-2 py-1 text-xs bg-gray-700 rounded-md text-white">LON</span>
               </div>
             </div>
-            <span className="text-[10px] md:text-xs text-zinc-50">9:49:30 PM UTC</span>
+            <span className="text-xs text-white">9:49:30 PM UTC</span>
           </div>
           
           {/* Market updates grid - Responsive and symmetrical */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
-            <div className="space-y-2 md:space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+            <div className="space-y-3 md:space-y-4">
               {/* Regular shifts - Column 1 */}
-              <div className="bg-gray-800 p-2 md:p-3 rounded-md">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] md:text-xs bg-amber-500 px-1 py-0.5 rounded text-black font-medium">SWAP</span>
-                  <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
-                  <span className="text-xs md:text-sm font-semibold text-green-400">€30/hr</span>
+              <div className="bg-gray-800/80 p-3 md:p-4 rounded-lg hover:bg-gray-800 transition-colors duration-200 border border-gray-700/50">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs bg-amber-500 px-2 py-1 rounded-md text-gray-900 font-medium">SWAP</span>
+                  <span className="text-xs bg-amber-500/20 px-2 py-1 rounded-md text-amber-300 font-medium">MEDIUM</span>
+                  <span className="text-sm font-bold text-green-400">€30/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Bartender Evening Shift Available</h3>
-                <p className="text-[10px] md:text-xs text-gray-400">Sky Bar Lounge</p>
-                <p className="text-[10px] md:text-xs text-zinc-50">Södermalm, Global</p>
+                <h3 className="font-semibold text-sm md:text-base text-white mb-1">Bartender Evening Shift Available</h3>
+                <p className="text-xs text-gray-300">Sky Bar Lounge</p>
+                <p className="text-xs text-white">Södermalm, Global</p>
               </div>
               
-              <div className="bg-purple-900/70 p-2 md:p-3 rounded-md">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] md:text-xs bg-purple-500 px-1 py-0.5 rounded text-white font-medium">PREMIUM</span>
-                  <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
-                  <span className="text-xs md:text-sm font-semibold text-green-400">€38/hr</span>
+              <div className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs bg-purple-500 px-2 py-1 rounded-md text-white font-medium">PREMIUM</span>
+                  <span className="text-xs bg-amber-500/20 px-2 py-1 rounded-md text-amber-300 font-medium">MEDIUM</span>
+                  <span className="text-sm font-bold text-green-400">€38/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">F&B Manager - 5-Star Resort</h3>
-                <p className="text-[10px] md:text-xs text-gray-400">Azure Beach Resort</p>
-                <p className="text-[10px] md:text-xs text-zinc-50">St. Julian's, Malta</p>
+                <h3 className="font-semibold text-sm md:text-base text-white mb-1">F&B Manager - 5-Star Resort</h3>
+                <p className="text-xs text-gray-300">Azure Beach Resort</p>
+                <p className="text-xs text-white">St. Julian's, Malta</p>
               </div>
               
-              <div className="bg-gray-800 p-2 md:p-3 rounded-md">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] md:text-xs bg-amber-500 px-1 py-0.5 rounded text-black font-medium">SWAP</span>
-                  <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
-                  <span className="text-xs md:text-sm font-semibold text-green-400">€32/hr</span>
+              <div className="bg-gray-800/80 p-3 md:p-4 rounded-lg hover:bg-gray-800 transition-colors duration-200 border border-gray-700/50">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs bg-amber-500 px-2 py-1 rounded-md text-gray-900 font-medium">SWAP</span>
+                  <span className="text-xs bg-amber-500/20 px-2 py-1 rounded-md text-amber-300 font-medium">MEDIUM</span>
+                  <span className="text-sm font-bold text-green-400">€32/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Head Bartender - Cocktail Bar</h3>
-                <p className="text-[10px] md:text-xs text-gray-400">The Mixology Lab</p>
-                <p className="text-[10px] md:text-xs text-zinc-50">Sliema, Malta</p>
-              </div>
-              
-              <div className="bg-gray-800 p-2 md:p-3 rounded-md">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] md:text-xs bg-amber-500 px-1 py-0.5 rounded text-black font-medium">SWAP</span>
-                  <span className="text-[10px] md:text-xs bg-green-500/20 px-1 py-0.5 rounded text-green-400 font-medium">LOW</span>
-                  <span className="text-xs md:text-sm font-semibold text-green-400">€28/hr</span>
-                </div>
-                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Head Waiter - Luxury Restaurant</h3>
-                <p className="text-[10px] md:text-xs text-gray-400">Signature Soirée</p>
-                <p className="text-[10px] md:text-xs text-zinc-50">Sliema, Italy</p>
+                <h3 className="font-semibold text-sm md:text-base text-white mb-1">Head Bartender - Cocktail Bar</h3>
+                <p className="text-xs text-gray-300">The Mixology Lab</p>
+                <p className="text-xs text-white">Sliema, Malta</p>
               </div>
             </div>
             
             {/* Premium shifts - Column 2 */}
-            <div className="space-y-2 md:space-y-3">
-              <div className="bg-purple-900/70 p-2 md:p-3 rounded-md">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] md:text-xs bg-purple-500 px-1 py-0.5 rounded text-white font-medium">PREMIUM</span>
-                  <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
-                  <span className="text-xs md:text-sm font-semibold text-green-400">€38/hr</span>
+            <div className="space-y-3 md:space-y-4">
+              <div className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs bg-purple-500 px-2 py-1 rounded-md text-white font-medium">PREMIUM</span>
+                  <span className="text-xs bg-amber-500/20 px-2 py-1 rounded-md text-amber-300 font-medium">MEDIUM</span>
+                  <span className="text-sm font-bold text-green-400">€38/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">F&B Manager - 5-Star Resort</h3>
-                <p className="text-[10px] md:text-xs text-gray-400">Azure Beach Resort</p>
-                <p className="text-[10px] md:text-xs text-zinc-50">St. Julian's, Malta</p>
+                <h3 className="font-semibold text-sm md:text-base text-white mb-1">F&B Manager - 5-Star Resort</h3>
+                <p className="text-xs text-gray-300">Azure Beach Resort</p>
+                <p className="text-xs text-white">St. Julian's, Malta</p>
               </div>
               
-              <div className="bg-purple-900/70 p-2 md:p-3 rounded-md">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] md:text-xs bg-purple-500 px-1 py-0.5 rounded text-white font-medium">PREMIUM</span>
-                  <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
-                  <span className="text-xs md:text-sm font-semibold text-green-400">€38/hr</span>
+              <div className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs bg-purple-500 px-2 py-1 rounded-md text-white font-medium">PREMIUM</span>
+                  <span className="text-xs bg-green-500/20 px-2 py-1 rounded-md text-green-300 font-medium">LOW</span>
+                  <span className="text-sm font-bold text-green-400">€39/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">F&B Manager - 5-Star Resort</h3>
-                <p className="text-[10px] md:text-xs text-gray-400">Azure Beach Resort</p>
-                <p className="text-[10px] md:text-xs text-zinc-50">St. Julian's, Malta</p>
+                <h3 className="font-semibold text-sm md:text-base text-white mb-1">Pastry Chef - 5-Star Hotel</h3>
+                <p className="text-xs text-gray-300">Le Grand Patisserie</p>
+                <p className="text-xs text-white">Port Louis, Italy</p>
               </div>
               
-              <div className="bg-purple-900/70 p-2 md:p-3 rounded-md">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] md:text-xs bg-purple-500 px-1 py-0.5 rounded text-white font-medium">PREMIUM</span>
-                  <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
-                  <span className="text-xs md:text-sm font-semibold text-green-400">€39/hr</span>
+              <div className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs bg-purple-500 px-2 py-1 rounded-md text-white font-medium">PREMIUM</span>
+                  <span className="text-xs bg-red-500/20 px-2 py-1 rounded-md text-red-300 font-medium">HIGH</span>
+                  <span className="text-sm font-bold text-green-400">€50/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Pastry Chef - 5-Star Hotel</h3>
-                <p className="text-[10px] md:text-xs text-gray-400">Le Grand Patisserie</p>
-                <p className="text-[10px] md:text-xs text-zinc-50">Port Louis, Italy</p>
-              </div>
-              
-              <div className="bg-purple-900/70 p-2 md:p-3 rounded-md">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] md:text-xs bg-purple-500 px-1 py-0.5 rounded text-white font-medium">PREMIUM</span>
-                  <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
-                  <span className="text-xs md:text-sm font-semibold text-green-400">€50/hr</span>
-                </div>
-                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Executive Pastry Chef</h3>
-                <p className="text-[10px] md:text-xs text-gray-400">Royal Dining Group</p>
-                <p className="text-[10px] md:text-xs text-zinc-50">Milan, Italy</p>
+                <h3 className="font-semibold text-sm md:text-base text-white mb-1">Executive Pastry Chef</h3>
+                <p className="text-xs text-gray-300">Royal Dining Group</p>
+                <p className="text-xs text-white">Milan, Italy</p>
               </div>
             </div>
           </div>
           
           {/* Emergency & Shift Swap Index */}
-          <div className="mt-2 md:mt-3">
-            <div className="flex justify-between items-center px-2 mb-1 md:mb-2">
-              <div className="flex space-x-2 items-center">
-                <h2 className="text-[10px] md:text-xs font-semibold text-green-400">EMERGENCY & SHIFT SWAP INDEX</h2>
-                <div className="px-1 py-0.5 bg-red-500/20 rounded text-red-400 text-[10px] md:text-xs font-medium">
+          <div className="mt-4 md:mt-5">
+            <div className="flex justify-between items-center px-2 mb-3">
+              <div className="flex items-center gap-3">
+                <h3 className="text-xs font-bold text-red-400 tracking-wider">EMERGENCY SHIFT INDEX</h3>
+                <div className="px-2 py-1 bg-red-500/20 rounded-md text-red-300 text-xs font-medium">
                   2 Active
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="px-1 py-0.5 text-[10px] md:text-xs bg-gray-800 rounded text-white">LON</span>
-                <span className="text-[10px] md:text-xs text-gray-400">9:49:30 PM UTC</span>
+                <span className="px-2 py-1 text-xs bg-gray-700 rounded-md text-white">LON</span>
+                <span className="text-xs text-gray-300">9:49:30 PM UTC</span>
               </div>
             </div>
             
-            <div className="bg-gray-800 border border-gray-700 rounded-lg p-2 md:p-3">
-              <div className="space-y-2 md:space-y-3">
+            <div className="bg-gray-800/80 border border-gray-700 rounded-lg p-4">
+              <div className="space-y-4">
                 {/* Emergency Shift 1 */}
-                <div className="border-b border-gray-700 pb-2 md:pb-3">
-                  <div className="flex items-center mb-1">
-                    <span className="text-[10px] md:text-xs bg-red-500 px-1 py-0.5 rounded text-white font-medium mr-2">URGENT</span>
-                    <span className="text-xs md:text-sm font-semibold text-green-400 ml-auto">€40/hr</span>
+                <div className="border-b border-gray-700 pb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs bg-red-500 px-2 py-1 rounded-md text-white font-medium">URGENT</span>
+                    <span className="text-sm font-bold text-green-400">€40/hr</span>
                   </div>
-                  <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Sous Chef - Michelin Restaurant</h3>
-                  <p className="text-[10px] md:text-xs text-zinc-50">Casa del Mar</p>
-                  <p className="text-[10px] md:text-xs text-zinc-50">Barcelona, Spain</p>
+                  <h3 className="font-semibold text-sm md:text-base text-white mb-1">Sous Chef - Michelin Restaurant</h3>
+                  <p className="text-xs text-gray-300">Casa del Mar</p>
+                  <p className="text-xs text-white">Barcelona, Spain</p>
                 </div>
                 
                 {/* Emergency Shift 2 */}
                 <div>
-                  <div className="flex items-center mb-1">
-                    <span className="text-[10px] md:text-xs bg-amber-500 px-1 py-0.5 rounded text-black font-medium mr-2">SWAP</span>
-                    <span className="text-xs md:text-sm font-semibold text-green-400 ml-auto">€35/hr</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs bg-amber-500 px-2 py-1 rounded-md text-gray-900 font-medium">SWAP</span>
+                    <span className="text-sm font-bold text-green-400">€35/hr</span>
                   </div>
-                  <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Restaurant Manager - Urgent Cover</h3>
-                  <p className="text-[10px] md:text-xs text-zinc-50">El Paradiso Beach Club</p>
-                  <p className="text-[10px] md:text-xs text-zinc-50">Ibiza, Spain</p>
+                  <h3 className="font-semibold text-sm md:text-base text-white mb-1">Restaurant Manager - Urgent Cover</h3>
+                  <p className="text-xs text-gray-300">El Paradiso Beach Club</p>
+                  <p className="text-xs text-white">Ibiza, Spain</p>
                 </div>
               </div>
             </div>
           </div>
           
           {/* Footer stats */}
-          <div className="flex justify-between items-center mt-2 md:mt-3 px-2 text-[8px] md:text-xs text-gray-400">
-            <p className="text-zinc-50 text-xs">Updated  5 minutes</p>
-            <p className="text-zinc-50 text-xs">69 new positions added </p>
-            <p className="text-zinc-50 text-xs">Emergency in real-time</p>
-            <p className="text-zinc-50 text-xs">7 active emergencies</p>
+          <div className="flex flex-wrap justify-between items-center mt-4 px-2 text-xs text-gray-400">
+            <p className="text-white">Updated 5 minutes ago</p>
+            <p className="text-white">69 new positions added today</p>
+            <p className="text-white">Emergency tracking in real-time</p>
+            <p className="text-white">7 active emergencies</p>
           </div>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default MarketUpdates;
