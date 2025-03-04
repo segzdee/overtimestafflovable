@@ -130,16 +130,18 @@ const FeatureCard = ({
   };
 
   return (
-    <Card className="border border-gray-200 hover:shadow-md transition-shadow overflow-hidden">
-      <CardContent className="p-6">
-        <div className="flex items-center mb-4">
-          <div className="p-2 rounded-md bg-purple-100 text-purple-600 mr-4">
-            <Icon size={24} />
+    <Card className="border border-gray-200 hover:shadow-md transition-shadow overflow-hidden h-full">
+      <CardContent className="p-4 sm:p-5 md:p-6 flex flex-col h-full">
+        <div className="flex items-center mb-3 md:mb-4">
+          <div className="p-2 rounded-md bg-purple-100 text-purple-600 mr-3 md:mr-4 flex-shrink-0">
+            <Icon size={20} className="md:w-6 md:h-6" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900">{title}</h3>
         </div>
-        <p className="text-gray-600 mb-4">{description}</p>
-        {renderChart()}
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4 flex-grow">{description}</p>
+        <div className="w-full h-[100px] md:h-[120px]">
+          {renderChart()}
+        </div>
       </CardContent>
     </Card>
   );
@@ -147,16 +149,16 @@ const FeatureCard = ({
 
 const HowItWorks: React.FC = () => {
   return (
-    <section className="py-12 bg-white">
+    <section className="py-8 md:py-10 lg:py-12 bg-white rounded-lg my-4 md:my-6">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How OVERTIMESTAFF Works</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+        <div className="text-center mb-8 md:mb-10 lg:mb-12">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4">How OVERTIMESTAFF Works</h2>
+          <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto">
             Our AI-powered platform streamlines hospitality staffing, matching the right talent with the right opportunities in real-time.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           <FeatureCard 
             icon={Users} 
             title="Instant Staff Matching" 
@@ -186,8 +188,8 @@ const HowItWorks: React.FC = () => {
           />
         </div>
         
-        <div className="text-center mt-10">
-          <button className="inline-flex items-center px-6 py-3 rounded-md bg-purple-600 text-white font-medium hover:bg-purple-700 transition-colors">
+        <div className="text-center mt-6 md:mt-8 lg:mt-10">
+          <button className="inline-flex items-center px-4 py-2 md:px-6 md:py-3 rounded-md bg-purple-600 text-white text-sm md:text-base font-medium hover:bg-purple-700 transition-colors">
             Learn more about our platform
             <ChevronRight size={16} className="ml-2" />
           </button>

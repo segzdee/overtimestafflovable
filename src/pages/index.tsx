@@ -13,14 +13,14 @@ export default function Home() {
       <Header />
 
       {/* Main Content */}
-      <div className="flex-grow overflow-auto">
-        <div className="container mx-auto px-4">
+      <main className="flex-grow overflow-auto">
+        <div className="container mx-auto px-4 pt-2 md:pt-4">
           <HeroSection />
           <LoginCards />
           <MarketUpdates />
           <HowItWorks />
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>
