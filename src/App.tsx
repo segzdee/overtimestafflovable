@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,6 +27,8 @@ import Terms from "./pages/terms";
 import Contact from "./pages/contact";
 import Blog from "./pages/blog";
 import RegistrationSuccess from "./pages/registration-success";
+import CompleteProfile from "./pages/CompleteProfile";
+import UserTypeSelection from "./pages/UserTypeSelection";
 
 const queryClient = new QueryClient();
 
@@ -39,25 +42,36 @@ const App = () => {
           <TooltipProvider>
             <Routes>
               {/* Public Routes */}
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={<UserTypeSelection />} />
+              <Route path="/register" element={<UserTypeSelection />} />
+              <Route path="/register/:userType" element={<Register />} />
+              <Route path="/registration-success" element={<RegistrationSuccess />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/token-validation" element={<TokenValidation />} />
               <Route path="/find-shifts" element={<FindShifts />} />
               <Route path="/find-staff" element={<FindStaff />} />
               
-              {/* New Public Routes */}
+              {/* Additional Public Routes */}
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/blog" element={<Blog />} />
-              <Route path="/registration-success" element={<RegistrationSuccess />} />
+              
+              {/* Protected Routes - Profile Completion */}
+              <Route 
+                path="/complete-profile/:userType" 
+                element={
+                  <ProtectedRoute allowedRoles={["admin", "shift-worker", "company", "agency", "aiagent"]}>
+                    <CompleteProfile />
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Dashboard Routes */}
               <Route
-                path="/dashboard/shift-worker"
+                path="/dashboard/shift-worker/*"
                 element={
                   <ProtectedRoute allowedRoles={["shift-worker"]}>
                     <ShiftWorkerDashboard />
@@ -66,7 +80,7 @@ const App = () => {
               />
               
               <Route
-                path="/dashboard/company"
+                path="/dashboard/company/*"
                 element={
                   <ProtectedRoute allowedRoles={["company"]}>
                     <CompanyDashboard />
@@ -75,7 +89,7 @@ const App = () => {
               />
               
               <Route
-                path="/dashboard/admin"
+                path="/dashboard/admin/*"
                 element={
                   <ProtectedRoute allowedRoles={["admin"]}>
                     <AdminDashboard />
@@ -84,7 +98,7 @@ const App = () => {
               />
               
               <Route
-                path="/dashboard/agency"
+                path="/dashboard/agency/*"
                 element={
                   <ProtectedRoute allowedRoles={["agency"]}>
                     <AgencyDashboard />
@@ -92,8 +106,16 @@ const App = () => {
                 }
               />
               
+              <Route path="/admin/*" 
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              
               {/* Catch all for 404 */}
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             
             <DevModeToggle />
