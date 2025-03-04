@@ -1,12 +1,22 @@
 
 import { Bell } from 'lucide-react';
 
-export const DesktopHeader = () => {
+interface DesktopHeaderProps {
+  title?: string;
+  subtitle?: string;
+  userInitial?: string;
+}
+
+export const DesktopHeader = ({ 
+  title = "Dashboard", 
+  subtitle = "Welcome back", 
+  userInitial = "A" 
+}: DesktopHeaderProps) => {
   return (
     <header className="bg-white shadow-sm hidden md:flex items-center justify-between p-4">
       <div>
-        <h1 className="text-xl font-semibold">Dashboard</h1>
-        <p className="text-sm text-gray-500">Welcome back, Alex</p>
+        <h1 className="text-xl font-semibold">{title}</h1>
+        <p className="text-sm text-gray-500">{subtitle}</p>
       </div>
       
       <div className="flex items-center space-x-4">
@@ -17,7 +27,7 @@ export const DesktopHeader = () => {
           </span>
         </div>
         <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
-          A
+          {userInitial}
         </div>
       </div>
     </header>

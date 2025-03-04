@@ -13,14 +13,22 @@ interface EarningEntry {
 
 interface RecentEarningsProps {
   earnings: EarningEntry[];
+  title?: string;
+  viewAllLink?: string;
 }
 
-export const RecentEarnings = ({ earnings }: RecentEarningsProps) => {
+export const RecentEarnings = ({ 
+  earnings, 
+  title = "Recent Earnings",
+  viewAllLink = "#" 
+}: RecentEarningsProps) => {
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="flex flex-row items-center justify-between py-4 px-6">
-        <CardTitle className="text-lg font-medium">Recent Earnings</CardTitle>
-        <Button variant="link" size="sm" className="text-sm text-indigo-600">View All</Button>
+        <CardTitle className="text-lg font-medium">{title}</CardTitle>
+        <Button variant="link" size="sm" className="text-sm text-indigo-600" asChild>
+          <a href={viewAllLink}>View All</a>
+        </Button>
       </CardHeader>
       <CardContent className="px-6">
         <div className="space-y-3">
