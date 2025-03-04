@@ -7,6 +7,7 @@ import {
   Calendar,
   ChevronRight
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -189,10 +190,10 @@ const HowItWorks: React.FC = () => {
         </div>
         
         <div className="text-center mt-6 md:mt-8 lg:mt-10">
-          <button className="inline-flex items-center px-4 py-2 md:px-6 md:py-3 rounded-md bg-purple-600 text-white text-sm md:text-base font-medium hover:bg-purple-700 transition-colors">
+          <Link to="/register" className="inline-flex items-center px-4 py-2 md:px-6 md:py-3 rounded-md bg-purple-600 text-white text-sm md:text-base font-medium hover:bg-purple-700 transition-colors">
             Learn more about our platform
             <ChevronRight size={16} className="ml-2" />
-          </button>
+          </Link>
         </div>
       </div>
     </section>

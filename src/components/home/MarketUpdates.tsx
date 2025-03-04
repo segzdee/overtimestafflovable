@@ -1,7 +1,34 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const MarketUpdates: React.FC = () => {
+  const [showLoginDialog, setShowLoginDialog] = React.useState(false);
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    setShowLoginDialog(true);
+  };
+
+  const handleLogin = () => {
+    navigate('/login');
+    setShowLoginDialog(false);
+  };
+
+  const handleSignUp = () => {
+    navigate('/register');
+    setShowLoginDialog(false);
+  };
+
   return (
     <section className="py-6 md:py-8 lg:py-10">
       <div className="container mx-auto px-4">
@@ -25,7 +52,10 @@ const MarketUpdates: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             <div className="space-y-3 md:space-y-4">
               {/* Regular shifts - Column 1 */}
-              <div className="bg-gray-800/80 p-3 md:p-4 rounded-lg hover:bg-gray-800 transition-colors duration-200 border border-gray-700/50">
+              <div 
+                className="bg-gray-800/80 p-3 md:p-4 rounded-lg hover:bg-gray-800 transition-colors duration-200 border border-gray-700/50 cursor-pointer transform hover:scale-[1.01] transition-transform"
+                onClick={handleCardClick}
+              >
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs bg-amber-500 px-2 py-1 rounded-md text-gray-900 font-medium">SWAP</span>
                   <span className="text-xs bg-amber-500/20 px-2 py-1 rounded-md text-amber-300 font-medium">MEDIUM</span>
@@ -36,7 +66,10 @@ const MarketUpdates: React.FC = () => {
                 <p className="text-xs text-white">Södermalm, Global</p>
               </div>
               
-              <div className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50">
+              <div 
+                className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50 cursor-pointer transform hover:scale-[1.01] transition-transform"
+                onClick={handleCardClick}
+              >
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs bg-purple-500 px-2 py-1 rounded-md text-white font-medium">PREMIUM</span>
                   <span className="text-xs bg-amber-500/20 px-2 py-1 rounded-md text-amber-300 font-medium">MEDIUM</span>
@@ -47,7 +80,10 @@ const MarketUpdates: React.FC = () => {
                 <p className="text-xs text-white">St. Julian's, Malta</p>
               </div>
               
-              <div className="bg-gray-800/80 p-3 md:p-4 rounded-lg hover:bg-gray-800 transition-colors duration-200 border border-gray-700/50">
+              <div 
+                className="bg-gray-800/80 p-3 md:p-4 rounded-lg hover:bg-gray-800 transition-colors duration-200 border border-gray-700/50 cursor-pointer transform hover:scale-[1.01] transition-transform"
+                onClick={handleCardClick}
+              >
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs bg-amber-500 px-2 py-1 rounded-md text-gray-900 font-medium">SWAP</span>
                   <span className="text-xs bg-amber-500/20 px-2 py-1 rounded-md text-amber-300 font-medium">MEDIUM</span>
@@ -61,7 +97,10 @@ const MarketUpdates: React.FC = () => {
             
             {/* Premium shifts - Column 2 */}
             <div className="space-y-3 md:space-y-4">
-              <div className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50">
+              <div 
+                className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50 cursor-pointer transform hover:scale-[1.01] transition-transform"
+                onClick={handleCardClick}
+              >
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs bg-purple-500 px-2 py-1 rounded-md text-white font-medium">PREMIUM</span>
                   <span className="text-xs bg-amber-500/20 px-2 py-1 rounded-md text-amber-300 font-medium">MEDIUM</span>
@@ -72,7 +111,10 @@ const MarketUpdates: React.FC = () => {
                 <p className="text-xs text-white">St. Julian's, Malta</p>
               </div>
               
-              <div className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50">
+              <div 
+                className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50 cursor-pointer transform hover:scale-[1.01] transition-transform"
+                onClick={handleCardClick}
+              >
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs bg-purple-500 px-2 py-1 rounded-md text-white font-medium">PREMIUM</span>
                   <span className="text-xs bg-green-500/20 px-2 py-1 rounded-md text-green-300 font-medium">LOW</span>
@@ -83,7 +125,10 @@ const MarketUpdates: React.FC = () => {
                 <p className="text-xs text-white">Port Louis, Italy</p>
               </div>
               
-              <div className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50">
+              <div 
+                className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50 cursor-pointer transform hover:scale-[1.01] transition-transform"
+                onClick={handleCardClick}
+              >
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs bg-purple-500 px-2 py-1 rounded-md text-white font-medium">PREMIUM</span>
                   <span className="text-xs bg-red-500/20 px-2 py-1 rounded-md text-red-300 font-medium">HIGH</span>
@@ -114,7 +159,10 @@ const MarketUpdates: React.FC = () => {
             <div className="bg-gray-800/80 border border-gray-700 rounded-lg p-4">
               <div className="space-y-4">
                 {/* Emergency Shift 1 */}
-                <div className="border-b border-gray-700 pb-4">
+                <div 
+                  className="border-b border-gray-700 pb-4 cursor-pointer hover:bg-gray-700/30 p-2 rounded transition-colors"
+                  onClick={handleCardClick}
+                >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs bg-red-500 px-2 py-1 rounded-md text-white font-medium">URGENT</span>
                     <span className="text-sm font-bold text-green-400">€40/hr</span>
@@ -125,7 +173,10 @@ const MarketUpdates: React.FC = () => {
                 </div>
                 
                 {/* Emergency Shift 2 */}
-                <div>
+                <div
+                  className="cursor-pointer hover:bg-gray-700/30 p-2 rounded transition-colors"
+                  onClick={handleCardClick}
+                >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs bg-amber-500 px-2 py-1 rounded-md text-gray-900 font-medium">SWAP</span>
                     <span className="text-sm font-bold text-green-400">€35/hr</span>
@@ -147,6 +198,31 @@ const MarketUpdates: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Login/Signup Dialog */}
+      <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Access Required</DialogTitle>
+            <DialogDescription>
+              Please sign in or create an account to view full details and apply for this position.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <p className="text-sm text-gray-600">
+              Join thousands of hospitality professionals accessing premium job opportunities and shifts.
+            </p>
+          </div>
+          <DialogFooter className="sm:justify-center gap-2 sm:gap-3">
+            <Button variant="outline" onClick={handleLogin}>
+              Login
+            </Button>
+            <Button onClick={handleSignUp} className="bg-purple-600 hover:bg-purple-700 text-white">
+              Create Account
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
