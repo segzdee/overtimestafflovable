@@ -95,41 +95,95 @@ export type Database = {
       }
       agencies: {
         Row: {
-          commission_rate: number | null
-          created_at: string | null
+          agency_code: string
+          created_at: string
+          description: string | null
+          email: string
           id: string
-          license_number: string | null
-          metadata: Json | null
-          service_areas: string[] | null
-          tenant_id: string | null
-          updated_at: string | null
+          name: string
+          phone: string | null
+          profile_id: string
+          status: string
+          updated_at: string
+          verification_status: string
+          website: string | null
         }
         Insert: {
-          commission_rate?: number | null
-          created_at?: string | null
+          agency_code: string
+          created_at?: string
+          description?: string | null
+          email: string
           id?: string
-          license_number?: string | null
-          metadata?: Json | null
-          service_areas?: string[] | null
-          tenant_id?: string | null
-          updated_at?: string | null
+          name: string
+          phone?: string | null
+          profile_id: string
+          status: string
+          updated_at?: string
+          verification_status: string
+          website?: string | null
         }
         Update: {
-          commission_rate?: number | null
-          created_at?: string | null
+          agency_code?: string
+          created_at?: string
+          description?: string | null
+          email?: string
           id?: string
-          license_number?: string | null
-          metadata?: Json | null
-          service_areas?: string[] | null
-          tenant_id?: string | null
-          updated_at?: string | null
+          name?: string
+          phone?: string | null
+          profile_id?: string
+          status?: string
+          updated_at?: string
+          verification_status?: string
+          website?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "agencies_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: true
-            referencedRelation: "tenants"
+            foreignKeyName: "agencies_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agency_company_relationships: {
+        Row: {
+          agency_id: string
+          company_id: string
+          created_at: string
+          id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          company_id: string
+          created_at?: string
+          id?: string
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          company_id?: string
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agency_company_relationships_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agency_company_relationships_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
@@ -174,6 +228,163 @@ export type Database = {
             columns: ["tenant_id"]
             isOneToOne: true
             referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agency_staff: {
+        Row: {
+          agency_id: string
+          created_at: string
+          id: string
+          profile_id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          id?: string
+          profile_id: string
+          role: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agency_staff_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agency_staff_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agency_workers: {
+        Row: {
+          agency_id: string
+          created_at: string
+          exclusive: boolean | null
+          id: string
+          status: string
+          updated_at: string
+          worker_profile_id: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          exclusive?: boolean | null
+          id?: string
+          status: string
+          updated_at?: string
+          worker_profile_id: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          exclusive?: boolean | null
+          id?: string
+          status?: string
+          updated_at?: string
+          worker_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agency_workers_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agency_workers_worker_profile_id_fkey"
+            columns: ["worker_profile_id"]
+            isOneToOne: false
+            referencedRelation: "shift_worker_profiles"
+            referencedColumns: ["profile_id"]
+          },
+        ]
+      }
+      ai_agent_subscriptions: {
+        Row: {
+          agency_id: string | null
+          api_token: string
+          company_id: string | null
+          created_at: string
+          id: string
+          monthly_fee: number | null
+          payment_status: string
+          status: string
+          subscriber_profile_id: string
+          subscriber_type: string
+          subscription_end: string
+          subscription_start: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id?: string | null
+          api_token: string
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          monthly_fee?: number | null
+          payment_status: string
+          status: string
+          subscriber_profile_id: string
+          subscriber_type: string
+          subscription_end: string
+          subscription_start: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string | null
+          api_token?: string
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          monthly_fee?: number | null
+          payment_status?: string
+          status?: string
+          subscriber_profile_id?: string
+          subscriber_type?: string
+          subscription_end?: string
+          subscription_start?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_agent_subscriptions_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_agent_subscriptions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_agent_subscriptions_subscriber_profile_id_fkey"
+            columns: ["subscriber_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -224,38 +435,56 @@ export type Database = {
       }
       companies: {
         Row: {
-          business_number: string | null
-          created_at: string | null
+          company_code: string
+          created_at: string
+          description: string | null
+          email: string
           id: string
           industry: string | null
-          metadata: Json | null
-          tenant_id: string | null
-          updated_at: string | null
+          name: string
+          phone: string | null
+          profile_id: string
+          status: string
+          updated_at: string
+          verification_status: string
+          website: string | null
         }
         Insert: {
-          business_number?: string | null
-          created_at?: string | null
+          company_code: string
+          created_at?: string
+          description?: string | null
+          email: string
           id?: string
           industry?: string | null
-          metadata?: Json | null
-          tenant_id?: string | null
-          updated_at?: string | null
+          name: string
+          phone?: string | null
+          profile_id: string
+          status: string
+          updated_at?: string
+          verification_status: string
+          website?: string | null
         }
         Update: {
-          business_number?: string | null
-          created_at?: string | null
+          company_code?: string
+          created_at?: string
+          description?: string | null
+          email?: string
           id?: string
           industry?: string | null
-          metadata?: Json | null
-          tenant_id?: string | null
-          updated_at?: string | null
+          name?: string
+          phone?: string | null
+          profile_id?: string
+          status?: string
+          updated_at?: string
+          verification_status?: string
+          website?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "companies_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: true
-            referencedRelation: "tenants"
+            foreignKeyName: "companies_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -301,55 +530,188 @@ export type Database = {
           },
         ]
       }
-      invoices: {
+      company_staff: {
         Row: {
-          amount: number
-          created_at: string | null
-          currency: string | null
-          due_date: string | null
-          from_user_id: string | null
+          company_id: string
+          created_at: string
           id: string
-          items: Json | null
-          payment_id: string | null
-          status: string | null
-          tenant_id: string
-          to_user_id: string | null
-          updated_at: string | null
+          profile_id: string
+          role: string
+          updated_at: string
         }
         Insert: {
-          amount: number
-          created_at?: string | null
-          currency?: string | null
-          due_date?: string | null
-          from_user_id?: string | null
+          company_id: string
+          created_at?: string
           id?: string
-          items?: Json | null
-          payment_id?: string | null
-          status?: string | null
-          tenant_id: string
-          to_user_id?: string | null
-          updated_at?: string | null
+          profile_id: string
+          role: string
+          updated_at?: string
         }
         Update: {
-          amount?: number
-          created_at?: string | null
-          currency?: string | null
-          due_date?: string | null
-          from_user_id?: string | null
+          company_id?: string
+          created_at?: string
           id?: string
-          items?: Json | null
-          payment_id?: string | null
-          status?: string | null
-          tenant_id?: string
-          to_user_id?: string | null
-          updated_at?: string | null
+          profile_id?: string
+          role?: string
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "invoices_payment_id_fkey"
-            columns: ["payment_id"]
+            foreignKeyName: "company_staff_company_id_fkey"
+            columns: ["company_id"]
             isOneToOne: false
-            referencedRelation: "shift_payments"
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_staff_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      id_counters: {
+        Row: {
+          admin_counter: number | null
+          agency_counter: number | null
+          ai_counter: number | null
+          company_counter: number | null
+          id: number
+          invoice_counter: number | null
+          shift_counter: number | null
+          worker_counter: number | null
+        }
+        Insert: {
+          admin_counter?: number | null
+          agency_counter?: number | null
+          ai_counter?: number | null
+          company_counter?: number | null
+          id?: number
+          invoice_counter?: number | null
+          shift_counter?: number | null
+          worker_counter?: number | null
+        }
+        Update: {
+          admin_counter?: number | null
+          agency_counter?: number | null
+          ai_counter?: number | null
+          company_counter?: number | null
+          id?: number
+          invoice_counter?: number | null
+          shift_counter?: number | null
+          worker_counter?: number | null
+        }
+        Relationships: []
+      }
+      invoice_items: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          shift_id: string | null
+          unit_price: number
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          quantity: number
+          shift_id?: string | null
+          unit_price: number
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          shift_id?: string | null
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_items_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          agency_id: string | null
+          company_id: string
+          created_at: string
+          due_date: string
+          id: string
+          invoice_code: string
+          invoice_number: string
+          invoice_period_end: string
+          invoice_period_start: string
+          payment_date: string | null
+          status: string
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          agency_id?: string | null
+          company_id: string
+          created_at?: string
+          due_date: string
+          id?: string
+          invoice_code?: string
+          invoice_number: string
+          invoice_period_end: string
+          invoice_period_start: string
+          payment_date?: string | null
+          status: string
+          total_amount: number
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string | null
+          company_id?: string
+          created_at?: string
+          due_date?: string
+          id?: string
+          invoice_code?: string
+          invoice_number?: string
+          invoice_period_end?: string
+          invoice_period_start?: string
+          payment_date?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
@@ -384,6 +746,47 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          link: string | null
+          message: string
+          profile_id: string
+          read: boolean | null
+          title: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          message: string
+          profile_id: string
+          read?: boolean | null
+          title: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          message?: string
+          profile_id?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -393,6 +796,7 @@ export type Database = {
           profile_complete: boolean | null
           role: string
           updated_at: string
+          user_code: string | null
         }
         Insert: {
           created_at?: string
@@ -402,6 +806,7 @@ export type Database = {
           profile_complete?: boolean | null
           role: string
           updated_at?: string
+          user_code?: string | null
         }
         Update: {
           created_at?: string
@@ -411,53 +816,47 @@ export type Database = {
           profile_complete?: boolean | null
           role?: string
           updated_at?: string
+          user_code?: string | null
         }
         Relationships: []
       }
       shift_applications: {
         Row: {
           agency_id: string | null
-          applicant_id: string | null
-          cover_note: string | null
-          created_at: string | null
+          applicant_type: string
+          created_at: string
           id: string
-          shift_id: string | null
-          status: string | null
-          updated_at: string | null
+          shift_id: string
+          status: string
+          updated_at: string
+          worker_profile_id: string | null
         }
         Insert: {
           agency_id?: string | null
-          applicant_id?: string | null
-          cover_note?: string | null
-          created_at?: string | null
+          applicant_type: string
+          created_at?: string
           id?: string
-          shift_id?: string | null
-          status?: string | null
-          updated_at?: string | null
+          shift_id: string
+          status: string
+          updated_at?: string
+          worker_profile_id?: string | null
         }
         Update: {
           agency_id?: string | null
-          applicant_id?: string | null
-          cover_note?: string | null
-          created_at?: string | null
+          applicant_type?: string
+          created_at?: string
           id?: string
-          shift_id?: string | null
-          status?: string | null
-          updated_at?: string | null
+          shift_id?: string
+          status?: string
+          updated_at?: string
+          worker_profile_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "shift_applications_agency_id_fkey"
             columns: ["agency_id"]
             isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "shift_applications_applicant_id_fkey"
-            columns: ["applicant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
+            referencedRelation: "agencies"
             referencedColumns: ["id"]
           },
           {
@@ -467,48 +866,76 @@ export type Database = {
             referencedRelation: "shifts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "shift_applications_worker_profile_id_fkey"
+            columns: ["worker_profile_id"]
+            isOneToOne: false
+            referencedRelation: "shift_worker_profiles"
+            referencedColumns: ["profile_id"]
+          },
         ]
       }
       shift_assignments: {
         Row: {
           agency_id: string | null
-          created_at: string | null
-          hourly_rate: number | null
+          clock_in: string | null
+          clock_out: string | null
+          company_feedback: string | null
+          created_at: string
+          hourly_rate: number
           id: string
-          metadata: Json | null
-          shift_id: string | null
-          status: string | null
-          updated_at: string | null
-          worker_id: string | null
+          rating_to_company: number | null
+          rating_to_worker: number | null
+          shift_id: string
+          status: string
+          total_hours: number | null
+          total_pay: number | null
+          updated_at: string
+          worker_feedback: string | null
+          worker_profile_id: string
         }
         Insert: {
           agency_id?: string | null
-          created_at?: string | null
-          hourly_rate?: number | null
+          clock_in?: string | null
+          clock_out?: string | null
+          company_feedback?: string | null
+          created_at?: string
+          hourly_rate: number
           id?: string
-          metadata?: Json | null
-          shift_id?: string | null
-          status?: string | null
-          updated_at?: string | null
-          worker_id?: string | null
+          rating_to_company?: number | null
+          rating_to_worker?: number | null
+          shift_id: string
+          status: string
+          total_hours?: number | null
+          total_pay?: number | null
+          updated_at?: string
+          worker_feedback?: string | null
+          worker_profile_id: string
         }
         Update: {
           agency_id?: string | null
-          created_at?: string | null
-          hourly_rate?: number | null
+          clock_in?: string | null
+          clock_out?: string | null
+          company_feedback?: string | null
+          created_at?: string
+          hourly_rate?: number
           id?: string
-          metadata?: Json | null
-          shift_id?: string | null
-          status?: string | null
-          updated_at?: string | null
-          worker_id?: string | null
+          rating_to_company?: number | null
+          rating_to_worker?: number | null
+          shift_id?: string
+          status?: string
+          total_hours?: number | null
+          total_pay?: number | null
+          updated_at?: string
+          worker_feedback?: string | null
+          worker_profile_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "shift_assignments_agency_id_fkey"
             columns: ["agency_id"]
             isOneToOne: false
-            referencedRelation: "tenants"
+            referencedRelation: "agencies"
             referencedColumns: ["id"]
           },
           {
@@ -519,11 +946,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "shift_assignments_worker_id_fkey"
-            columns: ["worker_id"]
+            foreignKeyName: "shift_assignments_worker_profile_id_fkey"
+            columns: ["worker_profile_id"]
             isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
+            referencedRelation: "shift_worker_profiles"
+            referencedColumns: ["profile_id"]
           },
         ]
       }
@@ -576,13 +1003,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "shift_payments_shift_id_fkey"
-            columns: ["shift_id"]
-            isOneToOne: false
-            referencedRelation: "shifts"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "shift_payments_to_tenant_id_fkey"
             columns: ["to_tenant_id"]
             isOneToOne: false
@@ -627,55 +1047,57 @@ export type Database = {
             referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "shift_reviews_shift_id_fkey"
-            columns: ["shift_id"]
-            isOneToOne: false
-            referencedRelation: "shifts"
-            referencedColumns: ["id"]
-          },
         ]
       }
       shift_worker_profiles: {
         Row: {
           availability: Json | null
-          created_at: string | null
+          created_at: string
           experience_years: number | null
-          hourly_rate: number | null
-          id: string
-          preferred_locations: string[] | null
+          is_independent: boolean | null
+          phone: string | null
+          preferred_roles: string[] | null
+          profile_id: string
+          rating: number | null
           skills: string[] | null
-          tenant_id: string
-          updated_at: string | null
+          updated_at: string
+          verification_status: string
+          worker_code: string
         }
         Insert: {
           availability?: Json | null
-          created_at?: string | null
+          created_at?: string
           experience_years?: number | null
-          hourly_rate?: number | null
-          id?: string
-          preferred_locations?: string[] | null
+          is_independent?: boolean | null
+          phone?: string | null
+          preferred_roles?: string[] | null
+          profile_id: string
+          rating?: number | null
           skills?: string[] | null
-          tenant_id: string
-          updated_at?: string | null
+          updated_at?: string
+          verification_status: string
+          worker_code: string
         }
         Update: {
           availability?: Json | null
-          created_at?: string | null
+          created_at?: string
           experience_years?: number | null
-          hourly_rate?: number | null
-          id?: string
-          preferred_locations?: string[] | null
+          is_independent?: boolean | null
+          phone?: string | null
+          preferred_roles?: string[] | null
+          profile_id?: string
+          rating?: number | null
           skills?: string[] | null
-          tenant_id?: string
-          updated_at?: string | null
+          updated_at?: string
+          verification_status?: string
+          worker_code?: string
         }
         Relationships: [
           {
-            foreignKeyName: "shift_worker_profiles_tenant_id_fkey"
-            columns: ["tenant_id"]
+            foreignKeyName: "shift_worker_profiles_profile_id_fkey"
+            columns: ["profile_id"]
             isOneToOne: true
-            referencedRelation: "tenants"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -735,62 +1157,72 @@ export type Database = {
       }
       shifts: {
         Row: {
-          created_at: string | null
+          agency_id: string | null
+          company_id: string
+          created_at: string
+          date: string
           description: string | null
           end_time: string
-          filled_count: number | null
           hourly_rate: number
           id: string
           location: string
-          metadata: Json | null
-          required_skills: string[] | null
-          staff_needed: number | null
+          position: string
+          shift_code: string
+          staff_confirmed: number | null
+          staff_needed: number
           start_time: string
-          status: Database["public"]["Enums"]["shift_status"] | null
-          tenant_id: string | null
-          title: string
-          updated_at: string | null
+          status: string
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          agency_id?: string | null
+          company_id: string
+          created_at?: string
+          date: string
           description?: string | null
           end_time: string
-          filled_count?: number | null
           hourly_rate: number
           id?: string
           location: string
-          metadata?: Json | null
-          required_skills?: string[] | null
-          staff_needed?: number | null
+          position: string
+          shift_code?: string
+          staff_confirmed?: number | null
+          staff_needed: number
           start_time: string
-          status?: Database["public"]["Enums"]["shift_status"] | null
-          tenant_id?: string | null
-          title: string
-          updated_at?: string | null
+          status: string
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          agency_id?: string | null
+          company_id?: string
+          created_at?: string
+          date?: string
           description?: string | null
           end_time?: string
-          filled_count?: number | null
           hourly_rate?: number
           id?: string
           location?: string
-          metadata?: Json | null
-          required_skills?: string[] | null
-          staff_needed?: number | null
+          position?: string
+          shift_code?: string
+          staff_confirmed?: number | null
+          staff_needed?: number
           start_time?: string
-          status?: Database["public"]["Enums"]["shift_status"] | null
-          tenant_id?: string | null
-          title?: string
-          updated_at?: string | null
+          status?: string
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "shifts_tenant_id_fkey"
-            columns: ["tenant_id"]
+            foreignKeyName: "shifts_agency_id_fkey"
+            columns: ["agency_id"]
             isOneToOne: false
-            referencedRelation: "tenants"
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
@@ -878,13 +1310,6 @@ export type Database = {
           worker_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "time_entries_shift_id_fkey"
-            columns: ["shift_id"]
-            isOneToOne: false
-            referencedRelation: "shifts"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "time_entries_worker_id_fkey"
             columns: ["worker_id"]
@@ -997,6 +1422,14 @@ export type Database = {
         }
         Returns: undefined
       }
+      generate_unique_id: {
+        Args: {
+          prefix: string
+          counter_table: string
+          counter_column: string
+        }
+        Returns: string
+      }
       get_current_tenant_id: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -1004,6 +1437,10 @@ export type Database = {
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      reset_and_install_schema: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {

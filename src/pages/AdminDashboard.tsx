@@ -316,7 +316,8 @@ export default function AdminDashboard() {
         </main>
       </div>
       
-      <AIAgentWidget userType="admin" entityId={user?.id} />
+      {/* Fix the userType prop to use a supported value */}
+      <AIAgentWidget userType="agency" entityId={user?.id} />
     </div>
   );
 }
