@@ -4,6 +4,7 @@ import Header from '@/components/layout/Header';
 import HeroSection from '@/components/home/HeroSection';
 import LoginCards from '@/components/home/LoginCards';
 import MarketUpdates from '@/components/home/MarketUpdates';
+import HowItWorks from '@/components/home/HowItWorks';
 import Footer from '@/components/layout/Footer';
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
           <HeroSection />
           <LoginCards />
           <MarketUpdates />
+          <HowItWorks />
         </div>
       </div>
 
