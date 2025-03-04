@@ -1,15 +1,15 @@
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth";
 import { useToast } from "@/components/ui/use-toast";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Mail, Wifi, WifiOff } from "lucide-react";
-import { CATEGORIES } from "@/lib/constants/categories";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PasswordInput } from "./PasswordInput";
+import { TermsCheckbox } from "./TermsCheckbox";
+import { RegisterFormAlerts } from "./RegisterFormAlerts";
+import { UserTypeFields } from "./UserTypeFields";
 
 export function RegisterForm() {
   const navigate = useNavigate();
@@ -25,14 +25,13 @@ export function RegisterForm() {
     name: ""
   });
   
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [networkError, setNetworkError] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     
     if (!agreedToTerms) {
@@ -109,43 +108,17 @@ export function RegisterForm() {
   const retryRegistration = () => {
     setNetworkError(false);
     setError("");
-    handleSubmit(new Event('submit') as unknown as React.FormEvent);
+    handleSubmit(new Event('submit') as unknown as FormEvent);
   };
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {successMessage && (
-        <Alert className="bg-green-50 border-green-200">
-          <Mail className="h-4 w-4 text-green-600" />
-          <AlertTitle className="text-green-800">Email Verification Required</AlertTitle>
-          <AlertDescription className="text-green-700">
-            {successMessage}
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {networkError && (
-        <Alert className="bg-orange-50 border-orange-200">
-          <WifiOff className="h-4 w-4 text-orange-600" />
-          <AlertTitle className="text-orange-800">Connection Error</AlertTitle>
-          <AlertDescription className="text-orange-700">
-            Unable to connect to the authentication service. This may be due to:
-            <ul className="list-disc ml-5 mt-2">
-              <li>Network connectivity issues</li>
-              <li>Temporary service unavailability</li>
-            </ul>
-            <Button 
-              type="button"
-              variant="outline" 
-              size="sm"
-              className="mt-2 bg-white"
-              onClick={retryRegistration}
-            >
-              <Wifi className="h-4 w-4 mr-2" /> Try Again
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
+      <RegisterFormAlerts 
+        error={error}
+        networkError={networkError}
+        successMessage={successMessage}
+        retryRegistration={retryRegistration}
+      />
 
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">I am a</label>
@@ -168,34 +141,14 @@ export function RegisterForm() {
         </Select>
       </div>
 
-      {formData.role && formData.role !== "shift-worker" && CATEGORIES[formData.role as keyof typeof CATEGORIES] && (
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Category</label>
-          <Select 
-            value={formData.category} 
-            onValueChange={value => setFormData({
-              ...formData,
-              category: value
-            })}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select your category" />
-            </SelectTrigger>
-            <SelectContent>
-              {CATEGORIES[formData.role as keyof typeof CATEGORIES]?.map(group => (
-                <SelectGroup key={group.group}>
-                  <SelectLabel>{group.group}</SelectLabel>
-                  {group.items.map(item => (
-                    <SelectItem key={item} value={item}>
-                      {item}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
+      <UserTypeFields 
+        role={formData.role}
+        category={formData.category}
+        onCategoryChange={(value) => setFormData({
+          ...formData,
+          category: value
+        })}
+      />
 
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">Name</label>
@@ -229,26 +182,14 @@ export function RegisterForm() {
 
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">Password</label>
-        <div className="relative">
-          <Input 
-            type={showPassword ? "text" : "password"} 
-            placeholder="Create a password" 
-            value={formData.password} 
-            onChange={e => setFormData({
-              ...formData,
-              password: e.target.value
-            })} 
-            required 
-            className="w-full pr-10" 
-          />
-          <button 
-            type="button" 
-            onClick={() => setShowPassword(!showPassword)} 
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-          >
-            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-          </button>
-        </div>
+        <PasswordInput 
+          value={formData.password}
+          onChange={e => setFormData({
+            ...formData,
+            password: e.target.value
+          })}
+          placeholder="Create a password"
+        />
       </div>
 
       <div className="space-y-2">
@@ -266,26 +207,10 @@ export function RegisterForm() {
         />
       </div>
 
-      <div className="flex items-center space-x-2">
-        <Checkbox 
-          id="terms" 
-          checked={agreedToTerms} 
-          onCheckedChange={checked => setAgreedToTerms(checked as boolean)} 
-        />
-        <label htmlFor="terms" className="text-sm text-gray-600">
-          I agree to the{" "}
-          <a href="/terms" className="text-primary hover:underline">Terms</a>
-          {" "}and{" "}
-          <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>
-        </label>
-      </div>
-
-      {error && !networkError && (
-        <Alert variant="destructive">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+      <TermsCheckbox 
+        agreedToTerms={agreedToTerms}
+        onAgreedToTermsChange={setAgreedToTerms}
+      />
 
       <Button 
         type="submit" 
