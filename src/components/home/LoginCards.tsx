@@ -1,13 +1,10 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Bot, UserCircle, Building2, Building } from 'lucide-react';
-
 const LoginCards: React.FC = () => {
-  return (
-    <section className="py-2">
+  return <section className="py-2">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 max-w-5xl mx-auto">
           {/* Staffing Agency Card */}
@@ -21,7 +18,7 @@ const LoginCards: React.FC = () => {
                 <p className="text-xs md:text-sm text-gray-500 mb-2 md:mb-4">Manage Multiple Venues and Staff</p>
               </div>
               <Link to="/login?type=agency" className="w-full">
-                <Button className="w-full bg-gradient-to-r from-green-500 to-green-700 text-white hover:from-green-600 hover:to-green-800 text-xs md:text-sm py-1 md:py-2">
+                <Button className="w-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-xs md:text-sm py-1 md:py-2 text-zinc-50">
                   LOGIN
                 </Button>
               </Link>
@@ -39,7 +36,7 @@ const LoginCards: React.FC = () => {
                 <p className="text-xs md:text-sm text-gray-500 mb-2 md:mb-4">Post shifts and hire Extra Staff</p>
               </div>
               <Link to="/login?type=company" className="w-full">
-                <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800 text-xs md:text-sm py-1 md:py-2">
+                <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-xs md:text-sm py-1 md:py-2 text-zinc-50">
                   LOGIN
                 </Button>
               </Link>
@@ -83,8 +80,6 @@ const LoginCards: React.FC = () => {
           </Card>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default LoginCards;

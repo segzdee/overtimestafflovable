@@ -1,9 +1,6 @@
-
 import React from 'react';
-
 const MarketUpdates: React.FC = () => {
-  return (
-    <section className="py-2 flex-grow flex items-center justify-center">
+  return <section className="py-2 flex-grow flex items-center justify-center">
       <div className="container mx-auto px-4">
         <div className="bg-gray-900 rounded-lg shadow-md p-2 md:p-4 max-w-5xl mx-auto text-white">
           <div className="flex justify-between items-center mb-2 md:mb-3 px-2">
@@ -27,9 +24,9 @@ const MarketUpdates: React.FC = () => {
                   <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
                   <span className="text-xs md:text-sm font-semibold text-green-400">€30/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm">Bartender Evening Shift Available</h3>
+                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Bartender Evening Shift Available</h3>
                 <p className="text-[10px] md:text-xs text-gray-400">Sky Bar Lounge</p>
-                <p className="text-[10px] md:text-xs text-gray-500">Södermalm, Global</p>
+                <p className="text-[10px] md:text-xs text-zinc-50">Södermalm, Global</p>
               </div>
               
               <div className="bg-purple-900/70 p-2 md:p-3 rounded-md">
@@ -38,9 +35,9 @@ const MarketUpdates: React.FC = () => {
                   <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
                   <span className="text-xs md:text-sm font-semibold text-green-400">€38/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm">F&B Manager - 5-Star Resort</h3>
+                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">F&B Manager - 5-Star Resort</h3>
                 <p className="text-[10px] md:text-xs text-gray-400">Azure Beach Resort</p>
-                <p className="text-[10px] md:text-xs text-gray-500">St. Julian's, Malta</p>
+                <p className="text-[10px] md:text-xs text-zinc-50">St. Julian's, Malta</p>
               </div>
               
               <div className="bg-gray-800 p-2 md:p-3 rounded-md">
@@ -49,9 +46,9 @@ const MarketUpdates: React.FC = () => {
                   <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
                   <span className="text-xs md:text-sm font-semibold text-green-400">€32/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm">Head Bartender - Cocktail Bar</h3>
+                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Head Bartender - Cocktail Bar</h3>
                 <p className="text-[10px] md:text-xs text-gray-400">The Mixology Lab</p>
-                <p className="text-[10px] md:text-xs text-gray-500">Sliema, Malta</p>
+                <p className="text-[10px] md:text-xs text-zinc-50">Sliema, Malta</p>
               </div>
               
               <div className="bg-gray-800 p-2 md:p-3 rounded-md">
@@ -60,9 +57,9 @@ const MarketUpdates: React.FC = () => {
                   <span className="text-[10px] md:text-xs bg-green-500/20 px-1 py-0.5 rounded text-green-400 font-medium">LOW</span>
                   <span className="text-xs md:text-sm font-semibold text-green-400">€28/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm">Head Waiter - Luxury Restaurant</h3>
+                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Head Waiter - Luxury Restaurant</h3>
                 <p className="text-[10px] md:text-xs text-gray-400">Signature Soirée</p>
-                <p className="text-[10px] md:text-xs text-gray-500">Sliema, Italy</p>
+                <p className="text-[10px] md:text-xs text-zinc-50">Sliema, Italy</p>
               </div>
             </div>
             
@@ -74,9 +71,9 @@ const MarketUpdates: React.FC = () => {
                   <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
                   <span className="text-xs md:text-sm font-semibold text-green-400">€38/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm">F&B Manager - 5-Star Resort</h3>
+                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">F&B Manager - 5-Star Resort</h3>
                 <p className="text-[10px] md:text-xs text-gray-400">Azure Beach Resort</p>
-                <p className="text-[10px] md:text-xs text-gray-500">St. Julian's, Malta</p>
+                <p className="text-[10px] md:text-xs text-zinc-50">St. Julian's, Malta</p>
               </div>
               
               <div className="bg-purple-900/70 p-2 md:p-3 rounded-md">
@@ -85,9 +82,9 @@ const MarketUpdates: React.FC = () => {
                   <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
                   <span className="text-xs md:text-sm font-semibold text-green-400">€38/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm">F&B Manager - 5-Star Resort</h3>
+                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">F&B Manager - 5-Star Resort</h3>
                 <p className="text-[10px] md:text-xs text-gray-400">Azure Beach Resort</p>
-                <p className="text-[10px] md:text-xs text-gray-500">St. Julian's, Malta</p>
+                <p className="text-[10px] md:text-xs text-zinc-50">St. Julian's, Malta</p>
               </div>
               
               <div className="bg-purple-900/70 p-2 md:p-3 rounded-md">
@@ -96,9 +93,9 @@ const MarketUpdates: React.FC = () => {
                   <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
                   <span className="text-xs md:text-sm font-semibold text-green-400">€39/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm">Pastry Chef - 5-Star Hotel</h3>
+                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Pastry Chef - 5-Star Hotel</h3>
                 <p className="text-[10px] md:text-xs text-gray-400">Le Grand Patisserie</p>
-                <p className="text-[10px] md:text-xs text-gray-500">Port Louis, Italy</p>
+                <p className="text-[10px] md:text-xs text-zinc-50">Port Louis, Italy</p>
               </div>
               
               <div className="bg-purple-900/70 p-2 md:p-3 rounded-md">
@@ -107,9 +104,9 @@ const MarketUpdates: React.FC = () => {
                   <span className="text-[10px] md:text-xs bg-amber-500/20 px-1 py-0.5 rounded text-amber-400 font-medium">MEDIUM</span>
                   <span className="text-xs md:text-sm font-semibold text-green-400">€50/hr</span>
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm">Executive Pastry Chef</h3>
+                <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Executive Pastry Chef</h3>
                 <p className="text-[10px] md:text-xs text-gray-400">Royal Dining Group</p>
-                <p className="text-[10px] md:text-xs text-gray-500">Milan, Italy</p>
+                <p className="text-[10px] md:text-xs text-zinc-50">Milan, Italy</p>
               </div>
             </div>
           </div>
@@ -137,9 +134,9 @@ const MarketUpdates: React.FC = () => {
                     <span className="text-[10px] md:text-xs bg-red-500 px-1 py-0.5 rounded text-white font-medium mr-2">URGENT</span>
                     <span className="text-xs md:text-sm font-semibold text-green-400 ml-auto">€40/hr</span>
                   </div>
-                  <h3 className="font-semibold text-xs md:text-sm">Sous Chef - Michelin Restaurant</h3>
-                  <p className="text-[10px] md:text-xs text-gray-400">Casa del Mar</p>
-                  <p className="text-[10px] md:text-xs text-gray-500">Barcelona, Spain</p>
+                  <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Sous Chef - Michelin Restaurant</h3>
+                  <p className="text-[10px] md:text-xs text-zinc-50">Casa del Mar</p>
+                  <p className="text-[10px] md:text-xs text-zinc-50">Barcelona, Spain</p>
                 </div>
                 
                 {/* Emergency Shift 2 */}
@@ -148,9 +145,9 @@ const MarketUpdates: React.FC = () => {
                     <span className="text-[10px] md:text-xs bg-amber-500 px-1 py-0.5 rounded text-black font-medium mr-2">SWAP</span>
                     <span className="text-xs md:text-sm font-semibold text-green-400 ml-auto">€35/hr</span>
                   </div>
-                  <h3 className="font-semibold text-xs md:text-sm">Restaurant Manager - Urgent Cover</h3>
-                  <p className="text-[10px] md:text-xs text-gray-400">El Paradiso Beach Club</p>
-                  <p className="text-[10px] md:text-xs text-gray-500">Ibiza, Spain</p>
+                  <h3 className="font-semibold text-xs md:text-sm text-zinc-50">Restaurant Manager - Urgent Cover</h3>
+                  <p className="text-[10px] md:text-xs text-zinc-50">El Paradiso Beach Club</p>
+                  <p className="text-[10px] md:text-xs text-zinc-50">Ibiza, Spain</p>
                 </div>
               </div>
             </div>
@@ -158,15 +155,13 @@ const MarketUpdates: React.FC = () => {
           
           {/* Footer stats */}
           <div className="flex justify-between items-center mt-2 md:mt-3 px-2 text-[8px] md:text-xs text-gray-400">
-            <p>Updated every 5 minutes</p>
-            <p>69 new positions added today</p>
-            <p>Emergency updates in real-time</p>
-            <p>7 active emergencies</p>
+            <p className="text-zinc-50">Updated every 5 minutes</p>
+            <p className="text-zinc-50">69 new positions added today</p>
+            <p className="text-zinc-50">Emergency updates in real-time</p>
+            <p className="text-zinc-50">7 active emergencies</p>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default MarketUpdates;
