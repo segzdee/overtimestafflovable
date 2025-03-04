@@ -1,19 +1,35 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Logo } from '@/components/ui/logo';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
-import { Bot, UserCircle, Building2, Building } from 'lucide-react';
+import { Bot, UserCircle, Building2, Building, Menu, X } from 'lucide-react';
 
 export default function Home() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="flex flex-col h-screen bg-[#f8f9fa] overflow-hidden">
       {/* Header/Menu - More compact */}
-      <header className="bg-white shadow-sm py-2">
+      <header className="bg-white shadow-sm py-2 relative z-20">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <Logo />
-          <div className="flex items-center gap-4 md:gap-6">
+          
+          {/* Mobile menu button */}
+          <button 
+            className="md:hidden p-2 text-gray-600 focus:outline-none"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+          
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-4 md:gap-6">
             <Link to="/find-shifts" className="text-sm md:text-base text-gray-600 hover:text-purple-600 transition-colors">
               Find Extra Shifts
             </Link>
@@ -25,6 +41,35 @@ export default function Home() {
             </Link>
           </div>
         </div>
+        
+        {/* Mobile Menu Dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-md z-10 animate-fadeIn">
+            <div className="py-3 px-4 flex flex-col space-y-3">
+              <Link 
+                to="/find-shifts" 
+                className="text-gray-600 hover:text-purple-600 transition-colors py-2 border-b border-gray-100"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Find Extra Shifts
+              </Link>
+              <Link 
+                to="/find-staff" 
+                className="text-gray-600 hover:text-purple-600 transition-colors py-2 border-b border-gray-100"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Find Extra Staff
+              </Link>
+              <Link 
+                to="/register" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2"
+              >
+                <Button className="bg-green-600 hover:bg-green-700 text-white w-full">Sign up</Button>
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Content - Fixed height with flex-grow, no scrolling */}
