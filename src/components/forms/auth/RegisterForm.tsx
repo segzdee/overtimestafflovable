@@ -31,38 +31,73 @@ export function RegisterForm() {
   const [successMessage, setSuccessMessage] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const isNetworkError = (error: any): boolean => {
+    if (!error) return false;
+    const errorMessage = error instanceof Error ? error.message : String(error);
     
+    // Check for common network error patterns
+    return (
+      errorMessage.includes('Unable to connect') || 
+      errorMessage.includes('network') ||
+      errorMessage.includes('connection') ||
+      errorMessage.includes('Load failed') ||
+      errorMessage.includes('timeout') ||
+      errorMessage.includes('offline') ||
+      // Add more patterns as needed
+      (error instanceof Error && 'code' in error && 
+       ['ECONNABORTED', 'ETIMEDOUT', 'ENOTFOUND'].includes((error as any).code))
+    );
+  };
+  
+  const validateForm = () => {
     if (!agreedToTerms) {
       setError("Please agree to the Terms and Privacy Policy");
-      return;
+      return false;
+    }
+    
+    if (!formData.email || !formData.name) {
+      setError("All fields are required");
+      return false;
     }
     
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
-      return;
+      return false;
     }
     
     if (!formData.role) {
       setError("Please select an account type");
-      return;
+      return false;
     }
     
     if (formData.role !== "shift-worker" && !formData.category) {
       setError("Please select a category");
-      return;
+      return false;
     }
     
+    return true;
+  };
+
+  const submitForm = async () => {
     try {
       setError("");
       setNetworkError(false);
       setLoading(true);
       
+      // Safe type checking before calling register
+      const validRole = ["company", "agency", "shift-worker", "admin", "aiagent"].includes(formData.role) 
+        ? formData.role 
+        : null;
+        
+      if (!validRole) {
+        setError("Invalid account type selected");
+        return;
+      }
+      
       await register(
         formData.email, 
         formData.password, 
-        formData.role as "company" | "agency" | "shift-worker" | "admin" | "aiagent", 
+        validRole as "company" | "agency" | "shift-worker" | "admin" | "aiagent", 
         formData.name,
         formData.category
       );
@@ -86,11 +121,8 @@ export function RegisterForm() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to create account";
       
-      // Check if this is a network error
-      if (errorMessage.includes('Unable to connect') || 
-          errorMessage.includes('network') ||
-          errorMessage.includes('connection') ||
-          errorMessage.includes('Load failed')) {
+      // More robust network error detection
+      if (isNetworkError(err)) {
         setNetworkError(true);
       }
       
@@ -105,10 +137,21 @@ export function RegisterForm() {
     }
   };
   
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    
+    if (validateForm()) {
+      await submitForm();
+    }
+  };
+  
   const retryRegistration = () => {
     setNetworkError(false);
     setError("");
-    handleSubmit(new Event('submit') as unknown as FormEvent);
+    // Just call the form submission logic directly without creating a synthetic event
+    if (validateForm()) {
+      submitForm();
+    }
   };
   
   return (

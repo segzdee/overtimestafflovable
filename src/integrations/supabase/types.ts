@@ -144,6 +144,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "agencies_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "worker_performance_view"
+            referencedColumns: ["profile_id"]
+          },
         ]
       }
       agency_company_relationships: {
@@ -272,6 +279,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "agency_staff_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "worker_performance_view"
+            referencedColumns: ["profile_id"]
+          },
         ]
       }
       agency_workers: {
@@ -387,6 +401,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "ai_agent_subscriptions_subscriber_profile_id_fkey"
+            columns: ["subscriber_profile_id"]
+            isOneToOne: false
+            referencedRelation: "worker_performance_view"
+            referencedColumns: ["profile_id"]
+          },
         ]
       }
       ai_tokens: {
@@ -487,6 +508,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "companies_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "worker_performance_view"
+            referencedColumns: ["profile_id"]
+          },
         ]
       }
       company_profiles: {
@@ -569,6 +597,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_staff_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "worker_performance_view"
+            referencedColumns: ["profile_id"]
           },
         ]
       }
@@ -784,6 +819,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "worker_performance_view"
+            referencedColumns: ["profile_id"]
           },
         ]
       }
@@ -1100,6 +1142,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "shift_worker_profiles_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "worker_performance_view"
+            referencedColumns: ["profile_id"]
+          },
         ]
       }
       shift_workers: {
@@ -1224,6 +1273,56 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_performance_metrics: {
+        Row: {
+          cancellation_rate: number | null
+          completion_rate: number | null
+          created_at: string
+          id: string
+          on_time_rate: number | null
+          overall_rating: number | null
+          reliability_score: number | null
+          response_time_avg: number | null
+          total_shifts_completed: number | null
+          updated_at: string
+          worker_profile_id: string
+        }
+        Insert: {
+          cancellation_rate?: number | null
+          completion_rate?: number | null
+          created_at?: string
+          id?: string
+          on_time_rate?: number | null
+          overall_rating?: number | null
+          reliability_score?: number | null
+          response_time_avg?: number | null
+          total_shifts_completed?: number | null
+          updated_at?: string
+          worker_profile_id: string
+        }
+        Update: {
+          cancellation_rate?: number | null
+          completion_rate?: number | null
+          created_at?: string
+          id?: string
+          on_time_rate?: number | null
+          overall_rating?: number | null
+          reliability_score?: number | null
+          response_time_avg?: number | null
+          total_shifts_completed?: number | null
+          updated_at?: string
+          worker_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_performance_metrics_worker_profile_id_fkey"
+            columns: ["worker_profile_id"]
+            isOneToOne: false
+            referencedRelation: "shift_worker_profiles"
+            referencedColumns: ["profile_id"]
           },
         ]
       }
@@ -1413,7 +1512,19 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      worker_performance_view: {
+        Row: {
+          email: string | null
+          name: string | null
+          overall_rating: number | null
+          profile_id: string | null
+          reliability_score: number | null
+          total_shifts_completed: number | null
+          user_code: string | null
+          worker_code: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       assign_admin_role: {
@@ -1440,6 +1551,22 @@ export type Database = {
       }
       reset_and_install_schema: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      safe_create_policy: {
+        Args: {
+          policy_name: string
+          table_name: string
+          policy_statement: string
+        }
+        Returns: undefined
+      }
+      safe_create_single_column_index: {
+        Args: {
+          index_name: string
+          table_name: string
+          column_name: string
+        }
         Returns: undefined
       }
     }
