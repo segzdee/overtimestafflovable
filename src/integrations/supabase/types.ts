@@ -2017,10 +2017,28 @@ export type Database = {
       }
       registration_errors: {
         Row: {
-          error_count: number | null
+          created_at: string | null
+          error_details: Json | null
+          error_id: string | null
           error_message: string | null
-          first_occurrence: string | null
-          last_occurrence: string | null
+          error_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_details?: Json | null
+          error_id?: string | null
+          error_message?: string | null
+          error_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_details?: Json | null
+          error_id?: string | null
+          error_message?: string | null
+          error_type?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

@@ -1,5 +1,5 @@
-
 import { supabase } from '../supabase/client';
+import { checkSupabaseConnection } from '../supabase/client';
 
 interface RegistrationData {
   email: string;
@@ -24,6 +24,33 @@ export class RegistrationService {
   private readonly STORAGE_KEY = 'pending_registration';
   private readonly MAX_RETRIES = 3;
   private readonly EDGE_FUNCTION = 'secure-registration';
+  private sendAuthDiagnostic: (eventType: string, userData: any, eventData: Record<string, any>) => Promise<boolean>;
+  private processRegistration: (userId: string, email: string, role: string, additionalData: Record<string, any>) => Promise<boolean>;
+  private monitorFailedRegistration: (email: string, errorMessage: string, ipAddress?: string) => Promise<boolean>;
+  
+  constructor(authHooks?: {
+    sendAuthDiagnostic?: (eventType: string, userData: any, eventData: Record<string, any>) => Promise<boolean>;
+    processRegistration?: (userId: string, email: string, role: string, additionalData: Record<string, any>) => Promise<boolean>;
+    monitorFailedRegistration?: (email: string, errorMessage: string, ipAddress?: string) => Promise<boolean>;
+  }) {
+    // Use provided hooks or empty functions
+    this.sendAuthDiagnostic = authHooks?.sendAuthDiagnostic || (async () => false);
+    this.processRegistration = authHooks?.processRegistration || (async () => false);
+    this.monitorFailedRegistration = authHooks?.monitorFailedRegistration || (async () => false);
+  }
+  
+  /**
+   * Set auth hooks after initialization
+   */
+  public setAuthHooks(authHooks: {
+    sendAuthDiagnostic: (eventType: string, userData: any, eventData: Record<string, any>) => Promise<boolean>;
+    processRegistration: (userId: string, email: string, role: string, additionalData: Record<string, any>) => Promise<boolean>;
+    monitorFailedRegistration: (email: string, errorMessage: string, ipAddress?: string) => Promise<boolean>;
+  }) {
+    this.sendAuthDiagnostic = authHooks.sendAuthDiagnostic;
+    this.processRegistration = authHooks.processRegistration;
+    this.monitorFailedRegistration = authHooks.monitorFailedRegistration;
+  }
   
   /**
    * Register a new user with fallback mechanisms
@@ -39,6 +66,12 @@ export class RegistrationService {
     // Perform validation
     const validationResult = this.validateRegistrationData(data);
     if (!validationResult.valid) {
+      // Monitor the failed registration
+      await this.monitorFailedRegistration(
+        data.email,
+        validationResult.message || 'Invalid registration data'
+      );
+      
       return {
         success: false,
         message: validationResult.message || 'Invalid registration data'
@@ -47,15 +80,68 @@ export class RegistrationService {
     
     try {
       // Try using the Edge Function first (most reliable method)
-      return await this.registerViaEdgeFunction(data);
+      const result = await this.registerViaEdgeFunction(data);
+      
+      // Send auth diagnostic for successful registration
+      if (result.success && result.userId) {
+        await this.processRegistration(
+          result.userId,
+          data.email,
+          data.role,
+          { name: data.name, category: data.category }
+        );
+        
+        await this.sendAuthDiagnostic(
+          'registration_success',
+          { userId: result.userId, email: data.email },
+          { method: 'edge_function', role: data.role }
+        );
+      }
+      
+      return result;
     } catch (edgeFunctionError) {
       console.error('Edge function registration failed:', edgeFunctionError);
       
+      // Send diagnostic for edge function failure
+      await this.sendAuthDiagnostic(
+        'registration_error',
+        { email: data.email },
+        { 
+          method: 'edge_function',
+          error: this.getErrorMessage(edgeFunctionError),
+          errorDetails: edgeFunctionError
+        }
+      );
+      
       try {
         // Fall back to client-side registration
-        return await this.registerViaClient(data);
+        const result = await this.registerViaClient(data);
+        
+        // Send auth diagnostic for successful client registration
+        if (result.success && result.userId) {
+          await this.processRegistration(
+            result.userId,
+            data.email,
+            data.role,
+            { name: data.name, category: data.category }
+          );
+          
+          await this.sendAuthDiagnostic(
+            'registration_success',
+            { userId: result.userId, email: data.email },
+            { method: 'client_fallback', role: data.role }
+          );
+        }
+        
+        return result;
       } catch (clientError) {
         console.error('Client registration failed:', clientError);
+        
+        // Monitor the failed registration
+        await this.monitorFailedRegistration(
+          data.email,
+          this.getErrorMessage(clientError)
+        );
         
         // Store registration for later if it's a network error
         if (this.isNetworkError(clientError)) {
