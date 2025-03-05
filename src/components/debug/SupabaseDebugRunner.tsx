@@ -58,7 +58,7 @@ export function SupabaseDebugRunner() {
     }
   };
 
-  const getIssuesOnly = () => {
+  const getIssuesOnly = (): Record<string, DiagnosticResult> => {
     if (!results) return {};
     
     return Object.entries(results)
@@ -66,7 +66,7 @@ export function SupabaseDebugRunner() {
       .reduce((obj, [key, value]) => ({...obj, [key]: value}), {});
   };
 
-  const getWarningsOnly = () => {
+  const getWarningsOnly = (): Record<string, DiagnosticResult> => {
     if (!results) return {};
     
     return Object.entries(results)
@@ -74,7 +74,7 @@ export function SupabaseDebugRunner() {
       .reduce((obj, [key, value]) => ({...obj, [key]: value}), {});
   };
 
-  const getPassedOnly = () => {
+  const getPassedOnly = (): Record<string, DiagnosticResult> => {
     if (!results) return {};
     
     return Object.entries(results)
