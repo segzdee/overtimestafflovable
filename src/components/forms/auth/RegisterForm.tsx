@@ -43,19 +43,24 @@ export function RegisterForm({
   const [successMessage, setSuccessMessage] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  // Handle pending registration data if provided
+  // If we have pending registration data, populate the form
   useEffect(() => {
     if (pendingRegistration) {
       setFormData(pendingRegistration);
-      // Don't auto-set agreedToTerms as it requires explicit user consent
+      setAgreedToTerms(true); // Assume they agreed previously
+      
+      toast({
+        title: "Registration Data Restored",
+        description: "We've restored your previous registration data.",
+      });
     }
-  }, [pendingRegistration]);
+  }, [pendingRegistration, toast]);
   
   const isNetworkError = (error: any): boolean => {
     if (!error) return false;
     const errorMessage = error instanceof Error ? error.message : String(error);
     
-    // Check for common network error patterns
+    // Expanded list of network error patterns
     return (
       errorMessage.includes('Unable to connect') || 
       errorMessage.includes('network') ||
@@ -63,9 +68,12 @@ export function RegisterForm({
       errorMessage.includes('Load failed') ||
       errorMessage.includes('timeout') ||
       errorMessage.includes('offline') ||
-      // Add more patterns as needed
+      errorMessage.includes('failed to fetch') ||
+      errorMessage.includes('Network request failed') ||
+      errorMessage.includes('Network Error') ||
+      errorMessage.includes('abort') ||
       (error instanceof Error && 'code' in error && 
-       ['ECONNABORTED', 'ETIMEDOUT', 'ENOTFOUND'].includes((error as any).code))
+       ['ECONNABORTED', 'ETIMEDOUT', 'ENOTFOUND', 'NETWORK_ERROR'].includes((error as any).code))
     );
   };
   
@@ -146,7 +154,7 @@ export function RegisterForm({
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to create account";
       
-      // More robust network error detection
+      // Enhanced network error detection
       if (isNetworkError(err)) {
         setNetworkError(true);
         

@@ -83,6 +83,17 @@ export function RegisterFormWrapper() {
     }
   }, [toast, clearPendingRegistration]);
 
+  // Function to handle clicking the "Resume Registration" button
+  const handleResumeRegistration = useCallback(() => {
+    // Just need to set pendingRegistration state to trigger the form update
+    // The actual data retrieval happens in submitPendingRegistration
+    if (isOnline && hasPendingRegistration) {
+      // Force a refresh of the pendingRegistration by clearing and setting it again
+      setHasPendingRegistration(false);
+      setTimeout(() => setHasPendingRegistration(true), 0);
+    }
+  }, [isOnline, hasPendingRegistration]);
+
   return (
     <div className="space-y-4">
       <ConnectionStatus />
@@ -107,7 +118,7 @@ export function RegisterFormWrapper() {
                   size="sm"
                   className="bg-white border border-blue-200 hover:bg-blue-50"
                   disabled={!isOnline}
-                  onClick={() => {}}
+                  onClick={handleResumeRegistration}
                 >
                   <Cloud className="h-4 w-4 mr-2" /> 
                   {isOnline ? "Resume Registration" : "Waiting for Connection..."}
