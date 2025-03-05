@@ -1,32 +1,30 @@
+
 import { useState, FormEvent, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/auth";
 import { useToast } from "@/components/ui/use-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PasswordInput } from "./PasswordInput";
+import { Button } from "@/components/ui/button";
+import { RoleSelector } from "./components/RoleSelector";
+import { UserTypeFields } from "./UserTypeFields";
+import { UserDataFields } from "./components/UserDataFields";
+import { PasswordFields } from "./components/PasswordFields";
 import { TermsCheckbox } from "./TermsCheckbox";
 import { RegisterFormAlerts } from "./RegisterFormAlerts";
-import { UserTypeFields } from "./UserTypeFields";
 import { registrationService } from "@/lib/registration/registration-service";
 import { executeWithConnectionRetry } from "@/lib/robust-connection-handler";
+import { RegistrationFooter } from "./components/RegistrationFooter";
 
 interface RegisterFormProps {
   onNetworkError?: (formData: any) => void;
   pendingRegistration?: any;
   onRegistrationSuccess?: () => void;
-  initialRole?: string | null;
+  initialRole?: string;
 }
 
 export function RegisterForm({ 
   onNetworkError, 
   pendingRegistration,
   onRegistrationSuccess,
-  initialRole
-}: RegisterFormProps = {}) {
-  const navigate = useNavigate();
-  const { register } = useAuth();
+  initialRole = ""
+}: RegisterFormProps) {
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
@@ -120,58 +118,68 @@ export function RegisterForm({
         { criticalOperation: true }
       );
       
-      if (result.success) {
-        setSuccessMessage(result.message || "Account created successfully! Please check your email to verify your account before logging in.");
-        toast({
-          title: "Account created successfully",
-          description: "Please check your email to verify your account",
-        });
-        
-        if (onRegistrationSuccess) {
-          onRegistrationSuccess();
-        }
-        
-        setFormData({
-          email: "",
-          password: "",
-          confirmPassword: "",
-          role: "",
-          category: "",
-          name: ""
-        });
-        
-        navigate("/registration-success");
-      } else {
-        setError(result.message || "Registration failed");
-        toast({
-          variant: "destructive",
-          title: "Registration failed",
-          description: result.message || "An error occurred during registration"
-        });
-      }
+      handleRegistrationResult(result);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to create account";
-      
-      if (err instanceof Error && 
-          (errorMessage.includes('network') || 
-           errorMessage.includes('connection') || 
-           errorMessage.includes('offline'))) {
-        setNetworkError(true);
-        
-        if (onNetworkError) {
-          onNetworkError(formData);
-        }
-      }
-      
-      toast({
-        variant: "destructive",
-        title: "Registration failed",
-        description: errorMessage
-      });
-      setError(errorMessage);
+      handleRegistrationError(err);
     } finally {
       setLoading(false);
     }
+  };
+  
+  const handleRegistrationResult = (result: any) => {
+    if (result.success) {
+      setSuccessMessage(result.message || "Account created successfully! Please check your email to verify your account before logging in.");
+      toast({
+        title: "Account created successfully",
+        description: "Please check your email to verify your account",
+      });
+      
+      if (onRegistrationSuccess) {
+        onRegistrationSuccess();
+      }
+      
+      resetForm();
+    } else {
+      setError(result.message || "Registration failed");
+      toast({
+        variant: "destructive",
+        title: "Registration failed",
+        description: result.message || "An error occurred during registration"
+      });
+    }
+  };
+  
+  const handleRegistrationError = (err: any) => {
+    const errorMessage = err instanceof Error ? err.message : "Failed to create account";
+    
+    if (err instanceof Error && 
+        (errorMessage.includes('network') || 
+         errorMessage.includes('connection') || 
+         errorMessage.includes('offline'))) {
+      setNetworkError(true);
+      
+      if (onNetworkError) {
+        onNetworkError(formData);
+      }
+    }
+    
+    toast({
+      variant: "destructive",
+      title: "Registration failed",
+      description: errorMessage
+    });
+    setError(errorMessage);
+  };
+  
+  const resetForm = () => {
+    setFormData({
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "",
+      category: "",
+      name: ""
+    });
   };
   
   const handleSubmit = async (e: FormEvent) => {
@@ -190,6 +198,13 @@ export function RegisterForm({
     }
   };
   
+  const updateFormValue = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+  
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <RegisterFormAlerts 
@@ -199,117 +214,37 @@ export function RegisterForm({
         retryRegistration={retryRegistration}
       />
 
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">I am a</label>
-        <Select 
-          value={formData.role} 
-          onValueChange={value => setFormData({
-            ...formData,
-            role: value,
-            category: ""
-          })}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select account type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="company">Business (Hiring Staff)</SelectItem>
-            <SelectItem value="agency">Staffing Agency</SelectItem>
-            <SelectItem value="shift-worker">Shift Worker</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <RoleSelector 
+        value={formData.role}
+        onChange={(value) => updateFormValue("role", value)}
+      />
 
       <UserTypeFields 
         role={formData.role}
         category={formData.category}
-        onCategoryChange={(value) => setFormData({
-          ...formData,
-          category: value
-        })}
+        onCategoryChange={(value) => updateFormValue("category", value)}
       />
 
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">Name</label>
-        <Input 
-          type="text" 
-          placeholder="Enter your full name" 
-          value={formData.name} 
-          onChange={e => setFormData({
-            ...formData,
-            name: e.target.value
-          })} 
-          required 
-          className="w-full" 
-        />
-      </div>
+      <UserDataFields 
+        name={formData.name}
+        email={formData.email}
+        onNameChange={(value) => updateFormValue("name", value)}
+        onEmailChange={(value) => updateFormValue("email", value)}
+      />
 
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">Email</label>
-        <Input 
-          type="email" 
-          placeholder="Enter your email" 
-          value={formData.email} 
-          onChange={e => setFormData({
-            ...formData,
-            email: e.target.value
-          })} 
-          required 
-          className="w-full" 
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">Password</label>
-        <PasswordInput 
-          value={formData.password}
-          onChange={e => setFormData({
-            ...formData,
-            password: e.target.value
-          })}
-          placeholder="Create a password"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
-        <Input 
-          type="password" 
-          placeholder="Confirm your password" 
-          value={formData.confirmPassword} 
-          onChange={e => setFormData({
-            ...formData,
-            confirmPassword: e.target.value
-          })} 
-          required 
-          className="w-full" 
-        />
-      </div>
+      <PasswordFields 
+        password={formData.password}
+        confirmPassword={formData.confirmPassword}
+        onPasswordChange={(value) => updateFormValue("password", value)}
+        onConfirmPasswordChange={(value) => updateFormValue("confirmPassword", value)}
+      />
 
       <TermsCheckbox 
         agreedToTerms={agreedToTerms}
         onAgreedToTermsChange={setAgreedToTerms}
       />
 
-      <Button 
-        type="submit" 
-        disabled={loading} 
-        className="w-full text-stone-50 bg-violet-900 hover:bg-violet-800"
-      >
-        {loading ? "Creating Account..." : "Create Account"}
-      </Button>
-
-      <p className="text-center text-sm text-gray-600">
-        Already have an account?{" "}
-        <Button 
-          variant="link" 
-          className="p-0 h-auto font-normal text-primary hover:text-primary/90" 
-          onClick={() => navigate("/login")}
-          type="button"
-        >
-          Sign in
-        </Button>
-      </p>
+      <RegistrationFooter loading={loading} />
     </form>
   );
 }
