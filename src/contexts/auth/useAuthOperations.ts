@@ -13,6 +13,7 @@ import {
 } from "./operations/authOperations";
 import { supabase } from "@/lib/supabase/client";
 import { NotificationPreferences } from "@/lib/types";
+import { executeWithConnectionRetry } from "@/lib/robust-connection-handler";
 
 interface AuthOperationsProps {
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
@@ -67,10 +68,21 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("No user found");
 
-    const { error } = await supabase
-      .from('notification_preferences')
-      .update(preferences)
-      .eq('user_id', user.id);
+    const { error } = await executeWithConnectionRetry(
+      async () => {
+        const { error } = await supabase
+          .from('notification_preferences')
+          .update(preferences)
+          .eq('user_id', user.id);
+
+        if (error) throw error;
+        return { success: true };
+      },
+      {
+        maxRetries: 3,
+        criticalOperation: false
+      }
+    );
 
     if (error) throw error;
 
@@ -100,7 +112,18 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
   };
 
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await executeWithConnectionRetry(
+      async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        return { success: true };
+      },
+      {
+        maxRetries: 3,
+        criticalOperation: true
+      }
+    );
+    
     if (error) throw error;
     
     setUser(null);

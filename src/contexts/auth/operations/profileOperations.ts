@@ -33,7 +33,8 @@ export const updateProfile = async (
 
     if (error) throw error;
 
-    const { data: updatedProfile } = await executeWithConnectionRetry(
+    // Get the updated profile data
+    const result = await executeWithConnectionRetry(
       async () => {
         const { data, error } = await supabase
           .from('profiles')
@@ -42,13 +43,15 @@ export const updateProfile = async (
           .single();
           
         if (error) throw error;
-        return { data: updatedProfile };
+        return { data };
       },
       {
         maxRetries: 2,
         criticalOperation: true
       }
     );
+
+    const updatedProfile = result.data;
 
     if (updatedProfile) {
       setUser((prev: AuthUser | null) => prev ? {
@@ -113,7 +116,7 @@ export const updateNotificationPreferences = async (
   toast: any
 ) => {
   try {
-    const { error } = await executeWithConnectionRetry(
+    const result = await executeWithConnectionRetry(
       async () => {
         const { error } = await supabase
           .from('notification_preferences')
@@ -121,7 +124,7 @@ export const updateNotificationPreferences = async (
           .eq('user_id', userId);
           
         if (error) throw error;
-        return { success: true };
+        return { error: null };
       },
       {
         maxRetries: 2,
@@ -129,7 +132,7 @@ export const updateNotificationPreferences = async (
       }
     );
 
-    if (error) throw error;
+    if (result.error) throw result.error;
 
     setUser(currentUser => {
       if (!currentUser) return null;
