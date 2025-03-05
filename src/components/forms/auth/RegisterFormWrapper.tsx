@@ -8,7 +8,11 @@ import { useToast } from "@/components/ui/use-toast";
 
 const LOCAL_STORAGE_KEY = "overtimestaff_pending_registration";
 
-export function RegisterFormWrapper() {
+interface RegisterFormWrapperProps {
+  initialRole?: string | null;
+}
+
+export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps = {}) {
   const [hasPendingRegistration, setHasPendingRegistration] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const { toast } = useToast();
@@ -162,6 +166,7 @@ export function RegisterFormWrapper() {
         onNetworkError={saveRegistrationLocally}
         pendingRegistration={hasPendingRegistration ? submitPendingRegistration() : null}
         onRegistrationSuccess={clearPendingRegistration}
+        initialRole={initialRole}
       />
     </div>
   );

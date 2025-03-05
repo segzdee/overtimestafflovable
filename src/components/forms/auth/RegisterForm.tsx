@@ -1,4 +1,3 @@
-
 import { useState, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -12,17 +11,18 @@ import { RegisterFormAlerts } from "./RegisterFormAlerts";
 import { UserTypeFields } from "./UserTypeFields";
 import { ConnectionStatus } from "@/components/ConnectionStatus";
 
-// Define props for the RegisterForm component
 interface RegisterFormProps {
   onNetworkError?: (formData: any) => void;
   pendingRegistration?: any;
   onRegistrationSuccess?: () => void;
+  initialRole?: string | null;
 }
 
 export function RegisterForm({ 
   onNetworkError, 
   pendingRegistration,
-  onRegistrationSuccess 
+  onRegistrationSuccess,
+  initialRole
 }: RegisterFormProps = {}) {
   const navigate = useNavigate();
   const { register } = useAuth();
@@ -32,10 +32,19 @@ export function RegisterForm({
     email: "",
     password: "",
     confirmPassword: "",
-    role: "",
+    role: initialRole || "",
     category: "",
     name: ""
   });
+  
+  useEffect(() => {
+    if (initialRole) {
+      setFormData(prev => ({
+        ...prev,
+        role: initialRole
+      }));
+    }
+  }, [initialRole]);
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -43,7 +52,6 @@ export function RegisterForm({
   const [successMessage, setSuccessMessage] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  // If we have pending registration data, populate the form
   useEffect(() => {
     if (pendingRegistration) {
       setFormData(pendingRegistration);
@@ -60,7 +68,6 @@ export function RegisterForm({
     if (!error) return false;
     const errorMessage = error instanceof Error ? error.message : String(error);
     
-    // Expanded list of network error patterns
     return (
       errorMessage.includes('Unable to connect') || 
       errorMessage.includes('network') ||
@@ -112,7 +119,6 @@ export function RegisterForm({
       setNetworkError(false);
       setLoading(true);
       
-      // Safe type checking before calling register
       const validRole = ["company", "agency", "shift-worker", "admin", "aiagent"].includes(formData.role) 
         ? formData.role 
         : null;
@@ -130,19 +136,16 @@ export function RegisterForm({
         formData.category
       );
       
-      // Show success message
       setSuccessMessage("Account created successfully! Please check your email to verify your account before logging in.");
       toast({
         title: "Account created successfully",
         description: "Please check your email to verify your account",
       });
       
-      // Call onRegistrationSuccess if provided (to clear pending registration)
       if (onRegistrationSuccess) {
         onRegistrationSuccess();
       }
       
-      // Clear the form
       setFormData({
         email: "",
         password: "",
@@ -154,11 +157,9 @@ export function RegisterForm({
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to create account";
       
-      // Enhanced network error detection
       if (isNetworkError(err)) {
         setNetworkError(true);
         
-        // If we have an onNetworkError callback and we're handling network errors
         if (onNetworkError) {
           onNetworkError(formData);
         }
@@ -186,7 +187,6 @@ export function RegisterForm({
   const retryRegistration = () => {
     setNetworkError(false);
     setError("");
-    // Just call the form submission logic directly without creating a synthetic event
     if (validateForm()) {
       submitForm();
     }
