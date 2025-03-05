@@ -15,6 +15,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
+    flowType: 'pkce',
+    redirectTo: 'https://www.overtimestaff.com/token-validation',
   },
   global: {
     // Custom fetch with timeout

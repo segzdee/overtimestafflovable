@@ -74,7 +74,7 @@ export const register = async (
               role,
               category
             },
-            emailRedirectTo: `${window.location.origin}/verify-email`
+            emailRedirectTo: `https://www.overtimestaff.com/verify-email`
           }
         });
         
