@@ -1,7 +1,8 @@
+
 import { MarketUpdate } from '../types/marketUpdate';
 
 export const demoUpdates: MarketUpdate[] = [
-  // Original Dubai entries
+  // Europe
   {
     id: '1',
     type: 'URGENT',
@@ -10,7 +11,7 @@ export const demoUpdates: MarketUpdate[] = [
     rate: '€45/hr',
     highlight: true,
     created_at: new Date().toISOString(),
-    region: 'Dubai Marina',
+    region: 'Paris, France',
     currency: 'EUR',
     original_rate: 45,
     currency_rate: 1,
@@ -24,146 +25,12 @@ export const demoUpdates: MarketUpdate[] = [
     rate: '€30/hr',
     highlight: false,
     created_at: new Date().toISOString(),
-    region: 'Downtown Dubai',
+    region: 'Berlin, Germany',
     currency: 'EUR',
     original_rate: 30,
     currency_rate: 1,
     urgency_level: 'medium'
   },
-  
-  // Malta entries
-  {
-    id: '11',
-    type: 'URGENT',
-    title: 'Executive Chef - Luxury Hotel',
-    location: 'Marriott Hotel & Spa',
-    rate: '€42/hr',
-    highlight: true,
-    created_at: new Date().toISOString(),
-    region: 'Valletta, Malta',
-    currency: 'EUR',
-    original_rate: 42,
-    currency_rate: 1,
-    urgency_level: 'high'
-  },
-  {
-    id: '12',
-    type: 'PREMIUM',
-    title: 'F&B Manager - 5-Star Resort',
-    location: 'Azure Beach Resort',
-    rate: '€38/hr',
-    highlight: true,
-    created_at: new Date().toISOString(),
-    region: 'St. Julian\'s, Malta',
-    currency: 'EUR',
-    original_rate: 38,
-    currency_rate: 1,
-    urgency_level: 'medium'
-  },
-  {
-    id: '13',
-    type: 'SWAP',
-    title: 'Head Bartender - Cocktail Bar',
-    location: 'The Thirsty Barracuda',
-    rate: '€32/hr',
-    highlight: false,
-    created_at: new Date().toISOString(),
-    region: 'Sliema, Malta',
-    currency: 'EUR',
-    original_rate: 32,
-    currency_rate: 1,
-    urgency_level: 'medium'
-  },
-  
-  // Spain entries
-  {
-    id: '14',
-    type: 'URGENT',
-    title: 'Sous Chef - Michelin Restaurant',
-    location: 'Casa del Mar',
-    rate: '€40/hr',
-    highlight: true,
-    created_at: new Date().toISOString(),
-    region: 'Barcelona, Spain',
-    currency: 'EUR',
-    original_rate: 40,
-    currency_rate: 1,
-    urgency_level: 'high'
-  },
-  {
-    id: '15',
-    type: 'PREMIUM',
-    title: 'Head Sommelier - Fine Dining',
-    location: 'Vinitus Barcelona',
-    rate: '€36/hr',
-    highlight: true,
-    created_at: new Date().toISOString(),
-    region: 'Barcelona, Spain',
-    currency: 'EUR',
-    original_rate: 36,
-    currency_rate: 1,
-    urgency_level: 'medium'
-  },
-  {
-    id: '16',
-    type: 'SWAP',
-    title: 'Restaurant Manager - Urgent Cover',
-    location: 'El Paradiso Beach Club',
-    rate: '€35/hr',
-    highlight: false,
-    created_at: new Date().toISOString(),
-    region: 'Ibiza, Spain',
-    currency: 'EUR',
-    original_rate: 35,
-    currency_rate: 1,
-    urgency_level: 'medium'
-  },
-  
-  // Italy entries
-  {
-    id: '17',
-    type: 'URGENT',
-    title: 'Pizza Chef - Authentic Pizzeria',
-    location: 'Ristorante Da Vinci',
-    rate: '€34/hr',
-    highlight: true,
-    created_at: new Date().toISOString(),
-    region: 'Rome, Italy',
-    currency: 'EUR',
-    original_rate: 34,
-    currency_rate: 1,
-    urgency_level: 'high'
-  },
-  {
-    id: '18',
-    type: 'PREMIUM',
-    title: 'Pastry Chef - 5-Star Hotel',
-    location: 'Grand Hotel Tremezzo',
-    rate: '€39/hr',
-    highlight: true,
-    created_at: new Date().toISOString(),
-    region: 'Lake Como, Italy',
-    currency: 'EUR',
-    original_rate: 39,
-    currency_rate: 1,
-    urgency_level: 'medium'
-  },
-  {
-    id: '19',
-    type: 'SWAP',
-    title: 'Head Waiter - Luxury Restaurant',
-    location: 'Ristorante Savini',
-    rate: '€28/hr',
-    highlight: false,
-    created_at: new Date().toISOString(),
-    region: 'Milan, Italy',
-    currency: 'EUR',
-    original_rate: 28,
-    currency_rate: 1,
-    urgency_level: 'low'
-  },
-  
-  // Keep some of the other original entries
   {
     id: '3',
     type: 'URGENT',
@@ -172,24 +39,26 @@ export const demoUpdates: MarketUpdate[] = [
     rate: '€40/hr',
     highlight: true,
     created_at: new Date().toISOString(),
-    region: 'Palm Jumeirah',
+    region: 'Amsterdam, Netherlands',
     currency: 'EUR',
     original_rate: 40,
     currency_rate: 1,
     urgency_level: 'high'
   },
+  
+  // Middle East
   {
     id: '4',
     type: 'PREMIUM',
     title: 'Executive Pastry Chef',
     location: 'Royal Dining Group',
-    rate: '€50/hr',
+    rate: 'AED200/hr',
     highlight: true,
     created_at: new Date().toISOString(),
-    region: 'DIFC',
-    currency: 'EUR',
-    original_rate: 50,
-    currency_rate: 1,
+    region: 'Dubai, UAE',
+    currency: 'AED',
+    original_rate: 200,
+    currency_rate: 4.1,
     urgency_level: 'medium'
   },
   {
@@ -197,13 +66,13 @@ export const demoUpdates: MarketUpdate[] = [
     type: 'SWAP',
     title: 'Server Brunch Shift Available',
     location: 'Beach Club Resort',
-    rate: '€25/hr',
+    rate: 'QAR100/hr',
     highlight: false,
     created_at: new Date().toISOString(),
-    region: 'JBR Beach',
-    currency: 'EUR',
-    original_rate: 25,
-    currency_rate: 1,
+    region: 'Doha, Qatar',
+    currency: 'QAR',
+    original_rate: 100,
+    currency_rate: 3.65,
     urgency_level: 'medium'
   },
   {
@@ -211,27 +80,29 @@ export const demoUpdates: MarketUpdate[] = [
     type: 'URGENT',
     title: 'Restaurant Manager Emergency',
     location: 'Fine Dining Restaurant',
-    rate: '€35/hr',
+    rate: 'SAR150/hr',
     highlight: true,
     created_at: new Date().toISOString(),
-    region: 'Business Bay',
-    currency: 'EUR',
-    original_rate: 35,
-    currency_rate: 1,
+    region: 'Riyadh, Saudi Arabia',
+    currency: 'SAR',
+    original_rate: 150,
+    currency_rate: 3.75,
     urgency_level: 'high'
   },
+  
+  // Asia Pacific
   {
     id: '7',
     type: 'PREMIUM',
     title: 'Head Sommelier Position',
     location: 'Michelin Star Restaurant',
-    rate: '€45/hr',
+    rate: 'S$60/hr',
     highlight: true,
     created_at: new Date().toISOString(),
-    region: 'Dubai Hills',
-    currency: 'EUR',
-    original_rate: 45,
-    currency_rate: 1,
+    region: 'Singapore',
+    currency: 'SGD',
+    original_rate: 60,
+    currency_rate: 1.35,
     urgency_level: 'medium'
   },
   {
@@ -239,13 +110,13 @@ export const demoUpdates: MarketUpdate[] = [
     type: 'PREMIUM',
     title: 'F&B Director',
     location: 'International Hotel Chain',
-    rate: '€55/hr',
+    rate: 'HK$425/hr',
     highlight: true,
     created_at: new Date().toISOString(),
-    region: 'Sheikh Zayed Road',
-    currency: 'EUR',
-    original_rate: 55,
-    currency_rate: 1,
+    region: 'Hong Kong',
+    currency: 'HKD',
+    original_rate: 425,
+    currency_rate: 7.8,
     urgency_level: 'medium'
   },
   {
@@ -253,27 +124,177 @@ export const demoUpdates: MarketUpdate[] = [
     type: 'SWAP',
     title: 'Barista Morning Shift Trade',
     location: 'Specialty Coffee House',
-    rate: '€22/hr',
+    rate: 'AU$35/hr',
     highlight: false,
     created_at: new Date().toISOString(),
-    region: 'City Walk',
-    currency: 'EUR',
-    original_rate: 22,
-    currency_rate: 1,
+    region: 'Sydney, Australia',
+    currency: 'AUD',
+    original_rate: 35,
+    currency_rate: 1.5,
     urgency_level: 'low'
   },
+  
+  // North America
   {
     id: '10',
     type: 'URGENT',
     title: 'Senior Chef de Partie',
     location: 'Boutique Hotel Restaurant',
-    rate: '€32/hr',
+    rate: '$40/hr',
     highlight: true,
     created_at: new Date().toISOString(),
-    region: 'Al Barsha',
-    currency: 'EUR',
-    original_rate: 32,
+    region: 'New York, USA',
+    currency: 'USD',
+    original_rate: 40,
     currency_rate: 1,
+    urgency_level: 'high'
+  },
+  {
+    id: '11',
+    type: 'URGENT',
+    title: 'Executive Chef - Luxury Hotel',
+    location: 'Marriott Hotel & Spa',
+    rate: 'CA$45/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Toronto, Canada',
+    currency: 'CAD',
+    original_rate: 45,
+    currency_rate: 1.35,
+    urgency_level: 'high'
+  },
+  {
+    id: '12',
+    type: 'PREMIUM',
+    title: 'F&B Manager - 5-Star Resort',
+    location: 'Azure Beach Resort',
+    rate: 'MX$750/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Cancun, Mexico',
+    currency: 'MXN',
+    original_rate: 750,
+    currency_rate: 20,
+    urgency_level: 'medium'
+  },
+  
+  // South America
+  {
+    id: '13',
+    type: 'SWAP',
+    title: 'Head Bartender - Cocktail Bar',
+    location: 'The Thirsty Barracuda',
+    rate: 'R$200/hr',
+    highlight: false,
+    created_at: new Date().toISOString(),
+    region: 'Rio de Janeiro, Brazil',
+    currency: 'BRL',
+    original_rate: 200,
+    currency_rate: 5.5,
+    urgency_level: 'medium'
+  },
+  {
+    id: '14',
+    type: 'URGENT',
+    title: 'Sous Chef - Fine Dining Restaurant',
+    location: 'Casa del Mar',
+    rate: 'AR$15000/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Buenos Aires, Argentina',
+    currency: 'ARS',
+    original_rate: 15000,
+    currency_rate: 350,
+    urgency_level: 'high'
+  },
+  
+  // Africa
+  {
+    id: '15',
+    type: 'PREMIUM',
+    title: 'Head Sommelier - Fine Dining',
+    location: 'The Cape View',
+    rate: 'R650/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Cape Town, South Africa',
+    currency: 'ZAR',
+    original_rate: 650,
+    currency_rate: 18,
+    urgency_level: 'medium'
+  },
+  {
+    id: '16',
+    type: 'SWAP',
+    title: 'Restaurant Manager - Urgent Cover',
+    location: 'Luxor Resort & Casino',
+    rate: 'E£650/hr',
+    highlight: false,
+    created_at: new Date().toISOString(),
+    region: 'Cairo, Egypt',
+    currency: 'EGP',
+    original_rate: 650,
+    currency_rate: 30.8,
+    urgency_level: 'medium'
+  },
+  
+  // Additional Asian Markets
+  {
+    id: '17',
+    type: 'URGENT',
+    title: 'Sushi Master - Japanese Restaurant',
+    location: 'Sakura Fine Dining',
+    rate: '¥6000/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Tokyo, Japan',
+    currency: 'JPY',
+    original_rate: 6000,
+    currency_rate: 150,
+    urgency_level: 'high'
+  },
+  {
+    id: '18',
+    type: 'PREMIUM',
+    title: 'Pastry Chef - 5-Star Hotel',
+    location: 'Grand Hotel Peninsula',
+    rate: '₹3000/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Mumbai, India',
+    currency: 'INR',
+    original_rate: 3000,
+    currency_rate: 83,
+    urgency_level: 'medium'
+  },
+  {
+    id: '19',
+    type: 'SWAP',
+    title: 'Head Waiter - Luxury Restaurant',
+    location: 'Riverside Gourmet',
+    rate: '฿1200/hr',
+    highlight: false,
+    created_at: new Date().toISOString(),
+    region: 'Bangkok, Thailand',
+    currency: 'THB',
+    original_rate: 1200,
+    currency_rate: 35,
+    urgency_level: 'low'
+  },
+  
+  // Additional European Markets
+  {
+    id: '20',
+    type: 'URGENT',
+    title: 'Executive Head Chef - Michelin Restaurant',
+    location: 'Nordic Fine Dining',
+    rate: 'kr450/hr',
+    highlight: true,
+    created_at: new Date().toISOString(),
+    region: 'Stockholm, Sweden',
+    currency: 'SEK',
+    original_rate: 450,
+    currency_rate: 10.5,
     urgency_level: 'high'
   }
 ];
