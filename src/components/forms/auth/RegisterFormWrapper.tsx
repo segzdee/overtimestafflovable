@@ -4,7 +4,7 @@ import { RegisterForm } from "./RegisterForm";
 import { ConnectionStatus } from "@/components/ConnectionStatus";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Save, Cloud, CloudOff } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const LOCAL_STORAGE_KEY = "overtimestaff_pending_registration";
 
@@ -16,6 +16,10 @@ export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps = 
   const [hasPendingRegistration, setHasPendingRegistration] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const { toast } = useToast();
+  
+  // Check if we're in production environment
+  const isProduction = window.location.hostname === 'www.overtimestaff.com' || 
+                      window.location.hostname === 'overtimestaff.com';
 
   // Track online status
   useEffect(() => {
@@ -100,7 +104,8 @@ export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps = 
 
   return (
     <div className="space-y-4">
-      <ConnectionStatus />
+      {/* Only show ConnectionStatus in non-production environments */}
+      {!isProduction && <ConnectionStatus />}
       
       {/* Pending Registration Banner */}
       {hasPendingRegistration && (
@@ -144,8 +149,8 @@ export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps = 
         </div>
       )}
 
-      {/* Warning for offline registration attempts */}
-      {!isOnline && !hasPendingRegistration && (
+      {/* Warning for offline registration attempts - only show in non-production */}
+      {!isOnline && !isProduction && !hasPendingRegistration && (
         <div className="p-4 rounded-lg bg-amber-50 border border-amber-200 mb-4">
           <div className="flex items-start">
             <div className="p-2 rounded-full bg-amber-100 mr-3">

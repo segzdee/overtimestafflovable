@@ -11,6 +11,15 @@ export function ConnectionStatus() {
   const [retryCount, setRetryCount] = useState(0);
   const [autoRetrying, setAutoRetrying] = useState(false);
 
+  // Check if we're in production environment
+  const isProduction = window.location.hostname === 'www.overtimestaff.com' || 
+                      window.location.hostname === 'overtimestaff.com';
+
+  // If we're in production, don't show any connection status
+  if (isProduction) {
+    return null;
+  }
+
   // Check browser online status
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
