@@ -621,7 +621,7 @@ export async function runSupabaseDiagnostics(
   supabaseAnonKey: string,
   options: Partial<DebugConfig> = {}
 ): Promise<Record<string, DiagnosticResult>> {
-  const debugger = new SupabaseDebugger({
+  const debugInstance = new SupabaseDebugger({
     supabaseUrl,
     supabaseAnonKey,
     timeoutThreshold: options.timeoutThreshold || 5000,
@@ -631,5 +631,5 @@ export async function runSupabaseDiagnostics(
     testPassword: options.testPassword
   });
   
-  return await debugger.runFullDiagnostics();
+  return await debugInstance.runFullDiagnostics();
 }
