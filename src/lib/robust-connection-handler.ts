@@ -1,6 +1,6 @@
 
-// robust-connection-handler.ts
 import { supabase } from "./supabase/client";
+import { runSupabaseDiagnostics } from "./debug/supabaseDebugger";
 
 // Constants for connection handling
 const CONNECTION_CHECK_INTERVAL = 5000; // Check every 5 seconds
@@ -17,6 +17,10 @@ let pendingOperations: Array<{
   resolve: (value: any) => void;
   reject: (reason?: any) => void;
 }> = [];
+
+// Check if we're in production/live environment
+const isProduction = window.location.hostname === 'www.overtimestaff.com' || 
+                    window.location.hostname === 'overtimestaff.com';
 
 // Set up event listeners for online/offline status
 export const setupConnectionListeners = () => {
@@ -96,6 +100,37 @@ const processPendingOperations = async () => {
   }
 };
 
+// Run a full diagnostic if connection issues are detected
+export const runConnectionDiagnostics = async (): Promise<any> => {
+  if (isProduction) {
+    // In production, just log to console but don't run extensive diagnostics
+    console.log("Connection issues detected, but diagnostics are disabled in production");
+    return null;
+  }
+  
+  console.log("Running Supabase connection diagnostics...");
+  
+  try {
+    // Get configuration from env vars
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://qdyyfxgonldvghrtjhnn.supabase.co';
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkeXlmeGdvbmxkdmdocnRqaG5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA0MDAzMTMsImV4cCI6MjA1NTk3NjMxM30.eS660marbWwss7pQFbMUBJ_e2mhH7JBJvaP7Kr3ZU0M';
+    
+    const results = await runSupabaseDiagnostics(
+      supabaseUrl,
+      supabaseAnonKey,
+      {
+        logLevel: 'verbose',
+        networkTestCount: 3
+      }
+    );
+    
+    return results;
+  } catch (error) {
+    console.error("Error running diagnostics:", error);
+    return null;
+  }
+};
+
 // Queue an operation for when connection is restored or execute it immediately if online
 export const executeWithConnectionRetry = async <T>(
   operation: () => Promise<T>,
@@ -130,6 +165,11 @@ export const executeWithConnectionRetry = async <T>(
       ) {
         // Connection issue detected, handle with retries
         isOnline = false;
+        
+        // In development, run diagnostics on connection errors
+        if (!isProduction) {
+          runConnectionDiagnostics();
+        }
       } else {
         // Not a connection error, rethrow
         throw error;

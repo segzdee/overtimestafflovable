@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { Wifi, WifiOff, RefreshCw } from "lucide-react";
+import { Wifi, WifiOff, RefreshCw, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { checkConnection } from '@/lib/robust-connection-handler';
+import { checkConnection, runConnectionDiagnostics } from '@/lib/robust-connection-handler';
+import { Link } from 'react-router-dom';
 
 export function ConnectionStatus() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -121,6 +122,11 @@ export function ConnectionStatus() {
     }
   };
 
+  const handleRunDiagnostics = async () => {
+    const results = await runConnectionDiagnostics();
+    console.log("Connection diagnostic results:", results);
+  };
+
   // Don't show anything if everything is connected
   if (isOnline && supabaseConnected) {
     return null;
@@ -136,7 +142,7 @@ export function ConnectionStatus() {
             <WifiOff className={`h-5 w-5 ${isOnline ? "text-orange-500" : "text-red-500"}`} />
           )}
         </div>
-        <div>
+        <div className="flex-1">
           <h3 className={`text-lg font-medium ${isOnline ? "text-orange-800" : "text-red-800"}`}>
             {autoRetrying 
               ? "Attempting to reconnect..." 
@@ -153,7 +159,7 @@ export function ConnectionStatus() {
           </p>
           
           {!autoRetrying && (
-            <div className="mt-3 flex space-x-3">
+            <div className="mt-3 flex flex-wrap gap-2">
               <Button 
                 type="button"
                 variant="outline" 
@@ -167,16 +173,40 @@ export function ConnectionStatus() {
               </Button>
               
               {isOnline && (
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  size="sm"
-                  className="bg-white border border-orange-200 hover:bg-orange-50"
-                  onClick={() => window.location.reload()}
-                >
-                  <RefreshCw className="h-4 w-4 mr-2" /> 
-                  Reload Page
-                </Button>
+                <>
+                  <Button 
+                    type="button"
+                    variant="outline" 
+                    size="sm"
+                    className="bg-white border border-orange-200 hover:bg-orange-50"
+                    onClick={() => window.location.reload()}
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" /> 
+                    Reload Page
+                  </Button>
+                  
+                  <Button 
+                    type="button"
+                    variant="outline" 
+                    size="sm"
+                    className="bg-white border border-orange-200 hover:bg-orange-50"
+                    onClick={handleRunDiagnostics}
+                  >
+                    <Terminal className="h-4 w-4 mr-2" /> 
+                    Run Diagnostics
+                  </Button>
+                  
+                  <Link to="/debug">
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      size="sm"
+                      className="bg-white border border-orange-200 hover:bg-orange-50"
+                    >
+                      Debug Tools
+                    </Button>
+                  </Link>
+                </>
               )}
             </div>
           )}
