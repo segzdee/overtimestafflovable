@@ -1,0 +1,14 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background -->
+  <rect width="32" height="32" rx="4" fill="#FFFFFF"/>
+  
+  <!-- Letter O with clean design for small sizes -->
+  <path d="M16,5C10.477,5,6,9.477,6,15s4.477,10,10,10s10-4.477,10-10S21.523,5,16,5z M16,21
+  c-3.314,0-6-2.686-6-6s2.686-6,6-6s6,2.686,6,6S19.314,21,16,21z" 
+  fill="#000000"/>
+  
+  <!-- Purple accent element (STAFF portion representation) -->
+  <path d="M19,12v6c0,1.657-1.343,3-3,3s-3-1.343-3-3v-6" 
+  stroke="#8A4FFF" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>
