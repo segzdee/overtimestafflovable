@@ -144,13 +144,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "agencies_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "worker_performance_view"
-            referencedColumns: ["profile_id"]
-          },
         ]
       }
       agency_company_relationships: {
@@ -279,13 +272,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "agency_staff_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "worker_performance_view"
-            referencedColumns: ["profile_id"]
-          },
         ]
       }
       agency_workers: {
@@ -401,13 +387,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "ai_agent_subscriptions_subscriber_profile_id_fkey"
-            columns: ["subscriber_profile_id"]
-            isOneToOne: false
-            referencedRelation: "worker_performance_view"
-            referencedColumns: ["profile_id"]
-          },
         ]
       }
       ai_tokens: {
@@ -453,6 +432,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      auth_diagnostics: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: number
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          id?: number
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: number
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          category_description: string | null
+          category_name: string
+          created_at: string
+          id: number
+          is_active: boolean
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          category_description?: string | null
+          category_name: string
+          created_at?: string
+          id?: number
+          is_active?: boolean
+          role: string
+          updated_at?: string
+        }
+        Update: {
+          category_description?: string | null
+          category_name?: string
+          created_at?: string
+          id?: number
+          is_active?: boolean
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       companies: {
         Row: {
@@ -507,13 +546,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "companies_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "worker_performance_view"
-            referencedColumns: ["profile_id"]
           },
         ]
       }
@@ -597,13 +629,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "company_staff_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "worker_performance_view"
-            referencedColumns: ["profile_id"]
           },
         ]
       }
@@ -820,13 +845,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "notifications_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "worker_performance_view"
-            referencedColumns: ["profile_id"]
-          },
         ]
       }
       profiles: {
@@ -859,6 +877,75 @@ export type Database = {
           role?: string
           updated_at?: string
           user_code?: string | null
+        }
+        Relationships: []
+      }
+      registration_attempts: {
+        Row: {
+          attempt_timestamp: string
+          email: string
+          error_message: string | null
+          id: number
+          ip_address: string | null
+          success: boolean | null
+          user_agent: string | null
+        }
+        Insert: {
+          attempt_timestamp?: string
+          email: string
+          error_message?: string | null
+          id?: number
+          ip_address?: string | null
+          success?: boolean | null
+          user_agent?: string | null
+        }
+        Update: {
+          attempt_timestamp?: string
+          email?: string
+          error_message?: string | null
+          id?: number
+          ip_address?: string | null
+          success?: boolean | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      registration_backups: {
+        Row: {
+          attempts: number
+          category: string | null
+          created_at: string
+          email: string
+          id: number
+          name: string
+          processed: boolean
+          registration_data: Json | null
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          category?: string | null
+          created_at?: string
+          email: string
+          id?: number
+          name: string
+          processed?: boolean
+          registration_data?: Json | null
+          role: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          category?: string | null
+          created_at?: string
+          email?: string
+          id?: number
+          name?: string
+          processed?: boolean
+          registration_data?: Json | null
+          role?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1142,13 +1229,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "shift_worker_profiles_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: true
-            referencedRelation: "worker_performance_view"
-            referencedColumns: ["profile_id"]
-          },
         ]
       }
       shift_workers: {
@@ -1316,15 +1396,7 @@ export type Database = {
           updated_at?: string
           worker_profile_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "staff_performance_metrics_worker_profile_id_fkey"
-            columns: ["worker_profile_id"]
-            isOneToOne: false
-            referencedRelation: "shift_worker_profiles"
-            referencedColumns: ["profile_id"]
-          },
-        ]
+        Relationships: []
       }
       tenants: {
         Row: {
@@ -1512,16 +1584,23 @@ export type Database = {
       }
     }
     Views: {
-      worker_performance_view: {
+      registration_analytics: {
         Row: {
-          email: string | null
-          name: string | null
-          overall_rating: number | null
-          profile_id: string | null
-          reliability_score: number | null
-          total_shifts_completed: number | null
-          user_code: string | null
-          worker_code: string | null
+          day: string | null
+          success_rate: number | null
+          successful_attempts: number | null
+          total_attempts: number | null
+          unique_emails: number | null
+          unique_ips: number | null
+        }
+        Relationships: []
+      }
+      registration_errors: {
+        Row: {
+          error_count: number | null
+          error_message: string | null
+          first_occurrence: string | null
+          last_occurrence: string | null
         }
         Relationships: []
       }
@@ -1532,6 +1611,13 @@ export type Database = {
           tenant_id: string
         }
         Returns: undefined
+      }
+      check_registration_rate_limit: {
+        Args: {
+          p_email: string
+          p_ip_address: string
+        }
+        Returns: Json
       }
       generate_unique_id: {
         Args: {
@@ -1548,6 +1634,31 @@ export type Database = {
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      process_registration_backup: {
+        Args: {
+          backup_id: number
+        }
+        Returns: boolean
+      }
+      record_successful_login: {
+        Args: {
+          p_user_id: string
+          p_ip_address?: string
+        }
+        Returns: undefined
+      }
+      register_user: {
+        Args: {
+          p_user_id: string
+          p_email: string
+          p_role: string
+          p_name: string
+          p_category: string
+          p_ip_address?: string
+          p_user_agent?: string
+        }
+        Returns: Json
       }
       reset_and_install_schema: {
         Args: Record<PropertyKey, never>
@@ -1568,6 +1679,21 @@ export type Database = {
           column_name: string
         }
         Returns: undefined
+      }
+      track_auth_event: {
+        Args: {
+          event_type: string
+          user_id: string
+          event_data?: Json
+        }
+        Returns: undefined
+      }
+      validate_category: {
+        Args: {
+          p_role: string
+          p_category: string
+        }
+        Returns: boolean
       }
     }
     Enums: {

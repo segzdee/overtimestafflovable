@@ -5,8 +5,8 @@ import { ConnectionStatus } from "@/components/ConnectionStatus";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Save, Cloud, CloudOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-const LOCAL_STORAGE_KEY = "overtimestaff_pending_registration";
+import { registrationService } from "@/lib/registration/registration-service";
+import { checkConnection } from "@/lib/robust-connection-handler";
 
 interface RegisterFormWrapperProps {
   initialRole?: string | null;
@@ -21,9 +21,35 @@ export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps = 
   const isProduction = window.location.hostname === 'www.overtimestaff.com' || 
                       window.location.hostname === 'overtimestaff.com';
 
+  // Check for pending registration on load
+  useEffect(() => {
+    const checkPendingRegistration = async () => {
+      const hasPending = registrationService.hasPendingRegistration();
+      setHasPendingRegistration(hasPending);
+      
+      // Try to process pending registration if we're online
+      if (hasPending && navigator.onLine) {
+        const isConnected = await checkConnection();
+        if (isConnected) {
+          processRegistration();
+        }
+      }
+    };
+    
+    checkPendingRegistration();
+  }, []);
+
   // Track online status
   useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
+    const handleOnline = () => {
+      setIsOnline(true);
+      checkConnection().then(connected => {
+        if (connected && hasPendingRegistration) {
+          processRegistration();
+        }
+      });
+    };
+    
     const handleOffline = () => setIsOnline(false);
 
     window.addEventListener('online', handleOnline);
@@ -33,74 +59,56 @@ export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps = 
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
+  }, [hasPendingRegistration]);
 
-  // Check for pending registration on load
-  useEffect(() => {
-    const pendingData = localStorage.getItem(LOCAL_STORAGE_KEY);
-    setHasPendingRegistration(!!pendingData);
-  }, []);
-
-  // Save registration data to local storage if submission fails due to connection
-  const saveRegistrationLocally = useCallback((formData) => {
+  // Process pending registration
+  const processRegistration = useCallback(async () => {
+    if (!hasPendingRegistration) return;
+    
     try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
-        formData,
-        timestamp: new Date().toISOString()
-      }));
-      setHasPendingRegistration(true);
-      
-      toast({
-        title: "Registration Saved",
-        description: "We'll complete your registration when connection is restored",
-        duration: 5000,
-      });
-    } catch (error) {
-      console.error("Error saving registration data locally:", error);
-    }
-  }, [toast]);
-
-  // Clear pending registration data
-  const clearPendingRegistration = useCallback(() => {
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
-    setHasPendingRegistration(false);
-  }, []);
-
-  // Submit pending registration when back online
-  const submitPendingRegistration = useCallback(() => {
-    try {
-      const pendingDataStr = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (!pendingDataStr) return;
-
-      const { formData } = JSON.parse(pendingDataStr);
-      
-      // We don't immediately remove the data in case submission fails again
-      // This happens in the registration form's onSuccess callback
-
       toast({
         title: "Resuming Registration",
         description: "Attempting to complete your saved registration...",
       });
       
-      return formData;
+      const result = await registrationService.processPendingRegistration();
+      
+      if (result?.success) {
+        setHasPendingRegistration(false);
+        toast({
+          title: "Registration Completed",
+          description: "Your registration has been successfully completed",
+          duration: 5000,
+        });
+      } else if (result) {
+        toast({
+          variant: "destructive",
+          title: "Registration Failed",
+          description: result.message || "Failed to process registration",
+          duration: 5000,
+        });
+      }
     } catch (error) {
-      console.error("Error processing pending registration:", error);
-      // If we can't parse the data, clear it
-      clearPendingRegistration();
-      return null;
+      console.error("Error processing registration:", error);
+      toast({
+        variant: "destructive",
+        title: "Registration Error",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        duration: 5000,
+      });
     }
-  }, [toast, clearPendingRegistration]);
+  }, [hasPendingRegistration, toast]);
+
+  // Clear pending registration data
+  const clearPendingRegistration = useCallback(() => {
+    registrationService.clearPendingRegistration();
+    setHasPendingRegistration(false);
+  }, []);
 
   // Function to handle clicking the "Resume Registration" button
   const handleResumeRegistration = useCallback(() => {
-    // Just need to set pendingRegistration state to trigger the form update
-    // The actual data retrieval happens in submitPendingRegistration
-    if (isOnline && hasPendingRegistration) {
-      // Force a refresh of the pendingRegistration by clearing and setting it again
-      setHasPendingRegistration(false);
-      setTimeout(() => setHasPendingRegistration(true), 0);
-    }
-  }, [isOnline, hasPendingRegistration]);
+    processRegistration();
+  }, [processRegistration]);
 
   return (
     <div className="space-y-4">
@@ -168,9 +176,13 @@ export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps = 
       )}
 
       <RegisterForm 
-        onNetworkError={saveRegistrationLocally}
-        pendingRegistration={hasPendingRegistration ? submitPendingRegistration() : null}
-        onRegistrationSuccess={clearPendingRegistration}
+        onNetworkError={(formData) => {
+          setHasPendingRegistration(true);
+        }}
+        pendingRegistration={hasPendingRegistration ? registrationService.getPendingRegistration()?.data : null}
+        onRegistrationSuccess={() => {
+          setHasPendingRegistration(false);
+        }}
         initialRole={initialRole}
       />
     </div>

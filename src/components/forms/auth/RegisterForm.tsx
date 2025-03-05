@@ -9,7 +9,8 @@ import { PasswordInput } from "./PasswordInput";
 import { TermsCheckbox } from "./TermsCheckbox";
 import { RegisterFormAlerts } from "./RegisterFormAlerts";
 import { UserTypeFields } from "./UserTypeFields";
-import { ConnectionStatus } from "@/components/ConnectionStatus";
+import { registrationService } from "@/lib/registration/registration-service";
+import { executeWithConnectionRetry } from "@/lib/robust-connection-handler";
 
 interface RegisterFormProps {
   onNetworkError?: (formData: any) => void;
@@ -64,26 +65,6 @@ export function RegisterForm({
     }
   }, [pendingRegistration, toast]);
   
-  const isNetworkError = (error: any): boolean => {
-    if (!error) return false;
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    
-    return (
-      errorMessage.includes('Unable to connect') || 
-      errorMessage.includes('network') ||
-      errorMessage.includes('connection') ||
-      errorMessage.includes('Load failed') ||
-      errorMessage.includes('timeout') ||
-      errorMessage.includes('offline') ||
-      errorMessage.includes('failed to fetch') ||
-      errorMessage.includes('Network request failed') ||
-      errorMessage.includes('Network Error') ||
-      errorMessage.includes('abort') ||
-      (error instanceof Error && 'code' in error && 
-       ['ECONNABORTED', 'ETIMEDOUT', 'ENOTFOUND', 'NETWORK_ERROR'].includes((error as any).code))
-    );
-  };
-  
   const validateForm = () => {
     if (!agreedToTerms) {
       setError("Please agree to the Terms and Privacy Policy");
@@ -128,36 +109,53 @@ export function RegisterForm({
         return;
       }
       
-      await register(
-        formData.email, 
-        formData.password, 
-        validRole as "company" | "agency" | "shift-worker" | "admin" | "aiagent", 
-        formData.name,
-        formData.category
+      const result = await executeWithConnectionRetry(
+        async () => registrationService.register({
+          email: formData.email,
+          password: formData.password,
+          role: validRole as "company" | "agency" | "shift-worker" | "admin" | "aiagent",
+          name: formData.name,
+          category: formData.category
+        }),
+        { criticalOperation: true }
       );
       
-      setSuccessMessage("Account created successfully! Please check your email to verify your account before logging in.");
-      toast({
-        title: "Account created successfully",
-        description: "Please check your email to verify your account",
-      });
-      
-      if (onRegistrationSuccess) {
-        onRegistrationSuccess();
+      if (result.success) {
+        setSuccessMessage(result.message || "Account created successfully! Please check your email to verify your account before logging in.");
+        toast({
+          title: "Account created successfully",
+          description: "Please check your email to verify your account",
+        });
+        
+        if (onRegistrationSuccess) {
+          onRegistrationSuccess();
+        }
+        
+        setFormData({
+          email: "",
+          password: "",
+          confirmPassword: "",
+          role: "",
+          category: "",
+          name: ""
+        });
+        
+        navigate("/registration-success");
+      } else {
+        setError(result.message || "Registration failed");
+        toast({
+          variant: "destructive",
+          title: "Registration failed",
+          description: result.message || "An error occurred during registration"
+        });
       }
-      
-      setFormData({
-        email: "",
-        password: "",
-        confirmPassword: "",
-        role: "",
-        category: "",
-        name: ""
-      });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to create account";
       
-      if (isNetworkError(err)) {
+      if (err instanceof Error && 
+          (errorMessage.includes('network') || 
+           errorMessage.includes('connection') || 
+           errorMessage.includes('offline'))) {
         setNetworkError(true);
         
         if (onNetworkError) {
