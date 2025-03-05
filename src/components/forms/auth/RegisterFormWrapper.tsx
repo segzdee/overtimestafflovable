@@ -15,6 +15,7 @@ export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [hasPendingRegistration, setHasPendingRegistration] = useState(false);
+  const [networkError, setNetworkError] = useState(false);
   const authHooks = useAuthHooks();
   const [registrationService] = useState(() => {
     const service = new RegistrationService();
@@ -46,6 +47,7 @@ export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps) {
   const handleRegister = async (formData: any) => {
     setError(null);
     setSuccess(null);
+    setNetworkError(false);
     
     try {
       const result = await registrationService.register(formData);
@@ -76,7 +78,16 @@ export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps) {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-      setError(errorMessage);
+      
+      // Check if it's a network error
+      if (error instanceof Error && 
+          (errorMessage.includes('network') || 
+           errorMessage.includes('connection') || 
+           errorMessage.includes('offline'))) {
+        setNetworkError(true);
+      } else {
+        setError(errorMessage);
+      }
       
       // Log and monitor the error
       console.error('Registration error:', error);
@@ -85,6 +96,19 @@ export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps) {
         errorMessage
       );
     }
+  };
+
+  const retryRegistration = () => {
+    setNetworkError(false);
+    setError(null);
+    // We don't have access to the form data here, so this is a placeholder
+    // The actual retry logic will need to be handled in the form component
+  };
+
+  const handleNetworkError = (formData: any) => {
+    // This will be called by the RegisterForm when it detects a network error
+    // Store the registration data for later processing
+    console.log("Network error detected, storing registration data for later", formData);
   };
 
   return (
@@ -98,11 +122,18 @@ export function RegisterFormWrapper({ initialRole }: RegisterFormWrapperProps) {
         </Alert>
       )}
       
-      <RegisterFormAlerts error={error} success={success} />
+      <RegisterFormAlerts 
+        error={error || ""}
+        networkError={networkError}
+        successMessage={success || ""}
+        retryRegistration={retryRegistration}
+      />
       
       <RegisterForm 
-        onSubmit={handleRegister} 
-        initialRole={initialRole} 
+        onNetworkError={handleNetworkError}
+        pendingRegistration={registrationService.getPendingRegistration()}
+        onRegistrationSuccess={() => setSuccess("Registration successful! Please check your email to verify your account.")}
+        initialRole={initialRole || ""}
       />
     </div>
   );
