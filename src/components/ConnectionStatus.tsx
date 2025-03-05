@@ -1,14 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Wifi, WifiOff, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Wifi, WifiOff } from "lucide-react";
 import { checkConnection } from '@/lib/robust-connection-handler';
 
 export function ConnectionStatus() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [supabaseConnected, setSupabaseConnected] = useState(true);
   const [checking, setChecking] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [autoRetrying, setAutoRetrying] = useState(false);
 
   // Check browser online status
   useEffect(() => {
@@ -24,7 +25,7 @@ export function ConnectionStatus() {
     };
   }, []);
 
-  // Check actual Supabase connection periodically
+  // Check Supabase connection when online
   useEffect(() => {
     if (!isOnline) {
       setSupabaseConnected(false);
@@ -35,27 +36,77 @@ export function ConnectionStatus() {
       try {
         const connected = await checkConnection();
         setSupabaseConnected(connected);
+        
+        // If we're connected, reset retry count
+        if (connected) {
+          setRetryCount(0);
+          setAutoRetrying(false);
+        }
       } catch (error) {
         console.error("Connection check error:", error);
         setSupabaseConnected(false);
       }
     };
 
-    // Check connection immediately and then every 30 seconds
+    // Check connection immediately
     checkSupabaseConnection();
-    const interval = setInterval(checkSupabaseConnection, 30000);
-
+    
+    // And then check every 10 seconds
+    const interval = setInterval(checkSupabaseConnection, 10000);
     return () => clearInterval(interval);
   }, [isOnline]);
 
-  const handleRetryConnection = async () => {
+  // Auto-retry logic
+  useEffect(() => {
+    if (!isOnline || supabaseConnected || !autoRetrying) return;
+    
+    let retryTimeout: number;
+    
+    const attemptReconnect = async () => {
+      setChecking(true);
+      try {
+        console.log(`Auto-retry attempt ${retryCount + 1}`);
+        const connected = await checkConnection();
+        setSupabaseConnected(connected);
+        
+        if (connected) {
+          setRetryCount(0);
+          setAutoRetrying(false);
+        } else {
+          // Exponential backoff with max of 30 seconds
+          const nextRetryDelay = Math.min(2000 * Math.pow(1.5, retryCount), 30000);
+          console.log(`Will retry in ${nextRetryDelay}ms`);
+          
+          setRetryCount(prev => prev + 1);
+          retryTimeout = window.setTimeout(attemptReconnect, nextRetryDelay);
+        }
+      } catch (error) {
+        console.error("Auto-retry failed:", error);
+      } finally {
+        setChecking(false);
+      }
+    };
+    
+    // Start the first auto-retry
+    retryTimeout = window.setTimeout(attemptReconnect, 1000);
+    
+    return () => {
+      clearTimeout(retryTimeout);
+    };
+  }, [autoRetrying, isOnline, supabaseConnected, retryCount]);
+
+  const handleManualRetry = async () => {
     setChecking(true);
     try {
       const connected = await checkConnection();
       setSupabaseConnected(connected);
+      
+      if (!connected) {
+        // Start auto-retry process
+        setAutoRetrying(true);
+      }
     } catch (error) {
-      console.error("Retry connection error:", error);
-      setSupabaseConnected(false);
+      console.error("Manual connection retry error:", error);
     } finally {
       setChecking(false);
     }
@@ -67,28 +118,61 @@ export function ConnectionStatus() {
   }
 
   return (
-    <Alert className={isOnline ? "bg-orange-50 border-orange-200" : "bg-red-50 border-red-200"}>
-      <WifiOff className={`h-4 w-4 ${isOnline ? "text-orange-600" : "text-red-600"}`} />
-      <AlertTitle className={isOnline ? "text-orange-800" : "text-red-800"}>
-        {isOnline ? "Service Connection Issue" : "Network Offline"}
-      </AlertTitle>
-      <AlertDescription className={isOnline ? "text-orange-700" : "text-red-700"}>
-        {isOnline 
-          ? "Unable to connect to the authentication service. We'll automatically retry when the service is available."
-          : "Your device appears to be offline. Please check your internet connection."}
-        
-        <Button 
-          type="button"
-          variant="outline" 
-          size="sm"
-          className="mt-2 bg-white"
-          disabled={checking}
-          onClick={handleRetryConnection}
-        >
-          <Wifi className="h-4 w-4 mr-2" /> 
-          {checking ? "Checking..." : "Check Connection"}
-        </Button>
-      </AlertDescription>
-    </Alert>
+    <div className={`p-4 rounded-lg mb-4 ${isOnline ? "bg-orange-100 border border-orange-200" : "bg-red-100 border border-red-200"}`}>
+      <div className="flex items-start">
+        <div className={`p-2 rounded-full ${isOnline ? "bg-orange-50" : "bg-red-50"} mr-3`}>
+          {autoRetrying ? (
+            <RefreshCw className={`h-5 w-5 animate-spin ${isOnline ? "text-orange-500" : "text-red-500"}`} />
+          ) : (
+            <WifiOff className={`h-5 w-5 ${isOnline ? "text-orange-500" : "text-red-500"}`} />
+          )}
+        </div>
+        <div>
+          <h3 className={`text-lg font-medium ${isOnline ? "text-orange-800" : "text-red-800"}`}>
+            {autoRetrying 
+              ? "Attempting to reconnect..." 
+              : isOnline 
+                ? "Connection Error" 
+                : "Network Offline"}
+          </h3>
+          <p className={`mt-1 text-sm ${isOnline ? "text-orange-700" : "text-red-700"}`}>
+            {autoRetrying 
+              ? `Retry attempt ${retryCount}... Please wait while we try to restore your connection.`
+              : isOnline 
+                ? "Unable to connect to the authentication service. This could be due to temporary service issues."
+                : "Your device appears to be offline. Please check your internet connection."}
+          </p>
+          
+          {!autoRetrying && (
+            <div className="mt-3 flex space-x-3">
+              <Button 
+                type="button"
+                variant="outline" 
+                size="sm"
+                className={`bg-white border ${isOnline ? "border-orange-200 hover:bg-orange-50" : "border-red-200 hover:bg-red-50"}`}
+                disabled={checking}
+                onClick={handleManualRetry}
+              >
+                <Wifi className="h-4 w-4 mr-2" /> 
+                {checking ? "Checking..." : "Retry Connection"}
+              </Button>
+              
+              {isOnline && (
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  size="sm"
+                  className="bg-white border border-orange-200 hover:bg-orange-50"
+                  onClick={() => window.location.reload()}
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" /> 
+                  Reload Page
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
