@@ -2,8 +2,15 @@
 import { NavigateFunction } from "react-router-dom";
 import { AuthUser, AIToken } from "./types";
 import { setUserFromSupabase } from "./utils/authUtils";
-import { register, login, loginWithToken, devLogin } from "./operations/authOperations";
-import { updateProfile, generateAiToken, revokeAiToken } from "./operations/profileOperations";
+import { 
+  register, 
+  login, 
+  loginWithToken, 
+  devLogin,
+  updateProfile,
+  generateAiToken,
+  revokeAiToken
+} from "./operations/authOperations";
 import { supabase } from "@/lib/supabase/client";
 import { NotificationPreferences } from "@/lib/types";
 
