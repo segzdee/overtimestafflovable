@@ -68,7 +68,7 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("No user found");
 
-    const { error } = await executeWithConnectionRetry(
+    const result = await executeWithConnectionRetry(
       async () => {
         const { error } = await supabase
           .from('notification_preferences')
@@ -76,7 +76,7 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
           .eq('user_id', user.id);
 
         if (error) throw error;
-        return { success: true };
+        return { success: true, error: null };
       },
       {
         maxRetries: 3,
@@ -84,7 +84,7 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
       }
     );
 
-    if (error) throw error;
+    if (result.error) throw result.error;
 
     setUser(currentUser => {
       if (!currentUser) return null;
@@ -112,11 +112,11 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
   };
 
   const logout = async () => {
-    const { error } = await executeWithConnectionRetry(
+    const result = await executeWithConnectionRetry(
       async () => {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
-        return { success: true };
+        return { success: true, error: null };
       },
       {
         maxRetries: 3,
@@ -124,7 +124,7 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
       }
     );
     
-    if (error) throw error;
+    if (result.error) throw result.error;
     
     setUser(null);
     navigate("/login");

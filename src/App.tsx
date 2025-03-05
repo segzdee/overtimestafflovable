@@ -1,4 +1,5 @@
 
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +8,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { DevModeToggle } from "./components/DevModeToggle";
+import { initConnectionHandling } from "@/lib/robust-connection-handler";
 
 // Pages
 import Index from "./pages/index";
@@ -33,6 +35,14 @@ import UserTypeSelection from "./pages/UserTypeSelection";
 const queryClient = new QueryClient();
 
 const App = () => {
+  useEffect(() => {
+    // Initialize the connection handling system
+    const cleanup = initConnectionHandling();
+    
+    // Cleanup when component unmounts
+    return cleanup;
+  }, []);
+
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
