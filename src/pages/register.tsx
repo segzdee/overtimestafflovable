@@ -1,6 +1,6 @@
 
 import { Logo } from "@/components/ui/logo";
-import { RegisterForm } from "@/components/forms/auth/RegisterForm";
+import { RegisterFormWrapper } from "@/components/forms/auth/RegisterFormWrapper";
 import { Mail } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -22,7 +22,7 @@ export default function Register() {
             </AlertDescription>
           </Alert>
           
-          <RegisterForm />
+          <RegisterFormWrapper />
         </div>
       </div>
     </div>;

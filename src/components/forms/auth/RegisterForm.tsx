@@ -1,5 +1,5 @@
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,18 @@ import { RegisterFormAlerts } from "./RegisterFormAlerts";
 import { UserTypeFields } from "./UserTypeFields";
 import { ConnectionStatus } from "@/components/ConnectionStatus";
 
-export function RegisterForm() {
+// Define props for the RegisterForm component
+interface RegisterFormProps {
+  onNetworkError?: (formData: any) => void;
+  pendingRegistration?: any;
+  onRegistrationSuccess?: () => void;
+}
+
+export function RegisterForm({ 
+  onNetworkError, 
+  pendingRegistration,
+  onRegistrationSuccess 
+}: RegisterFormProps = {}) {
   const navigate = useNavigate();
   const { register } = useAuth();
   const { toast } = useToast();
@@ -31,6 +42,14 @@ export function RegisterForm() {
   const [networkError, setNetworkError] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  // Handle pending registration data if provided
+  useEffect(() => {
+    if (pendingRegistration) {
+      setFormData(pendingRegistration);
+      // Don't auto-set agreedToTerms as it requires explicit user consent
+    }
+  }, [pendingRegistration]);
   
   const isNetworkError = (error: any): boolean => {
     if (!error) return false;
@@ -110,6 +129,11 @@ export function RegisterForm() {
         description: "Please check your email to verify your account",
       });
       
+      // Call onRegistrationSuccess if provided (to clear pending registration)
+      if (onRegistrationSuccess) {
+        onRegistrationSuccess();
+      }
+      
       // Clear the form
       setFormData({
         email: "",
@@ -125,6 +149,11 @@ export function RegisterForm() {
       // More robust network error detection
       if (isNetworkError(err)) {
         setNetworkError(true);
+        
+        // If we have an onNetworkError callback and we're handling network errors
+        if (onNetworkError) {
+          onNetworkError(formData);
+        }
       }
       
       toast({
@@ -157,8 +186,6 @@ export function RegisterForm() {
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <ConnectionStatus />
-      
       <RegisterFormAlerts 
         error={error}
         networkError={networkError}
