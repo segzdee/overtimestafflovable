@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { SupabaseProvider } from '@/lib/supabase/SupabaseProvider';
 import { DevModeProvider } from '@/contexts/dev/DevModeContext';
 import { Toaster } from '@/components/ui/toaster';
+import { initConnectionHandling } from '@/lib/robust-connection-handler';
 import App from './App';
 import './index.css';
 
@@ -17,6 +18,9 @@ if (!rootElement) {
 }
 
 const root = ReactDOM.createRoot(rootElement);
+
+// Initialize connection handling
+const cleanupConnectionHandling = initConnectionHandling();
 
 // Ensure the DOM is fully loaded before rendering
 document.addEventListener('DOMContentLoaded', () => {
@@ -32,4 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
       </BrowserRouter>
     </React.StrictMode>
   );
+});
+
+// Clean up connection handling when the app is unmounted
+window.addEventListener('unload', () => {
+  if (cleanupConnectionHandling) {
+    cleanupConnectionHandling();
+  }
 });
