@@ -192,6 +192,7 @@ export type Database = {
         Row: {
           billing_address: Json | null
           business_number: string | null
+          business_verification_date: string | null
           commission_rate: number | null
           created_at: string | null
           id: string
@@ -199,10 +200,12 @@ export type Database = {
           service_areas: string[] | null
           tenant_id: string
           updated_at: string | null
+          verification_status: string | null
         }
         Insert: {
           billing_address?: Json | null
           business_number?: string | null
+          business_verification_date?: string | null
           commission_rate?: number | null
           created_at?: string | null
           id?: string
@@ -210,10 +213,12 @@ export type Database = {
           service_areas?: string[] | null
           tenant_id: string
           updated_at?: string | null
+          verification_status?: string | null
         }
         Update: {
           billing_address?: Json | null
           business_number?: string | null
+          business_verification_date?: string | null
           commission_rate?: number | null
           created_at?: string | null
           id?: string
@@ -221,6 +226,7 @@ export type Database = {
           service_areas?: string[] | null
           tenant_id?: string
           updated_at?: string | null
+          verification_status?: string | null
         }
         Relationships: [
           {
@@ -463,6 +469,56 @@ export type Database = {
         }
         Relationships: []
       }
+      auth_sessions: {
+        Row: {
+          created_at: string
+          device_info: Json | null
+          expires_at: string
+          id: number
+          ip_address: string | null
+          last_active_at: string | null
+          revoked: boolean | null
+          revoked_at: string | null
+          session_token: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_info?: Json | null
+          expires_at: string
+          id?: number
+          ip_address?: string | null
+          last_active_at?: string | null
+          revoked?: boolean | null
+          revoked_at?: string | null
+          session_token?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_info?: Json | null
+          expires_at?: string
+          id?: number
+          ip_address?: string | null
+          last_active_at?: string | null
+          revoked?: boolean | null
+          revoked_at?: string | null
+          session_token?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auth_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           category_description: string | null
@@ -553,32 +609,38 @@ export type Database = {
         Row: {
           billing_address: Json | null
           business_number: string | null
+          business_verification_date: string | null
           company_size: string | null
           created_at: string | null
           id: string
           industry: string | null
           tenant_id: string
           updated_at: string | null
+          verification_status: string | null
         }
         Insert: {
           billing_address?: Json | null
           business_number?: string | null
+          business_verification_date?: string | null
           company_size?: string | null
           created_at?: string | null
           id?: string
           industry?: string | null
           tenant_id: string
           updated_at?: string | null
+          verification_status?: string | null
         }
         Update: {
           billing_address?: Json | null
           business_number?: string | null
+          business_verification_date?: string | null
           company_size?: string | null
           created_at?: string | null
           id?: string
           industry?: string | null
           tenant_id?: string
           updated_at?: string | null
+          verification_status?: string | null
         }
         Relationships: [
           {
@@ -626,6 +688,50 @@ export type Database = {
           {
             foreignKeyName: "company_staff_profile_id_fkey"
             columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connection_diagnostics: {
+        Row: {
+          created_at: string
+          device_info: Json | null
+          error_details: string | null
+          event_type: string
+          id: number
+          ip_address: string | null
+          latency_ms: number | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          device_info?: Json | null
+          error_details?: string | null
+          event_type: string
+          id?: number
+          ip_address?: string | null
+          latency_ms?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          device_info?: Json | null
+          error_details?: string | null
+          event_type?: string
+          id?: number
+          ip_address?: string | null
+          latency_ms?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connection_diagnostics_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -778,27 +884,36 @@ export type Database = {
       }
       notification_preferences: {
         Row: {
+          auth_alerts: boolean | null
           created_at: string
+          device_notifications: boolean | null
           email: boolean | null
           id: number
+          login_notifications: boolean | null
           push: boolean | null
           sms: boolean | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          auth_alerts?: boolean | null
           created_at?: string
+          device_notifications?: boolean | null
           email?: boolean | null
           id?: number
+          login_notifications?: boolean | null
           push?: boolean | null
           sms?: boolean | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          auth_alerts?: boolean | null
           created_at?: string
+          device_notifications?: boolean | null
           email?: boolean | null
           id?: number
+          login_notifications?: boolean | null
           push?: boolean | null
           sms?: boolean | null
           updated_at?: string
@@ -847,36 +962,152 @@ export type Database = {
           },
         ]
       }
+      password_reset_requests: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          email: string
+          expires_at: string
+          id: number
+          ip_address: string | null
+          requested_at: string
+          reset_token: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          email: string
+          expires_at: string
+          id?: number
+          ip_address?: string | null
+          requested_at?: string
+          reset_token: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: number
+          ip_address?: string | null
+          requested_at?: string
+          reset_token?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "password_reset_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
+          account_status: string | null
+          auth_provider: string | null
+          auth_provider_id: string | null
+          category: string | null
           created_at: string
           email: string
+          email_verified: boolean | null
+          failed_login_attempts: number | null
           id: string
+          last_login_timestamp: string | null
+          last_verification_sent: string | null
+          locked_until: string | null
+          login_count: number | null
           name: string
           profile_complete: boolean | null
+          registration_ip: string | null
+          registration_status: string | null
+          registration_timestamp: string | null
           role: string
           updated_at: string
           user_code: string | null
         }
         Insert: {
+          account_status?: string | null
+          auth_provider?: string | null
+          auth_provider_id?: string | null
+          category?: string | null
           created_at?: string
           email: string
+          email_verified?: boolean | null
+          failed_login_attempts?: number | null
           id: string
+          last_login_timestamp?: string | null
+          last_verification_sent?: string | null
+          locked_until?: string | null
+          login_count?: number | null
           name: string
           profile_complete?: boolean | null
+          registration_ip?: string | null
+          registration_status?: string | null
+          registration_timestamp?: string | null
           role: string
           updated_at?: string
           user_code?: string | null
         }
         Update: {
+          account_status?: string | null
+          auth_provider?: string | null
+          auth_provider_id?: string | null
+          category?: string | null
           created_at?: string
           email?: string
+          email_verified?: boolean | null
+          failed_login_attempts?: number | null
           id?: string
+          last_login_timestamp?: string | null
+          last_verification_sent?: string | null
+          locked_until?: string | null
+          login_count?: number | null
           name?: string
           profile_complete?: boolean | null
+          registration_ip?: string | null
+          registration_status?: string | null
+          registration_timestamp?: string | null
           role?: string
           updated_at?: string
           user_code?: string | null
+        }
+        Relationships: []
+      }
+      rate_limits: {
+        Row: {
+          action: string
+          count: number
+          expires_at: string
+          first_attempt: string
+          id: number
+          ip_address: string
+          last_attempt: string
+        }
+        Insert: {
+          action: string
+          count?: number
+          expires_at: string
+          first_attempt?: string
+          id?: number
+          ip_address: string
+          last_attempt?: string
+        }
+        Update: {
+          action?: string
+          count?: number
+          expires_at?: string
+          first_attempt?: string
+          id?: number
+          ip_address?: string
+          last_attempt?: string
         }
         Relationships: []
       }
@@ -1234,45 +1465,54 @@ export type Database = {
       shift_workers: {
         Row: {
           availability: Json | null
+          background_check_status: string | null
           certifications: Json | null
           completed_shifts: number | null
           created_at: string | null
           experience_years: number | null
           hourly_rate: number | null
           id: string
+          identity_verified: boolean | null
           preferred_locations: string[] | null
           rating: number | null
           skills: string[] | null
           tenant_id: string | null
           updated_at: string | null
+          verification_status: string | null
         }
         Insert: {
           availability?: Json | null
+          background_check_status?: string | null
           certifications?: Json | null
           completed_shifts?: number | null
           created_at?: string | null
           experience_years?: number | null
           hourly_rate?: number | null
           id?: string
+          identity_verified?: boolean | null
           preferred_locations?: string[] | null
           rating?: number | null
           skills?: string[] | null
           tenant_id?: string | null
           updated_at?: string | null
+          verification_status?: string | null
         }
         Update: {
           availability?: Json | null
+          background_check_status?: string | null
           certifications?: Json | null
           completed_shifts?: number | null
           created_at?: string | null
           experience_years?: number | null
           hourly_rate?: number | null
           id?: string
+          identity_verified?: boolean | null
           preferred_locations?: string[] | null
           rating?: number | null
           skills?: string[] | null
           tenant_id?: string | null
           updated_at?: string | null
+          verification_status?: string | null
         }
         Relationships: [
           {
@@ -1490,6 +1730,144 @@ export type Database = {
           },
         ]
       }
+      user_activity_log: {
+        Row: {
+          action: string
+          created_at: string
+          id: number
+          ip_address: string | null
+          metadata: Json | null
+          resource_id: string | null
+          resource_type: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: number
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: number
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_activity_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_devices: {
+        Row: {
+          browser_name: string | null
+          browser_version: string | null
+          created_at: string
+          device_id: string
+          device_name: string | null
+          device_type: string | null
+          id: number
+          is_trusted: boolean | null
+          last_used_at: string
+          os_name: string | null
+          os_version: string | null
+          user_id: string
+        }
+        Insert: {
+          browser_name?: string | null
+          browser_version?: string | null
+          created_at?: string
+          device_id: string
+          device_name?: string | null
+          device_type?: string | null
+          id?: number
+          is_trusted?: boolean | null
+          last_used_at?: string
+          os_name?: string | null
+          os_version?: string | null
+          user_id: string
+        }
+        Update: {
+          browser_name?: string | null
+          browser_version?: string | null
+          created_at?: string
+          device_id?: string
+          device_name?: string | null
+          device_type?: string | null
+          id?: number
+          is_trusted?: boolean | null
+          last_used_at?: string
+          os_name?: string | null
+          os_version?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_devices_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_verification_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: number
+          token: string
+          token_type: string
+          used: boolean | null
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: number
+          token: string
+          token_type: string
+          used?: boolean | null
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: number
+          token?: string
+          token_type?: string
+          used?: boolean | null
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_verification_tokens_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           auth_id: string | null
@@ -1536,6 +1914,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      webhook_logs: {
+        Row: {
+          created_at: string | null
+          duration_ms: number | null
+          error_message: string | null
+          event_type: string
+          id: number
+          record_id: string | null
+          request_payload: Json | null
+          response_body: string | null
+          response_status: number | null
+          triggered_table: string
+          webhook_name: string
+        }
+        Insert: {
+          created_at?: string | null
+          duration_ms?: number | null
+          error_message?: string | null
+          event_type: string
+          id?: number
+          record_id?: string | null
+          request_payload?: Json | null
+          response_body?: string | null
+          response_status?: number | null
+          triggered_table: string
+          webhook_name: string
+        }
+        Update: {
+          created_at?: string | null
+          duration_ms?: number | null
+          error_message?: string | null
+          event_type?: string
+          id?: number
+          record_id?: string | null
+          request_payload?: Json | null
+          response_body?: string | null
+          response_status?: number | null
+          triggered_table?: string
+          webhook_name?: string
+        }
+        Relationships: []
       }
       worker_certifications: {
         Row: {
@@ -1612,6 +2032,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      check_rate_limit: {
+        Args: {
+          p_ip_address: string
+          p_action: string
+          p_max_attempts: number
+          p_window_seconds: number
+        }
+        Returns: boolean
+      }
       check_registration_rate_limit: {
         Args: {
           p_email: string
@@ -1627,9 +2056,42 @@ export type Database = {
         }
         Returns: string
       }
+      generate_verification_token: {
+        Args: {
+          p_user_id: string
+          p_token_type: string
+          p_expires_hours?: number
+        }
+        Returns: string
+      }
       get_current_tenant_id: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_registration_errors: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          error_id: string
+          user_id: string
+          error_type: string
+          error_message: string
+          error_details: Json
+          created_at: string
+        }[]
+      }
+      handle_failed_login: {
+        Args: {
+          p_user_id: string
+          p_max_attempts?: number
+          p_lockout_minutes?: number
+        }
+        Returns: boolean
+      }
+      is_account_locked: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: boolean
       }
       is_admin: {
         Args: Record<PropertyKey, never>
@@ -1641,12 +2103,34 @@ export type Database = {
         }
         Returns: boolean
       }
+      process_webhook: {
+        Args: {
+          webhook_name: string
+          edge_function_name: string
+          triggered_table: string
+          record_id: string
+          event_type: string
+          payload: Json
+        }
+        Returns: undefined
+      }
       record_successful_login: {
         Args: {
           p_user_id: string
           p_ip_address?: string
         }
         Returns: undefined
+      }
+      record_user_login: {
+        Args: {
+          p_user_id: string
+          p_session_token: string
+          p_ip_address: string
+          p_user_agent: string
+          p_device_info?: Json
+          p_session_hours?: number
+        }
+        Returns: number
       }
       register_user: {
         Args: {
@@ -1662,6 +2146,12 @@ export type Database = {
       }
       reset_and_install_schema: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      reset_failed_login_attempts: {
+        Args: {
+          p_user_id: string
+        }
         Returns: undefined
       }
       safe_create_policy: {
@@ -1680,11 +2170,53 @@ export type Database = {
         }
         Returns: undefined
       }
+      send_verification_email: {
+        Args: {
+          p_user_id: string
+          p_email: string
+          p_verification_type: string
+          p_token: string
+          p_redirect_url?: string
+        }
+        Returns: boolean
+      }
+      store_supabase_settings: {
+        Args: {
+          supabase_url: string
+          anon_key: string
+          service_role_key: string
+        }
+        Returns: undefined
+      }
       track_auth_event: {
         Args: {
           event_type: string
           user_id: string
           event_data?: Json
+        }
+        Returns: undefined
+      }
+      track_connection_event: {
+        Args: {
+          p_user_id: string
+          p_event_type: string
+          p_error_details?: string
+          p_latency_ms?: number
+          p_ip_address?: string
+          p_user_agent?: string
+          p_device_info?: Json
+        }
+        Returns: undefined
+      }
+      track_user_activity: {
+        Args: {
+          p_user_id: string
+          p_action: string
+          p_resource_type?: string
+          p_resource_id?: string
+          p_metadata?: Json
+          p_ip_address?: string
+          p_user_agent?: string
         }
         Returns: undefined
       }
@@ -1694,6 +2226,13 @@ export type Database = {
           p_category: string
         }
         Returns: boolean
+      }
+      verify_user_token: {
+        Args: {
+          p_token: string
+          p_token_type: string
+        }
+        Returns: Json
       }
     }
     Enums: {

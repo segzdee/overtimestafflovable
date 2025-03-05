@@ -1,3 +1,4 @@
+
 import { supabase } from '../supabase/client';
 
 interface RegistrationData {
@@ -301,8 +302,9 @@ export class RegistrationService {
   
   /**
    * Get pending registration data
+   * Made public to allow access from UI components
    */
-  private getPendingRegistration(): { data: RegistrationData; timestamp: string; attempts: number } | null {
+  public getPendingRegistration(): { data: RegistrationData; timestamp: string; attempts: number } | null {
     try {
       const storedData = localStorage.getItem(this.STORAGE_KEY);
       if (!storedData) return null;
@@ -316,8 +318,9 @@ export class RegistrationService {
   
   /**
    * Clear pending registration data
+   * Made public to allow access from UI components
    */
-  private clearPendingRegistration(): void {
+  public clearPendingRegistration(): void {
     try {
       localStorage.removeItem(this.STORAGE_KEY);
     } catch (error) {

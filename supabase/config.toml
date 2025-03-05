@@ -30,3 +30,15 @@ verify_jwt = true
 
 [functions.shift-status-update]
 verify_jwt = true
+
+[functions.secure-registration]
+verify_jwt = false
+
+[functions.process-registration]
+verify_jwt = false
+
+[functions.monitor-failed-registrations]
+verify_jwt = false
+
+[functions.process-auth-diagnostics]
+verify_jwt = false
