@@ -10,6 +10,7 @@ import { PasswordInput } from "./PasswordInput";
 import { TermsCheckbox } from "./TermsCheckbox";
 import { RegisterFormAlerts } from "./RegisterFormAlerts";
 import { UserTypeFields } from "./UserTypeFields";
+import { ConnectionStatus } from "@/components/ConnectionStatus";
 
 export function RegisterForm() {
   const navigate = useNavigate();
@@ -156,6 +157,8 @@ export function RegisterForm() {
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <ConnectionStatus />
+      
       <RegisterFormAlerts 
         error={error}
         networkError={networkError}

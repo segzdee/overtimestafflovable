@@ -59,7 +59,7 @@ const handleOffline = () => {
 };
 
 // Check actual connection to Supabase
-const checkConnection = async (): Promise<boolean> => {
+export const checkConnection = async (): Promise<boolean> => {
   if (!isOnline) return false;
   
   try {
