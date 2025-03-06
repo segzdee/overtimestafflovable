@@ -36,11 +36,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      refetchOnWindowFocus: false,
-      useErrorBoundary: true
-    },
-    mutations: {
-      useErrorBoundary: true
+      refetchOnWindowFocus: false
     }
   }
 });
@@ -63,7 +59,6 @@ const App = () => {
             <Sonner />
             <TooltipProvider>
               <Routes>
-                {/* Public Routes */}
                 <Route path="/" element={<Index />} />
                 <Route path="/register" element={<UserTypeSelection />} />
                 <Route path="/register/:userType" element={<Register />} />
@@ -75,13 +70,11 @@ const App = () => {
                 <Route path="/find-shifts" element={<FindShifts />} />
                 <Route path="/find-staff" element={<FindStaff />} />
                 
-                {/* Additional Public Routes */}
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/blog" element={<Blog />} />
                 
-                {/* Protected Routes - Profile Completion */}
                 <Route 
                   path="/complete-profile/:userType" 
                   element={
@@ -91,7 +84,6 @@ const App = () => {
                   } 
                 />
                 
-                {/* Dashboard Routes */}
                 <Route
                   path="/dashboard/shift-worker/*"
                   element={
@@ -128,7 +120,6 @@ const App = () => {
                   }
                 />
                 
-                {/* Catch all for 404 */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
               
