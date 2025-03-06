@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import ReactMarkdown from "react-markdown";
 import { Helmet } from "react-helmet";
+import "../styles/blog-article.css";
 
 export default function BlogPost() {
   const navigate = useNavigate();
@@ -143,12 +144,14 @@ export default function BlogPost() {
         </div>
 
         <article className="max-w-3xl mx-auto">
-          {/* Content */}
-          <div className="prose prose-lg max-w-none bg-white p-5 md:p-8 lg:p-10 rounded-xl shadow-sm border border-gray-100">
-            <div className="prose prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-violet-700 prose-blockquote:border-violet-300 prose-blockquote:bg-violet-50/50 prose-blockquote:p-4 prose-blockquote:rounded-md prose-li:marker:text-violet-500">
-              <ReactMarkdown>
-                {post.content}
-              </ReactMarkdown>
+          {/* Content - now using our custom styles */}
+          <div className="bg-white p-5 md:p-8 lg:p-10 rounded-xl shadow-sm border border-gray-100">
+            <div className="article-container">
+              <div className="article-content">
+                <ReactMarkdown>
+                  {post.content}
+                </ReactMarkdown>
+              </div>
             </div>
             
             {post.tags && post.tags.length > 0 && (
