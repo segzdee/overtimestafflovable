@@ -1,12 +1,17 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MobileHeader } from "@/features/shift-worker/components/MobileHeader";
 import { ShiftWorkerSidebar } from "@/features/shift-worker/components/ShiftWorkerSidebar";
 import { ShiftWorkerContent } from "@/features/shift-worker/components/ShiftWorkerContent";
+import { ErrorBoundary } from "@/components/error/ErrorBoundary";
+import { SkeletonLoader } from "@/components/ui/skeleton-loader";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function ShiftWorkerDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
   
   const [weeklyProgress] = useState({
     current: 24,
@@ -33,6 +38,19 @@ export default function ShiftWorkerDashboard() {
     { id: 3, company: 'Downtown Hotel', date: 'Feb 25, 2025', hours: 8, amount: '$144.00', status: 'Paid' }
   ]);
 
+  useEffect(() => {
+    // Simulate loading data
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      toast({
+        title: "Dashboard Loaded",
+        description: "Your dashboard has been successfully loaded.",
+      });
+    }, 1500);
+    
+    return () => clearTimeout(timer);
+  }, [toast]);
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -42,31 +60,39 @@ export default function ShiftWorkerDashboard() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-gray-100 overflow-hidden">
-      <MobileHeader toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+    <ErrorBoundary>
+      <div className="flex flex-col md:flex-row h-screen bg-gray-100 overflow-hidden">
+        <MobileHeader toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
 
-      <ShiftWorkerSidebar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-        sidebarOpen={sidebarOpen} 
-        setSidebarOpen={setSidebarOpen} 
-      />
-
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden" 
-          onClick={() => setSidebarOpen(false)}
+        <ShiftWorkerSidebar 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          sidebarOpen={sidebarOpen} 
+          setSidebarOpen={setSidebarOpen} 
         />
-      )}
 
-      <ShiftWorkerContent 
-        weeklyProgress={weeklyProgress}
-        upcomingShifts={upcomingShifts}
-        recentEarnings={recentEarnings}
-        availableShifts={availableShifts}
-        handleApplyShift={handleApplyShift}
-      />
-    </div>
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden" 
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {isLoading ? (
+          <div className="flex-1 p-6 overflow-auto">
+            <SkeletonLoader variant="dashboard" />
+          </div>
+        ) : (
+          <ShiftWorkerContent 
+            weeklyProgress={weeklyProgress}
+            upcomingShifts={upcomingShifts}
+            recentEarnings={recentEarnings}
+            availableShifts={availableShifts}
+            handleApplyShift={handleApplyShift}
+          />
+        )}
+      </div>
+    </ErrorBoundary>
   );
 }

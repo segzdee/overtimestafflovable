@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -9,6 +8,7 @@ import { AuthProvider } from "@/contexts/auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { DevModeToggle } from "./components/DevModeToggle";
 import { initConnectionHandling } from "@/lib/robust-connection-handler";
+import { ErrorBoundary } from "./components/error/ErrorBoundary";
 
 // Pages
 import Index from "./pages/index";
@@ -32,7 +32,18 @@ import RegistrationSuccess from "./pages/registration-success";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserTypeSelection from "./pages/UserTypeSelection";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      useErrorBoundary: true
+    },
+    mutations: {
+      useErrorBoundary: true
+    }
+  }
+});
 
 const App = () => {
   useEffect(() => {
@@ -44,87 +55,89 @@ const App = () => {
   }, []);
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <div className="h-full">
-          <Toaster />
-          <Sonner />
-          <TooltipProvider>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/register" element={<UserTypeSelection />} />
-              <Route path="/register/:userType" element={<Register />} />
-              <Route path="/registration-success" element={<RegistrationSuccess />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/token-validation" element={<TokenValidation />} />
-              <Route path="/find-shifts" element={<FindShifts />} />
-              <Route path="/find-staff" element={<FindStaff />} />
+    <ErrorBoundary>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <div className="h-full">
+            <Toaster />
+            <Sonner />
+            <TooltipProvider>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/register" element={<UserTypeSelection />} />
+                <Route path="/register/:userType" element={<Register />} />
+                <Route path="/registration-success" element={<RegistrationSuccess />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/token-validation" element={<TokenValidation />} />
+                <Route path="/find-shifts" element={<FindShifts />} />
+                <Route path="/find-staff" element={<FindStaff />} />
+                
+                {/* Additional Public Routes */}
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/blog" element={<Blog />} />
+                
+                {/* Protected Routes - Profile Completion */}
+                <Route 
+                  path="/complete-profile/:userType" 
+                  element={
+                    <ProtectedRoute allowedRoles={["admin", "shift-worker", "company", "agency", "aiagent"]}>
+                      <CompleteProfile />
+                    </ProtectedRoute>
+                  } 
+                />
+                
+                {/* Dashboard Routes */}
+                <Route
+                  path="/dashboard/shift-worker/*"
+                  element={
+                    <ProtectedRoute allowedRoles={["shift-worker"]}>
+                      <ShiftWorkerDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                
+                <Route
+                  path="/dashboard/company/*"
+                  element={
+                    <ProtectedRoute allowedRoles={["company"]}>
+                      <CompanyDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                
+                <Route
+                  path="/dashboard/admin/*"
+                  element={
+                    <ProtectedRoute allowedRoles={["admin"]}>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                
+                <Route
+                  path="/dashboard/agency/*"
+                  element={
+                    <ProtectedRoute allowedRoles={["agency"]}>
+                      <AgencyDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                
+                {/* Catch all for 404 */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
               
-              {/* Additional Public Routes */}
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/blog" element={<Blog />} />
-              
-              {/* Protected Routes - Profile Completion */}
-              <Route 
-                path="/complete-profile/:userType" 
-                element={
-                  <ProtectedRoute allowedRoles={["admin", "shift-worker", "company", "agency", "aiagent"]}>
-                    <CompleteProfile />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              {/* Dashboard Routes */}
-              <Route
-                path="/dashboard/shift-worker/*"
-                element={
-                  <ProtectedRoute allowedRoles={["shift-worker"]}>
-                    <ShiftWorkerDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              
-              <Route
-                path="/dashboard/company/*"
-                element={
-                  <ProtectedRoute allowedRoles={["company"]}>
-                    <CompanyDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              
-              <Route
-                path="/dashboard/admin/*"
-                element={
-                  <ProtectedRoute allowedRoles={["admin"]}>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              
-              <Route
-                path="/dashboard/agency/*"
-                element={
-                  <ProtectedRoute allowedRoles={["agency"]}>
-                    <AgencyDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              
-              {/* Catch all for 404 */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-            
-            <DevModeToggle />
-          </TooltipProvider>
-        </div>
-      </QueryClientProvider>
-    </AuthProvider>
+              <DevModeToggle />
+            </TooltipProvider>
+          </div>
+        </QueryClientProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 };
 
