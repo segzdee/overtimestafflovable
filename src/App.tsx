@@ -69,6 +69,7 @@ const App = () => {
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/blog" element={<Blog />} />
+                <Route path="/blog-post" element={<BlogPost />} />
                 
                 <Route 
                   path="/complete-profile/:userType" 

@@ -1,15 +1,18 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, User, Tag, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, User, Tag, Share2, MessageCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Footer from "@/components/layout/Footer";
 import { blogPosts } from "@/data/blogPosts";
 import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import ReactMarkdown from "react-markdown";
 
 export default function BlogPost() {
   const navigate = useNavigate();
   const location = useLocation();
   const [post, setPost] = useState<any | null>(null);
+  const { toast } = useToast();
   
   useEffect(() => {
     const id = new URLSearchParams(location.search).get('id');
@@ -26,6 +29,15 @@ export default function BlogPost() {
       navigate('/blog');
     }
   }, [location, navigate]);
+
+  const handleShareArticle = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast({
+      title: "Link copied",
+      description: "The article link has been copied to your clipboard",
+      duration: 3000,
+    });
+  };
 
   if (!post) {
     return (
@@ -89,39 +101,9 @@ export default function BlogPost() {
           )}
           
           <div className="prose prose-lg max-w-none bg-white p-6 md:p-10 rounded-xl shadow-sm border border-gray-100">
-            {post.content.split('\n\n').map((paragraph: string, idx: number) => {
-              // Check if this is a heading (starts with ##)
-              if (paragraph.startsWith('## ')) {
-                return <h2 key={idx} className="text-2xl font-bold mt-8 mb-4">{paragraph.replace('## ', '')}</h2>;
-              }
-              
-              // Check if this is a blockquote
-              if (paragraph.startsWith('> ')) {
-                return (
-                  <blockquote key={idx} className="border-l-4 border-purple-500 pl-4 italic my-6 py-2 text-gray-700">
-                    {paragraph.replace('> ', '')}
-                  </blockquote>
-                );
-              }
-              
-              // Check if this is a list item with "-"
-              if (paragraph.includes('\n- ')) {
-                const [listIntro, ...items] = paragraph.split('\n- ');
-                return (
-                  <div key={idx}>
-                    <p>{listIntro}</p>
-                    <ul className="list-disc list-inside my-4 space-y-2">
-                      {items.map((item, itemIdx) => (
-                        <li key={itemIdx} className="text-gray-700">{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              }
-              
-              // Regular paragraph
-              return <p key={idx} className="my-4 text-gray-700">{paragraph}</p>;
-            })}
+            <ReactMarkdown className="prose prose-headings:text-gray-900 prose-p:text-gray-700">
+              {post.content}
+            </ReactMarkdown>
             
             {post.tags && post.tags.length > 0 && (
               <div className="mt-8 pt-6 border-t border-gray-100">
@@ -148,17 +130,31 @@ export default function BlogPost() {
               Back to all articles
             </Button>
             
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Link copied to clipboard!');
-              }}
-            >
-              <Share2 className="mr-2 h-4 w-4" />
-              Share article
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleShareArticle}
+              >
+                <Share2 className="mr-2 h-4 w-4" />
+                Share article
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  toast({
+                    title: "Feature coming soon",
+                    description: "Comments will be available in a future update",
+                    duration: 3000,
+                  });
+                }}
+              >
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Comments
+              </Button>
+            </div>
           </div>
         </article>
       </div>
