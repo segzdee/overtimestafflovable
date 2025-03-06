@@ -27,6 +27,7 @@ import Privacy from "./pages/privacy";
 import Terms from "./pages/terms";
 import Contact from "./pages/contact";
 import Blog from "./pages/blog";
+import BlogPost from "./pages/blog-post";
 import RegistrationSuccess from "./pages/registration-success";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserTypeSelection from "./pages/UserTypeSelection";

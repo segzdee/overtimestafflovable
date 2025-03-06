@@ -5,96 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Footer from "@/components/layout/Footer";
 import { Input } from "@/components/ui/input";
-
-interface BlogPost {
-  id: number;
-  title: string;
-  excerpt: string;
-  content: string;
-  author: string;
-  date: string;
-  imageUrl: string;
-  category: string;
-  readTime: string;
-  tags: string[];
-  featured?: boolean;
-}
-
-const blogPosts: BlogPost[] = [
-  {
-    id: 1,
-    title: "The Future of Hospitality Staffing",
-    excerpt: "How AI and automation are transforming the way hotels and restaurants manage their workforce needs.",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    author: "Sarah Johnson",
-    date: "May 15, 2024",
-    imageUrl: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-    category: "Industry Trends",
-    readTime: "8 min read",
-    tags: ["AI", "Automation", "Hospitality", "Workforce"],
-    featured: true
-  },
-  {
-    id: 2,
-    title: "Maximizing Flexibility in Shift Work",
-    excerpt: "Best practices for managing a flexible workforce while maintaining service quality and staff satisfaction.",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    author: "Michael Chen",
-    date: "May 10, 2024",
-    imageUrl: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-    category: "Management",
-    readTime: "6 min read",
-    tags: ["Flexibility", "Management", "Best Practices", "Employee Satisfaction"]
-  },
-  {
-    id: 3,
-    title: "Building a Successful Hospitality Career",
-    excerpt: "Tips and strategies for professionals looking to advance their careers in the hospitality industry.",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    author: "Emma Davis",
-    date: "May 5, 2024",
-    imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
-    category: "Career Development",
-    readTime: "10 min read",
-    tags: ["Career", "Professional Development", "Hospitality Industry"]
-  },
-  {
-    id: 4,
-    title: "The Rise of Gig Economy in Hospitality",
-    excerpt: "How the gig economy is reshaping traditional employment models in hotels and restaurants.",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    author: "James Wilson",
-    date: "May 1, 2024",
-    imageUrl: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-    category: "Industry Trends",
-    readTime: "7 min read",
-    tags: ["Gig Economy", "Employment Models", "Hospitality"]
-  },
-  {
-    id: 5,
-    title: "Managing Staff Shortages During Peak Seasons",
-    excerpt: "Strategies for hospitality businesses to handle staff shortages during their busiest periods.",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    author: "Alexandra Brown",
-    date: "April 25, 2024",
-    imageUrl: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
-    category: "Operations",
-    readTime: "9 min read",
-    tags: ["Staffing", "Peak Season", "Management", "Hospitality"]
-  },
-  {
-    id: 6,
-    title: "Technology Solutions for Staffing Challenges",
-    excerpt: "How technology is helping hospitality businesses overcome staffing challenges in a competitive market.",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    author: "Daniel Kim",
-    date: "April 20, 2024",
-    imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475",
-    category: "Technology",
-    readTime: "8 min read",
-    tags: ["Technology", "Staffing Solutions", "Innovation"]
-  }
-];
+import { blogPosts } from "@/data/blogPosts";
 
 // Extract unique categories for filtering
 const categories = Array.from(new Set(blogPosts.map(post => post.category)));
@@ -115,8 +26,12 @@ export default function Blog() {
     return matchesSearch && matchesCategory;
   });
   
-  // Get featured post
+  // Get featured post - prioritize the new AI post
   const featuredPost = blogPosts.find(post => post.featured);
+  
+  const handleReadMore = (postId: number) => {
+    navigate(`/blog-post?id=${postId}`);
+  };
   
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -203,7 +118,11 @@ export default function Blog() {
                       <Calendar className="h-4 w-4 text-gray-400 mr-1" />
                       <span className="text-sm text-gray-500">{featuredPost.date}</span>
                     </div>
-                    <Button variant="ghost" size="sm">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleReadMore(featuredPost.id)}
+                    >
                       Read More
                     </Button>
                   </div>
@@ -269,7 +188,11 @@ export default function Blog() {
                         {post.author}
                       </span>
                     </div>
-                    <Button variant="ghost" size="sm">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleReadMore(post.id)}
+                    >
                       Read More
                     </Button>
                   </div>
