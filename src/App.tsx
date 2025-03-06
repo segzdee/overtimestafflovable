@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -42,9 +41,6 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  // Note: We've removed the duplicate initConnectionHandling call
-  // as it's already being initialized in main.tsx
-  
   return (
     <ErrorBoundary>
       <AuthProvider>
@@ -70,6 +66,7 @@ const App = () => {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog-post" element={<BlogPost />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
                 
                 <Route 
                   path="/complete-profile/:userType" 

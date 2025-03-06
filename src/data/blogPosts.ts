@@ -7,10 +7,13 @@ interface BlogPost {
   author: string;
   date: string;
   imageUrl: string;
+  coverImage?: string;
+  authorImage?: string;
   category: string;
   readTime: string;
   tags: string[];
   featured?: boolean;
+  slug: string;
 }
 
 export const blogPosts: BlogPost[] = [
@@ -84,10 +87,13 @@ Ready to experience the difference that intelligent matching can make for your b
     author: "OVERTIMESTAFF Team",
     date: "June 5, 2024",
     imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c",
+    coverImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c",
+    authorImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
     category: "Technology",
     readTime: "8 min read",
     tags: ["AI", "Staff Matching", "Hospitality", "Innovation", "Staffing Solutions"],
-    featured: true
+    featured: true,
+    slug: "ai-matching-revolution"
   },
   {
     id: 1,
@@ -97,9 +103,12 @@ Ready to experience the difference that intelligent matching can make for your b
     author: "Sarah Johnson",
     date: "May 15, 2024",
     imageUrl: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    coverImage: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    authorImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
     category: "Industry Trends",
     readTime: "8 min read",
-    tags: ["AI", "Automation", "Hospitality", "Workforce"]
+    tags: ["AI", "Automation", "Hospitality", "Workforce"],
+    slug: "future-of-hospitality-staffing"
   },
   {
     id: 2,
@@ -109,9 +118,12 @@ Ready to experience the difference that intelligent matching can make for your b
     author: "Michael Chen",
     date: "May 10, 2024",
     imageUrl: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+    coverImage: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+    authorImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
     category: "Management",
     readTime: "6 min read",
-    tags: ["Flexibility", "Management", "Best Practices", "Employee Satisfaction"]
+    tags: ["Flexibility", "Management", "Best Practices", "Employee Satisfaction"],
+    slug: "maximizing-flexibility-shift-work"
   },
   {
     id: 3,
@@ -121,9 +133,12 @@ Ready to experience the difference that intelligent matching can make for your b
     author: "Emma Davis",
     date: "May 5, 2024",
     imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
+    coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
+    authorImage: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
     category: "Career Development",
     readTime: "10 min read",
-    tags: ["Career", "Professional Development", "Hospitality Industry"]
+    tags: ["Career", "Professional Development", "Hospitality Industry"],
+    slug: "building-successful-hospitality-career"
   },
   {
     id: 4,
@@ -133,9 +148,12 @@ Ready to experience the difference that intelligent matching can make for your b
     author: "James Wilson",
     date: "May 1, 2024",
     imageUrl: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+    coverImage: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+    authorImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
     category: "Industry Trends",
     readTime: "7 min read",
-    tags: ["Gig Economy", "Employment Models", "Hospitality"]
+    tags: ["Gig Economy", "Employment Models", "Hospitality"],
+    slug: "rise-of-gig-economy-hospitality"
   },
   {
     id: 5,
@@ -145,9 +163,12 @@ Ready to experience the difference that intelligent matching can make for your b
     author: "Alexandra Brown",
     date: "April 25, 2024",
     imageUrl: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
+    coverImage: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
+    authorImage: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb",
     category: "Operations",
     readTime: "9 min read",
-    tags: ["Staffing", "Peak Season", "Management", "Hospitality"]
+    tags: ["Staffing", "Peak Season", "Management", "Hospitality"],
+    slug: "managing-staff-shortages-peak-seasons"
   },
   {
     id: 6,
@@ -157,8 +178,11 @@ Ready to experience the difference that intelligent matching can make for your b
     author: "Daniel Kim",
     date: "April 20, 2024",
     imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+    coverImage: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+    authorImage: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d",
     category: "Technology",
     readTime: "8 min read",
-    tags: ["Technology", "Staffing Solutions", "Innovation"]
+    tags: ["Technology", "Staffing Solutions", "Innovation"],
+    slug: "technology-solutions-staffing-challenges"
   }
 ];
