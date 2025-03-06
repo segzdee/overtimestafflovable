@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,7 +7,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { DevModeToggle } from "./components/DevModeToggle";
-import { initConnectionHandling } from "@/lib/robust-connection-handler";
 import { ErrorBoundary } from "./components/error/ErrorBoundary";
 
 // Pages
@@ -42,14 +41,9 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  useEffect(() => {
-    // Initialize the connection handling system
-    const cleanup = initConnectionHandling();
-    
-    // Cleanup when component unmounts
-    return cleanup;
-  }, []);
-
+  // Note: We've removed the duplicate initConnectionHandling call
+  // as it's already being initialized in main.tsx
+  
   return (
     <ErrorBoundary>
       <AuthProvider>
@@ -120,7 +114,7 @@ const App = () => {
                   }
                 />
                 
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
               
               <DevModeToggle />
