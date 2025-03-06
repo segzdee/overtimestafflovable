@@ -101,9 +101,12 @@ export default function BlogPost() {
           )}
           
           <div className="prose prose-lg max-w-none bg-white p-6 md:p-10 rounded-xl shadow-sm border border-gray-100">
-            <ReactMarkdown className="prose prose-headings:text-gray-900 prose-p:text-gray-700">
-              {post.content}
-            </ReactMarkdown>
+            {/* Fix: Proper way to apply classes to markdown content */}
+            <div className="prose prose-headings:text-gray-900 prose-p:text-gray-700">
+              <ReactMarkdown>
+                {post.content}
+              </ReactMarkdown>
+            </div>
             
             {post.tags && post.tags.length > 0 && (
               <div className="mt-8 pt-6 border-t border-gray-100">
