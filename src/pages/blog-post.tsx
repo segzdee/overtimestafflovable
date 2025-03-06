@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, User, Tag, Share2, MessageCircle } from "lucide-react";
+import { ArrowLeft, Calendar, User, Tag, Share2, MessageCircle, Clock } from "lucide-react";
 import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
 import Footer from "@/components/layout/Footer";
 import { blogPosts } from "@/data/blogPosts";
@@ -93,33 +93,38 @@ export default function BlogPost() {
       </Helmet>
       
       {/* Hero Section */}
-      <div className="relative h-96 w-full bg-gray-900">
+      <div className="relative h-64 md:h-96 w-full bg-gray-900">
         <img
           src={coverImage}
           alt={post.title}
-          className="absolute inset-0 w-full h-full object-cover opacity-50"
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-70"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/40 to-gray-900/90"></div>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="container mx-auto px-4 text-center text-white">
-            <div className="mb-4">
-              <span className="text-sm font-semibold text-violet-300 bg-violet-900 bg-opacity-60 px-3 py-1 rounded-full mr-2">
+          <div className="container mx-auto px-4 md:px-8 text-center text-white">
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
+              <span className="text-xs md:text-sm font-semibold text-violet-300 bg-violet-900/60 px-3 py-1 rounded-full">
                 {post.category}
               </span>
-              <span className="text-sm">
-                {post.date} • {post.readTime}
+              <span className="flex items-center text-xs md:text-sm text-gray-200">
+                <Calendar className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                {post.date}
+              </span>
+              <span className="flex items-center text-xs md:text-sm text-gray-200">
+                <Clock className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                {post.readTime}
               </span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 max-w-4xl mx-auto">
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-6 max-w-4xl mx-auto leading-tight">
               {post.title}
             </h1>
             <div className="flex items-center justify-center">
               <img
                 src={post.authorImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d'}
                 alt={post.author}
-                className="w-10 h-10 rounded-full object-cover"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-white/20"
               />
-              <span className="ml-2">
+              <span className="ml-2 text-sm md:text-base font-medium">
                 {post.author}
               </span>
             </div>
@@ -127,20 +132,20 @@ export default function BlogPost() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 flex-1">
+      <div className="container mx-auto px-4 md:px-8 py-6 md:py-10 flex-1">
         {/* Breadcrumbs */}
-        <div className="max-w-3xl mx-auto text-sm text-gray-500 mb-8">
-          <Link to="/" className="hover:text-violet-700">Home</Link>
+        <div className="max-w-3xl mx-auto text-xs md:text-sm text-gray-500 mb-6 md:mb-8">
+          <Link to="/" className="hover:text-violet-700 transition-colors">Home</Link>
           <span className="mx-2">›</span>
-          <Link to="/blog" className="hover:text-violet-700">Blog</Link>
+          <Link to="/blog" className="hover:text-violet-700 transition-colors">Blog</Link>
           <span className="mx-2">›</span>
           <span className="text-gray-700">{post.title}</span>
         </div>
 
         <article className="max-w-3xl mx-auto">
           {/* Content */}
-          <div className="prose prose-lg max-w-none bg-white p-6 md:p-10 rounded-xl shadow-sm border border-gray-100">
-            <div className="prose prose-headings:text-gray-900 prose-p:text-gray-700">
+          <div className="prose prose-lg max-w-none bg-white p-5 md:p-8 lg:p-10 rounded-xl shadow-sm border border-gray-100">
+            <div className="prose prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-violet-700 prose-blockquote:border-violet-300 prose-blockquote:bg-violet-50/50 prose-blockquote:p-4 prose-blockquote:rounded-md prose-li:marker:text-violet-500">
               <ReactMarkdown>
                 {post.content}
               </ReactMarkdown>
@@ -154,7 +159,7 @@ export default function BlogPost() {
                     <Link
                       key={tag}
                       to={`/blog?tag=${tag}`}
-                      className="bg-gray-100 text-gray-800 text-xs px-2.5 py-1 rounded-full hover:bg-gray-200 transition-colors"
+                      className="bg-gray-100 text-gray-800 text-xs px-2.5 py-1 rounded-full hover:bg-gray-200 transition-colors flex items-center"
                     >
                       <Tag className="inline-block h-3 w-3 mr-1" />
                       {tag}
@@ -217,8 +222,9 @@ export default function BlogPost() {
               variant="outline" 
               size="sm"
               onClick={() => navigate('/blog')}
+              className="text-xs md:text-sm"
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <ArrowLeft className="mr-2 h-3 w-3 md:h-4 md:w-4" />
               Back to all articles
             </Button>
             
@@ -232,8 +238,9 @@ export default function BlogPost() {
                   duration: 3000,
                 });
               }}
+              className="text-xs md:text-sm"
             >
-              <MessageCircle className="mr-2 h-4 w-4" />
+              <MessageCircle className="mr-2 h-3 w-3 md:h-4 md:w-4" />
               Comments
             </Button>
           </div>
@@ -242,43 +249,43 @@ export default function BlogPost() {
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <div className="max-w-5xl mx-auto mt-16">
-            <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <h2 className="text-xl md:text-2xl font-bold mb-6">Related Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {relatedPosts.map((relatedPost) => (
                 <div 
                   key={relatedPost.id} 
-                  className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow duration-300"
+                  className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 hover:translate-y-[-2px]"
                 >
-                  <Link to={`/blog/${relatedPost.slug}`}>
+                  <Link to={`/blog/${relatedPost.slug}`} className="block aspect-video overflow-hidden">
                     <img 
                       src={relatedPost.coverImage || relatedPost.imageUrl} 
                       alt={relatedPost.title} 
-                      className="w-full h-48 object-cover"
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                     />
                   </Link>
-                  <div className="p-6">
-                    <div className="mb-2">
+                  <div className="p-4 md:p-6">
+                    <div className="mb-2 flex items-center justify-between">
                       <span className="text-xs font-semibold text-violet-700 bg-violet-100 px-2 py-1 rounded-full">
                         {relatedPost.category}
                       </span>
-                      <span className="text-xs text-gray-500 ml-2">
-                        {relatedPost.date}
+                      <span className="text-xs text-gray-500">
+                        {relatedPost.readTime}
                       </span>
                     </div>
                     <Link to={`/blog/${relatedPost.slug}`}>
-                      <h3 className="text-lg font-bold mb-2 text-gray-800 hover:text-violet-700 transition-colors">
+                      <h3 className="text-base md:text-lg font-bold mb-2 text-gray-800 hover:text-violet-700 transition-colors line-clamp-2">
                         {relatedPost.title}
                       </h3>
                     </Link>
-                    <p className="text-gray-600 mb-4 text-sm line-clamp-2">
+                    <p className="text-gray-600 mb-4 text-xs md:text-sm line-clamp-2">
                       {relatedPost.excerpt}
                     </p>
                     <Link 
                       to={`/blog/${relatedPost.slug}`}
-                      className="text-violet-700 font-medium hover:text-violet-900 transition-colors inline-flex items-center text-sm"
+                      className="text-violet-700 font-medium hover:text-violet-900 transition-colors inline-flex items-center text-xs md:text-sm"
                     >
                       Read More
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 md:h-4 md:w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </Link>
@@ -290,21 +297,21 @@ export default function BlogPost() {
         )}
         
         {/* Call to Action */}
-        <div className="max-w-3xl mx-auto mt-16 p-8 bg-violet-50 rounded-lg text-center">
-          <h2 className="text-2xl font-bold mb-4">Ready to optimize your staffing?</h2>
-          <p className="text-gray-600 mb-6">
+        <div className="max-w-3xl mx-auto mt-16 p-6 md:p-8 bg-violet-50 rounded-lg text-center">
+          <h2 className="text-xl md:text-2xl font-bold mb-4">Ready to optimize your staffing?</h2>
+          <p className="text-gray-600 mb-6 text-sm md:text-base">
             Join thousands of businesses and workers who are already using OVERTIMESTAFF to streamline hospitality staffing.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/register"
-              className="px-6 py-3 bg-violet-700 text-white rounded-lg font-medium hover:bg-violet-800 transition-colors"
+              className="px-6 py-3 bg-violet-700 text-white rounded-lg font-medium hover:bg-violet-800 transition-colors text-sm md:text-base"
             >
               Sign Up Free
             </Link>
             <Link
               to="/contact"
-              className="px-6 py-3 bg-white text-violet-700 border border-violet-700 rounded-lg font-medium hover:bg-violet-50 transition-colors"
+              className="px-6 py-3 bg-white text-violet-700 border border-violet-700 rounded-lg font-medium hover:bg-violet-50 transition-colors text-sm md:text-base"
             >
               Contact Sales
             </Link>
