@@ -1,63 +1,42 @@
-
-import React from "react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Mail, Wifi, WifiOff } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import { RegisterFormAlertsProps } from "./types";
 
-interface RegisterFormAlertsProps {
-  error: string;
-  networkError: boolean;
-  successMessage: string;
-  retryRegistration: () => void;
-}
-
-export const RegisterFormAlerts: React.FC<RegisterFormAlertsProps> = ({
+export function RegisterFormAlerts({
   error,
   networkError,
   successMessage,
   retryRegistration
-}) => {
+}: RegisterFormAlertsProps) {
   return (
     <>
-      {successMessage && (
-        <Alert className="bg-green-50 border-green-200">
-          <Mail className="h-4 w-4 text-green-600" />
-          <AlertTitle className="text-green-800">Email Verification Required</AlertTitle>
-          <AlertDescription className="text-green-700">
-            {successMessage}
-          </AlertDescription>
+      {error && (
+        <Alert className="mb-4 bg-red-50 border-red-200">
+          <AlertCircle className="h-4 w-4 mr-2 text-red-600" />
+          <AlertDescription className="text-red-700">{error}</AlertDescription>
         </Alert>
       )}
 
       {networkError && (
-        <Alert className="bg-orange-50 border-orange-200">
-          <WifiOff className="h-4 w-4 text-orange-600" />
-          <AlertTitle className="text-orange-800">Connection Error</AlertTitle>
+        <Alert className="mb-4 bg-orange-50 border-orange-200">
+          <AlertCircle className="h-4 w-4 mr-2 text-orange-600" />
           <AlertDescription className="text-orange-700">
-            Unable to connect to the authentication service. This may be due to:
-            <ul className="list-disc ml-5 mt-2">
-              <li>Network connectivity issues</li>
-              <li>Temporary service unavailability</li>
-            </ul>
-            <Button 
-              type="button"
-              variant="outline" 
-              size="sm"
-              className="mt-2 bg-white"
-              onClick={retryRegistration}
-            >
-              <Wifi className="h-4 w-4 mr-2" /> Try Again
+            Network error detected. Please check your internet connection.
+            <Button variant="link" onClick={retryRegistration} className="ml-2 p-0 h-auto font-normal">
+              <RefreshCw className="h-4 w-4 mr-1" />
+              Retry
             </Button>
           </AlertDescription>
         </Alert>
       )}
 
-      {error && !networkError && (
-        <Alert variant="destructive">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
+      {successMessage && (
+        <Alert className="mb-4 bg-green-50 border-green-200">
+          <AlertCircle className="h-4 w-4 mr-2 text-green-600" />
+          <AlertDescription className="text-green-700">{successMessage}</AlertDescription>
         </Alert>
       )}
     </>
   );
-};
+}

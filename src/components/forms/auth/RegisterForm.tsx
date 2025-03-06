@@ -1,4 +1,3 @@
-
 import { useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -11,13 +10,7 @@ import { RegisterFormAlerts } from "./RegisterFormAlerts";
 import { registrationService } from "@/lib/registration/registration-service";
 import { executeWithConnectionRetry } from "@/lib/robust-connection-handler";
 import { RegistrationFooter } from "./components/RegistrationFooter";
-
-interface RegisterFormProps {
-  onNetworkError?: (formData: any) => void;
-  pendingRegistration?: any;
-  onRegistrationSuccess?: () => void;
-  initialRole?: string;
-}
+import { AuthFormData, AuthFormState, RegisterFormProps } from "./types";
 
 export function RegisterForm({ 
   onNetworkError, 
