@@ -12,9 +12,10 @@ const createResilientFetch = () => {
   let currentTimeoutMs = 3000; // Start with 3 seconds
   const maxTimeoutMs = 15000; // Maximum 15 seconds
   
-  return (url, options = {}) => {
+  return (url: string, options: RequestInit = {}) => {
     const controller = new AbortController();
-    const { signal: originalSignal } = options;
+    // Fixed: Properly extract the original signal from options with type checking
+    const originalSignal = options.signal;
     const { signal } = controller;
     
     // Combine our abort signal with any existing one
