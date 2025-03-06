@@ -1,6 +1,7 @@
+
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import Footer from "@/components/layout/Footer";
-import { blogPosts, getPostBySlug, getPostById, getRelatedPosts } from "@/data/blog";
+import { getPostBySlug, getPostById, getRelatedPosts } from "@/data/blog";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Helmet } from "react-helmet";
@@ -12,6 +13,7 @@ import BlogBreadcrumbs from "@/components/blog/BlogBreadcrumbs";
 import BlogPostContent from "@/components/blog/BlogPostContent";
 import RelatedPosts from "@/components/blog/RelatedPosts";
 import BlogCTA from "@/components/blog/BlogCTA";
+import BlogPostSkeleton from "@/components/blog/BlogPostSkeleton";
 
 export default function BlogPost() {
   const navigate = useNavigate();
@@ -68,8 +70,9 @@ export default function BlogPost() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-700"></div>
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <BlogPostSkeleton />
+        <Footer />
       </div>
     );
   }
@@ -92,7 +95,7 @@ export default function BlogPost() {
       {/* Hero Section */}
       <BlogPostHero post={post} />
 
-      <div className="container mx-auto px-4 md:px-8 py-6 md:py-10 flex-1">
+      <div className="container mx-auto px-4 py-4 md:py-6 flex-1">
         {/* Breadcrumbs */}
         <BlogBreadcrumbs title={post.title} />
 
