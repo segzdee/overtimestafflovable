@@ -1,7 +1,6 @@
-
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import Footer from "@/components/layout/Footer";
-import { blogPosts } from "@/data/blogPosts";
+import { blogPosts, getPostBySlug, getPostById, getRelatedPosts } from "@/data/blog";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Helmet } from "react-helmet";
@@ -28,14 +27,14 @@ export default function BlogPost() {
     const findPost = () => {
       // First try to find by slug
       if (slug) {
-        const foundPost = blogPosts.find(post => post.slug === slug);
+        const foundPost = getPostBySlug(slug);
         if (foundPost) return foundPost;
       }
       
       // Then try to find by ID from query params
       const id = new URLSearchParams(location.search).get('id');
       if (id) {
-        const foundPost = blogPosts.find(post => post.id === parseInt(id));
+        const foundPost = getPostById(parseInt(id));
         if (foundPost) return foundPost;
       }
       
@@ -48,11 +47,7 @@ export default function BlogPost() {
       setPost(currentPost);
       
       // Find related posts (same category, excluding current)
-      const related = blogPosts
-        .filter(p => p.category === currentPost.category && p.id !== currentPost.id)
-        .slice(0, 3);
-      
-      setRelatedPosts(related);
+      setRelatedPosts(getRelatedPosts(currentPost.id, 3));
       
       // Scroll to top when post loads
       window.scrollTo(0, 0);

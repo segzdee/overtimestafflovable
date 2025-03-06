@@ -1,11 +1,10 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, BookOpen, Calendar, User, Clock, Tag, Search } from "lucide-react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Footer from "@/components/layout/Footer";
 import { Input } from "@/components/ui/input";
-import { blogPosts } from "@/data/blogPosts";
+import { blogPosts } from "@/data/blog";
 import { Helmet } from "react-helmet";
 
 // Extract unique categories for filtering
