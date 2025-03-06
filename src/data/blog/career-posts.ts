@@ -3,7 +3,7 @@ import { BlogPost } from "@/types/blog";
 
 export const careerPosts: BlogPost[] = [
   {
-    id: 8,
+    id: 3,
     title: "5 Ways Shift Workers Can Maximize Their Earnings on OVERTIMESTAFF",
     excerpt: "Discover proven strategies to increase your income as a hospitality professional using the OVERTIMESTAFF platform.",
     content: `# 5 Ways Shift Workers Can Maximize Their Earnings on OVERTIMESTAFF
@@ -100,20 +100,5 @@ Ready to boost your earnings? Log into your OVERTIMESTAFF account today and star
     readTime: "7 min read",
     tags: ["Shift Work", "Earnings", "Career Tips", "Hospitality", "Gig Economy"],
     slug: "maximize-earnings-shift-workers"
-  },
-  {
-    id: 3,
-    title: "Building a Successful Hospitality Career",
-    excerpt: "Tips and strategies for professionals looking to advance their careers in the hospitality industry.",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    author: "Emma Davis",
-    date: "May 5, 2024",
-    imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
-    coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
-    authorImage: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-    category: "Career Development",
-    readTime: "10 min read",
-    tags: ["Career", "Professional Development", "Hospitality Industry"],
-    slug: "building-successful-hospitality-career"
   }
 ];

@@ -3,7 +3,7 @@ import { BlogPost } from "@/types/blog";
 
 export const featuredPosts: BlogPost[] = [
   {
-    id: 9,
+    id: 1,
     title: "The True Cost of Understaffing: Why Flexible Staffing Solutions Are Essential for Today's Hospitality Business",
     excerpt: "Discover how running lean on staff may actually be costing your hospitality business more than you think, and how flexible staffing provides a more profitable alternative.",
     content: `# The True Cost of Understaffing: Why Flexible Staffing Solutions Are Essential for Today's Hospitality Business
@@ -134,7 +134,7 @@ The most successful hospitality businesses have shifted their thinking—viewing
 
 By implementing a flexible staffing strategy with OVERTIMESTAFF, you can ensure your business always has the right number of qualified people on hand, transforming what was once a operational headache into a competitive advantage.
 
-Ready to optimize your staffing strategy? Contact our business solutions team for a personalized staffing analysis and recommendation.
+Ready to optimize your staffing strategy? [Contact our business solutions team](#) for a personalized staffing analysis and recommendation.
 
 ---
 
@@ -151,7 +151,7 @@ Ready to optimize your staffing strategy? Contact our business solutions team fo
     slug: "true-cost-of-understaffing"
   },
   {
-    id: 7,
+    id: 2,
     title: "How AI-Powered Matching is Revolutionizing the Hospitality Staffing Industry",
     excerpt: "Discover how OVERTIMESTAFF's advanced AI matching algorithm is creating perfect connections between hospitality businesses and qualified workers.",
     content: `## The Staffing Crisis in Hospitality
