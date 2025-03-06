@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 const SupabaseContext = createContext<SupabaseClient | undefined>(undefined);
 
 export function SupabaseProvider({ children }: { children: ReactNode }) {
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true); // Optimistic initialization
   const [isChecking, setIsChecking] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
   const { toast } = useToast();
@@ -18,52 +18,50 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const checkConnection = async () => {
+      if (isChecking) return; // Prevent parallel checks
+      
       setIsChecking(true);
       try {
-        const connected = await checkSupabaseConnection(3, 2000);
-        setIsConnected(connected);
+        const connected = await checkSupabaseConnection(3, 5000);
         
-        if (!connected && retryCount < 3) {
-          // Attempt to reconnect, but only show toast in development
-          if (!isProduction) {
+        if (!connected && isConnected) {
+          // We've lost connection
+          setIsConnected(false);
+          
+          // Don't show toast in production for transient issues
+          if (!isProduction || retryCount > 1) {
             toast({
               variant: "default",
-              title: "Reconnecting...",
-              description: "Attempting to reconnect to the server",
+              title: "Connection Issue",
+              description: "Attempting to reconnect to our servers...",
             });
           }
           
           setRetryCount(prev => prev + 1);
+        } else if (connected && !isConnected) {
+          // Connection restored
+          setIsConnected(true);
           
-          // Wait 3 seconds before retrying
-          setTimeout(() => {
-            checkConnection();
-          }, 3000);
-        } else if (!connected && !isProduction) {
-          // Only show toast in development
-          toast({
-            variant: "destructive",
-            title: "Connection Error",
-            description: "Please check your internet connection and reload the page",
-          });
-        } else if (connected && retryCount > 0 && !isProduction) {
-          // Successfully reconnected, only show toast in development
-          toast({
-            title: "Connected",
-            description: "Connection to the server has been restored",
-          });
-          setRetryCount(0);
+          if (retryCount > 0) {
+            toast({
+              title: "Connected",
+              description: "Connection to the server has been restored",
+            });
+            setRetryCount(0);
+          }
         }
+        
+        // Update connection state
+        setIsConnected(connected);
       } catch (error) {
         console.error("Error checking Supabase connection:", error);
         setIsConnected(false);
         
-        // Only show toast in development
-        if (!isProduction) {
+        if (!isProduction || retryCount > 2) {
           toast({
             variant: "destructive",
             title: "Connection Error",
-            description: "Unable to connect to the server. Please try again later.",
+            description: "Unable to connect to our servers. Please check your internet connection.",
           });
         }
       } finally {
@@ -79,14 +77,20 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
       if (!isChecking) {
         checkConnection();
       }
-    }, 30000); // Check every 30 seconds
+    }, isConnected ? 60000 : 15000); // Check more frequently when disconnected
 
     return () => clearInterval(interval);
-  }, [toast, retryCount, isChecking, isProduction]);
+  }, [toast, retryCount, isChecking, isConnected, isProduction]);
 
   return (
     <SupabaseContext.Provider value={supabase}>
       {children}
+      {!isConnected && !isProduction && (
+        <div className="fixed bottom-4 left-4 bg-amber-50 border border-amber-200 text-amber-700 px-4 py-2 rounded-md shadow-md z-50 flex items-center space-x-2">
+          <span className="animate-ping h-2 w-2 rounded-full bg-amber-400 opacity-75"></span>
+          <span>Connection issues detected. Attempting to reconnect...</span>
+        </div>
+      )}
     </SupabaseContext.Provider>
   );
 }

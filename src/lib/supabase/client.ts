@@ -8,15 +8,14 @@ const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXB
 
 // Create a more resilient fetch implementation with adaptive timeouts
 const createResilientFetch = () => {
-  // Initial configuration with shorter timeout for first attempt
-  let currentTimeoutMs = 3000; // Start with 3 seconds
-  const maxTimeoutMs = 15000; // Maximum 15 seconds
+  // Initial configuration
+  let currentTimeoutMs = 5000; // Start with 5 seconds instead of 3
+  const maxTimeoutMs = 20000; // Increase maximum to 20 seconds
+  const initialTimeoutMs = 5000; // Keep track of initial timeout
   
   return (url: string, options: RequestInit = {}) => {
     const controller = new AbortController();
-    // Fixed: Properly extract the original signal from options with type checking
     const originalSignal = options.signal;
-    const { signal } = controller;
     
     // Combine our abort signal with any existing one
     if (originalSignal) {
@@ -34,17 +33,18 @@ const createResilientFetch = () => {
       console.log(`Request timed out, increasing timeout to ${currentTimeoutMs}ms for next attempt`);
     }, currentTimeoutMs);
     
-    return fetch(url, { ...options, signal })
+    return fetch(url, { ...options, signal: controller.signal })
       .then(response => {
         clearTimeout(timeoutId);
-        // Reset timeout on success
-        currentTimeoutMs = 3000;
+        // Reset timeout on success, but gradually to avoid ping-pong effect
+        currentTimeoutMs = Math.max(initialTimeoutMs, currentTimeoutMs * 0.8);
         return response;
       })
       .catch(error => {
         clearTimeout(timeoutId);
         if (error.name === 'AbortError') {
-          throw new Error(`Request timeout after ${currentTimeoutMs}ms`);
+          console.warn(`Supabase request to ${url.split('?')[0]} timed out after ${currentTimeoutMs}ms`);
+          throw new Error(`Request timed out after ${currentTimeoutMs}ms`);
         }
         throw error;
       });
@@ -58,10 +58,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    // Use options.emailRedirectTo for auth operations instead of redirectTo here
   },
   global: {
-    // Custom fetch with adaptive timeout
     fetch: createResilientFetch(),
     headers: {
       'X-Client-Info': 'overtimestaffapp-web'
@@ -78,8 +76,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // Create a service role client for admin operations
-// WARNING: This should only be used in secure contexts (like serverless functions)
-// NEVER expose this client in browser code
 export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
     autoRefreshToken: false,
@@ -92,27 +88,42 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
   }
 });
 
-// Function to check Supabase connection status with timeout
+// Function to check Supabase connection status with improved retry handling
 export const checkSupabaseConnection = async (
-  maxRetries = 2, 
-  timeoutMs = 3000
+  maxRetries = 3, 
+  timeoutMs = 5000
 ): Promise<boolean> => {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       // Create a promise that will reject after a timeout
       const timeoutPromise = new Promise<never>((_resolve, reject) => {
-        setTimeout(() => reject(new Error('Connection check timed out')), timeoutMs);
+        setTimeout(() => reject(new Error('Connection check timed out')), timeoutMs + (attempt * 1000)); // Increase timeout with each retry
       });
       
       // Create a promise that will resolve with the health check result
-      const healthCheckPromise = supabase.auth.getSession().then(() => true);
+      const healthCheckPromise = Promise.race([
+        supabase.auth.getSession().then(() => true),
+        // Also try another endpoint as a fallback
+        supabase.from('profiles').select('count', { count: 'exact', head: true }).then(() => true)
+      ]);
       
-      // Race the two promises
+      // Race the promises
       const isConnected = await Promise.race([healthCheckPromise, timeoutPromise]);
-      if (isConnected) return true;
+      if (isConnected) {
+        if (attempt > 0) {
+          console.log(`Supabase connection restored after ${attempt + 1} attempts`);
+        }
+        return true;
+      }
     } catch (error) {
-      console.warn(`Connection check attempt ${attempt + 1} failed:`, error);
-      if (attempt === maxRetries - 1) {
+      const waitTime = Math.min(1000 * Math.pow(2, attempt), 8000); // Exponential backoff
+      console.warn(`Connection check attempt ${attempt + 1}/${maxRetries} failed: ${error.message}`);
+      console.warn(`Waiting ${waitTime}ms before next attempt...`);
+      
+      if (attempt < maxRetries - 1) {
+        // Wait before trying again with exponential backoff
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      } else {
         console.error('All connection check attempts failed');
         return false;
       }
