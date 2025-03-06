@@ -1,5 +1,4 @@
 
-import { supabase } from "@/lib/supabase/client";
 import { executeWithConnectionRetry } from "@/lib/robust-connection-handler";
 import { BaseRole } from "@/lib/types";
 import { registrationService } from "@/lib/registration/registration-service";
