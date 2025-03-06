@@ -6,8 +6,49 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://qdyyfxgonldvgh
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkeXlmeGdvbmxkdmdocnRqaG5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA0MDAzMTMsImV4cCI6MjA1NTk3NjMxM30.eS660marbWwss7pQFbMUBJ_e2mhH7JBJvaP7Kr3ZU0M';
 const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkeXlmeGdvbmxkdmdocnRqaG5uIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MDQwMDMxMywiZXhwIjoyMDU1OTc2MzEzfQ.MKIcuSLo_ZI6PTA44VyHFes5wV1xpKMRYv-AWxr3qp0';
 
-// Global timeout values
-const DEFAULT_TIMEOUT = 20000; // 20 seconds
+// Create a more resilient fetch implementation with adaptive timeouts
+const createResilientFetch = () => {
+  // Initial configuration with shorter timeout for first attempt
+  let currentTimeoutMs = 3000; // Start with 3 seconds
+  const maxTimeoutMs = 15000; // Maximum 15 seconds
+  
+  return (url, options = {}) => {
+    const controller = new AbortController();
+    const { signal: originalSignal } = options;
+    const { signal } = controller;
+    
+    // Combine our abort signal with any existing one
+    if (originalSignal) {
+      if (originalSignal.aborted) {
+        controller.abort();
+      } else {
+        originalSignal.addEventListener('abort', () => controller.abort());
+      }
+    }
+    
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      // Increase the timeout for next attempts, up to the maximum
+      currentTimeoutMs = Math.min(currentTimeoutMs * 1.5, maxTimeoutMs);
+      console.log(`Request timed out, increasing timeout to ${currentTimeoutMs}ms for next attempt`);
+    }, currentTimeoutMs);
+    
+    return fetch(url, { ...options, signal })
+      .then(response => {
+        clearTimeout(timeoutId);
+        // Reset timeout on success
+        currentTimeoutMs = 3000;
+        return response;
+      })
+      .catch(error => {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+          throw new Error(`Request timeout after ${currentTimeoutMs}ms`);
+        }
+        throw error;
+      });
+  };
+};
 
 // Create Supabase client with improved timeouts and resilience
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -19,31 +60,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     // Use options.emailRedirectTo for auth operations instead of redirectTo here
   },
   global: {
-    // Custom fetch with timeout
-    fetch: (...args) => {
-      // @ts-ignore - the args type is complex but this works
-      const [url, config] = args;
-      const timeout = DEFAULT_TIMEOUT;
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeout);
-      
-      return fetch(url, {
-        ...config,
-        signal: controller.signal,
-      })
-        .then(response => {
-          clearTimeout(timeoutId);
-          return response;
-        })
-        .catch(error => {
-          clearTimeout(timeoutId);
-          if (error.name === 'AbortError') {
-            throw new Error(`Request timeout after ${timeout}ms`);
-          }
-          throw error;
-        });
-    },
+    // Custom fetch with adaptive timeout
+    fetch: createResilientFetch(),
     headers: {
       'X-Client-Info': 'overtimestaffapp-web'
     }
