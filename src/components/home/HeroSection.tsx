@@ -1,42 +1,52 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
 import { ArrowRight } from 'lucide-react';
 
-const HeroSection: React.FC = () => {
+const HeroSection = () => {
+  const navigate = useNavigate();
+
   return (
-    <section className="py-6 md:py-10 lg:py-16">
-      <div className="container mx-auto px-4 text-center">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600 mb-3 md:mb-4 leading-tight">
-            AI Meets Hospitality
+    <section className="py-12 md:py-20 overflow-hidden relative">
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+            The AI-Powered Hospitality Staffing Platform
           </h1>
-          <h2 className="text-xl md:text-2xl lg:text-3xl mb-3 md:mb-4 text-gray-800 font-medium">
-            Extra Staff, Anytime, Anywhere
-          </h2>
-          <p className="text-sm md:text-base lg:text-lg mb-6 md:mb-8 max-w-3xl mx-auto text-gray-700 leading-relaxed">
-            Got extra time? Need extra shifts? No dinner staff coverage? Plan canceled? The OVERTIMESTAFF 
-            Platform connects people with spare time to hospitality companies and agencies using smart AI 
-            integration.
+          <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
+            Connect qualified staff with urgent shifts in minutes. Perfect for hotels, restaurants, and hospitality businesses.
           </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link to="/find-staff">
-              <Button className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-6 rounded-md transition-all duration-200 shadow-md hover:shadow-lg text-sm md:text-base flex items-center gap-2">
-                Find Extra Staff
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Link to="/find-shifts">
-              <Button className="w-full sm:w-auto bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white font-medium py-2 px-6 rounded-md transition-all duration-200 shadow-md hover:shadow-lg text-sm md:text-base">
-                Find Extra Shifts
-              </Button>
-            </Link>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button 
+              onClick={() => navigate("/register")} 
+              size="lg"
+              className="bg-violet-700 hover:bg-violet-800 text-white font-medium text-base md:text-lg"
+            >
+              Sign Up Free <ArrowRight className="h-4 w-4 ml-1" />
+            </Button>
+            <Button 
+              onClick={() => navigate("/find-shifts")} 
+              variant="outline" 
+              size="lg"
+              className="border-violet-600 text-violet-700 hover:text-violet-800 font-medium text-base md:text-lg"
+            >
+              Explore Available Shifts
+            </Button>
+          </div>
+          <div className="mt-4 text-gray-500 text-sm">
+            No credit card required • Free for employees
           </div>
         </div>
       </div>
+      
+      {/* Hero Background with optimized loading */}
+      <div 
+        className="absolute inset-0 -z-10 opacity-20 bg-gradient-to-tr from-violet-100 to-indigo-50" 
+        aria-hidden="true"
+      />
     </section>
   );
 };
+
 export default HeroSection;

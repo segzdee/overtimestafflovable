@@ -1,6 +1,6 @@
 
 import { Search } from "lucide-react";
-import { useState } from "react";
+import React from "react";
 
 interface BlogHeaderProps {
   searchQuery: string;
@@ -10,15 +10,15 @@ interface BlogHeaderProps {
 
 const BlogHeader = ({ searchQuery, setSearchQuery, handleSearch }: BlogHeaderProps) => {
   return (
-    <div className="bg-violet-900 text-white py-8 md:py-12">
+    <div className="bg-violet-900 text-white py-6 md:py-8">
       <div className="container mx-auto px-4 md:px-6">
-        <h1 className="text-2xl md:text-3xl font-bold mb-2 md:mb-3">OVERTIMESTAFF Blog</h1>
-        <p className="text-base md:text-lg max-w-2xl">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">OVERTIMESTAFF Blog</h1>
+        <p className="text-base max-w-2xl">
           Insights, tips, and industry news for shift workers, hospitality businesses, and staffing agencies.
         </p>
         
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="mt-4 md:mt-6 max-w-md">
+        <form onSubmit={handleSearch} className="mt-4 max-w-md">
           <div className="relative">
             <input
               type="text"
@@ -40,4 +40,4 @@ const BlogHeader = ({ searchQuery, setSearchQuery, handleSearch }: BlogHeaderPro
   );
 };
 
-export default BlogHeader;
+export default React.memo(BlogHeader);

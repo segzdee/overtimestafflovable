@@ -6,14 +6,29 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://qdyyfxgonldvgh
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkeXlmeGdvbmxkdmdocnRqaG5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA0MDAzMTMsImV4cCI6MjA1NTk3NjMxM30.eS660marbWwss7pQFbMUBJ_e2mhH7JBJvaP7Kr3ZU0M';
 const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkeXlmeGdvbmxkdmdocnRqaG5uIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MDQwMDMxMywiZXhwIjoyMDU1OTc2MzEzfQ.MKIcuSLo_ZI6PTA44VyHFes5wV1xpKMRYv-AWxr3qp0';
 
-// Create a more resilient fetch implementation with adaptive timeouts
+// Create a more resilient fetch implementation with adaptive timeouts and caching
 const createResilientFetch = () => {
   // Initial configuration
-  let currentTimeoutMs = 5000; // Start with 5 seconds instead of 3
-  const maxTimeoutMs = 20000; // Increase maximum to 20 seconds
-  const initialTimeoutMs = 5000; // Keep track of initial timeout
+  let currentTimeoutMs = 5000; // Start with 5 seconds
+  const maxTimeoutMs = 20000; // Maximum timeout
+  const initialTimeoutMs = 5000; // Initial timeout
+  
+  // Simple in-memory cache
+  const cache = new Map();
+  const CACHE_TTL = 60000; // 1 minute cache TTL
   
   return (url: string, options: RequestInit = {}) => {
+    // If this is a GET request and cache is available, try to return from cache
+    const cacheKey = options.method === 'GET' || !options.method ? url : '';
+    if (cacheKey && cache.has(cacheKey)) {
+      const { data, expiry } = cache.get(cacheKey);
+      if (expiry > Date.now()) {
+        return Promise.resolve(new Response(data.body, data));
+      } else {
+        cache.delete(cacheKey); // Remove expired item
+      }
+    }
+
     const controller = new AbortController();
     const originalSignal = options.signal;
     
@@ -28,7 +43,7 @@ const createResilientFetch = () => {
     
     const timeoutId = setTimeout(() => {
       controller.abort();
-      // Increase the timeout for next attempts, up to the maximum
+      // Increase the timeout for next attempts
       currentTimeoutMs = Math.min(currentTimeoutMs * 1.5, maxTimeoutMs);
       console.log(`Request timed out, increasing timeout to ${currentTimeoutMs}ms for next attempt`);
     }, currentTimeoutMs);
@@ -36,8 +51,25 @@ const createResilientFetch = () => {
     return fetch(url, { ...options, signal: controller.signal })
       .then(response => {
         clearTimeout(timeoutId);
-        // Reset timeout on success, but gradually to avoid ping-pong effect
+        
+        // Reset timeout on success gradually
         currentTimeoutMs = Math.max(initialTimeoutMs, currentTimeoutMs * 0.8);
+        
+        // Clone the response for caching if it's a GET request
+        if (cacheKey && response.ok) {
+          response.clone().text().then(body => {
+            cache.set(cacheKey, {
+              data: {
+                body,
+                status: response.status,
+                statusText: response.statusText,
+                headers: Object.fromEntries(response.headers.entries())
+              },
+              expiry: Date.now() + CACHE_TTL
+            });
+          });
+        }
+        
         return response;
       })
       .catch(error => {
@@ -51,8 +83,8 @@ const createResilientFetch = () => {
   };
 };
 
-// Create Supabase client with improved timeouts and resilience
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+// Supabase client options with performance optimizations
+const options = {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -73,7 +105,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       eventsPerSecond: 10,
     },
   },
-});
+};
+
+// Create Supabase client with improved performance
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, options);
 
 // Create a service role client for admin operations
 export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {

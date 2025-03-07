@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import React from "react";
 
 interface CategoryFilterProps {
   categories: string[];
@@ -9,7 +10,7 @@ interface CategoryFilterProps {
 
 const CategoryFilter = ({ categories, selectedCategory, handleCategorySelect }: CategoryFilterProps) => {
   return (
-    <div className="flex flex-wrap gap-2 mb-6 overflow-x-auto pb-2">
+    <div className="flex flex-wrap gap-2 mb-4 overflow-x-auto pb-2">
       <Button 
         variant={!selectedCategory ? "default" : "outline"}
         size="sm"
@@ -33,4 +34,5 @@ const CategoryFilter = ({ categories, selectedCategory, handleCategorySelect }: 
   );
 };
 
-export default CategoryFilter;
+// Use React.memo to prevent unnecessary re-renders
+export default React.memo(CategoryFilter);

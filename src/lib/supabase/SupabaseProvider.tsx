@@ -1,5 +1,5 @@
 
-import { createContext, useContext, ReactNode, useEffect, useState } from 'react';
+import { createContext, useContext, ReactNode, useEffect, useState, useCallback } from 'react';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { supabase, checkSupabaseConnection } from './client';
 import { useToast } from '@/hooks/use-toast';
@@ -22,7 +22,7 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
   const isProduction = window.location.hostname === 'www.overtimestaff.com' || 
                       window.location.hostname === 'overtimestaff.com';
 
-  const checkConnection = async () => {
+  const checkConnection = useCallback(async () => {
     if (isChecking) return false; // Prevent parallel checks
     
     setIsChecking(true);
@@ -74,17 +74,17 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
       }
       return false;
     }
-  };
+  }, [isChecking, isConnected, isProduction, retryCount, toast]);
 
   // Manual retry function that can be called from components
-  const retryConnection = async () => {
+  const retryConnection = useCallback(async () => {
     if (isChecking) return false;
     toast({
       title: "Retrying Connection",
       description: "Attempting to reconnect to servers..."
     });
     return await checkConnection();
-  };
+  }, [checkConnection, isChecking, toast]);
 
   useEffect(() => {
     // Initial check
@@ -102,7 +102,7 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
     }, isConnected ? 60000 : 15000); // Check more frequently when disconnected
 
     return () => clearInterval(interval);
-  }, [retryCount, isChecking, isConnected, isProduction]);
+  }, [checkConnection, isChecking, isConnected]);
 
   return (
     <SupabaseContext.Provider value={{
