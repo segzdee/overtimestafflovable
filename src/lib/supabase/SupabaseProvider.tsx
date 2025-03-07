@@ -1,4 +1,3 @@
-
 import { createContext, useContext, ReactNode, useEffect, useState, useCallback } from 'react';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { supabase, checkSupabaseConnection } from './client';
@@ -6,34 +5,31 @@ import { useToast } from '@/hooks/use-toast';
 import { AlertCircle, Loader2 } from 'lucide-react';
 
 const SupabaseContext = createContext<{
-  client: SupabaseClient;
+  client: SupabaseClient<any, 'public', any>;
   isConnected: boolean;
   isChecking: boolean;
   retryConnection: () => Promise<boolean>;
 } | undefined>(undefined);
 
 export function SupabaseProvider({ children }: { children: ReactNode }) {
-  const [isConnected, setIsConnected] = useState(true); // Optimistic initialization
+  const [isConnected, setIsConnected] = useState(true);
   const [isChecking, setIsChecking] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
   const { toast } = useToast();
   
-  // Check if we're in production/live environment
   const isProduction = window.location.hostname === 'www.overtimestaff.com' || 
                       window.location.hostname === 'overtimestaff.com';
 
   const checkConnection = useCallback(async () => {
-    if (isChecking) return false; // Prevent parallel checks
+    if (isChecking) return false;
     
     setIsChecking(true);
     try {
       const connected = await checkSupabaseConnection(3, 5000);
       
       if (!connected && isConnected) {
-        // We've lost connection
         setIsConnected(false);
         
-        // Don't show toast in production for transient issues
         if (!isProduction || retryCount > 1) {
           toast({
             variant: "default",
@@ -44,7 +40,6 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
         
         setRetryCount(prev => prev + 1);
       } else if (connected && !isConnected) {
-        // Connection restored
         setIsConnected(true);
         
         if (retryCount > 0) {
@@ -56,7 +51,6 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
         }
       }
       
-      // Update connection state
       setIsConnected(connected);
       setIsChecking(false);
       return connected;
@@ -76,7 +70,6 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
     }
   }, [isChecking, isConnected, isProduction, retryCount, toast]);
 
-  // Manual retry function that can be called from components
   const retryConnection = useCallback(async () => {
     if (isChecking) return false;
     toast({
@@ -87,19 +80,17 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
   }, [checkConnection, isChecking, toast]);
 
   useEffect(() => {
-    // Initial check
     const initialCheck = async () => {
       await checkConnection();
     };
     
     initialCheck();
 
-    // Set up periodic connection checks
     const interval = setInterval(() => {
       if (!isChecking) {
         checkConnection();
       }
-    }, isConnected ? 60000 : 15000); // Check more frequently when disconnected
+    }, isConnected ? 60000 : 15000);
 
     return () => clearInterval(interval);
   }, [checkConnection, isChecking, isConnected]);

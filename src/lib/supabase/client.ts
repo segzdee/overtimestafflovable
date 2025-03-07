@@ -89,7 +89,7 @@ const options = {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    flowType: 'pkce',
+    flowType: 'pkce' as const,
   },
   global: {
     fetch: createResilientFetch(),
