@@ -195,8 +195,8 @@ export type Database = {
           business_verification_date: string | null
           commission_rate: number | null
           created_at: string | null
-          id: string
           license_number: string | null
+          profile_id: string
           service_areas: string[] | null
           tenant_id: string
           updated_at: string | null
@@ -208,8 +208,8 @@ export type Database = {
           business_verification_date?: string | null
           commission_rate?: number | null
           created_at?: string | null
-          id?: string
           license_number?: string | null
+          profile_id?: string
           service_areas?: string[] | null
           tenant_id: string
           updated_at?: string | null
@@ -221,8 +221,8 @@ export type Database = {
           business_verification_date?: string | null
           commission_rate?: number | null
           created_at?: string | null
-          id?: string
           license_number?: string | null
+          profile_id?: string
           service_areas?: string[] | null
           tenant_id?: string
           updated_at?: string | null
@@ -612,8 +612,8 @@ export type Database = {
           business_verification_date: string | null
           company_size: string | null
           created_at: string | null
-          id: string
           industry: string | null
+          profile_id: string
           tenant_id: string
           updated_at: string | null
           verification_status: string | null
@@ -624,8 +624,8 @@ export type Database = {
           business_verification_date?: string | null
           company_size?: string | null
           created_at?: string | null
-          id?: string
           industry?: string | null
+          profile_id?: string
           tenant_id: string
           updated_at?: string | null
           verification_status?: string | null
@@ -636,8 +636,8 @@ export type Database = {
           business_verification_date?: string | null
           company_size?: string | null
           created_at?: string | null
-          id?: string
           industry?: string | null
+          profile_id?: string
           tenant_id?: string
           updated_at?: string | null
           verification_status?: string | null
@@ -737,6 +737,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          created_at: string | null
+          profile_id: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string | null
+          profile_id: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string | null
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       id_counters: {
         Row: {
@@ -882,6 +936,48 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string | null
+          created_at: string | null
+          id: string
+          read: boolean | null
+          sender_id: string | null
+        }
+        Insert: {
+          content: string
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          sender_id?: string | null
+        }
+        Update: {
+          content?: string
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          sender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           auth_alerts: boolean | null
@@ -1009,11 +1105,76 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          invoice_id: string | null
+          payer_id: string | null
+          payment_date: string | null
+          payment_method: string
+          recipient_id: string | null
+          status: string
+          transaction_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          invoice_id?: string | null
+          payer_id?: string | null
+          payment_date?: string | null
+          payment_method: string
+          recipient_id?: string | null
+          status: string
+          transaction_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          invoice_id?: string | null
+          payer_id?: string | null
+          payment_date?: string | null
+          payment_method?: string
+          recipient_id?: string | null
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_payer_id_fkey"
+            columns: ["payer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           account_status: string | null
           auth_provider: string | null
           auth_provider_id: string | null
+          avatar_url: string | null
           category: string | null
           created_at: string
           email: string
@@ -1025,11 +1186,13 @@ export type Database = {
           locked_until: string | null
           login_count: number | null
           name: string
+          phone: string | null
           profile_complete: boolean | null
           registration_ip: string | null
           registration_status: string | null
           registration_timestamp: string | null
           role: string
+          timezone: string | null
           updated_at: string
           user_code: string | null
         }
@@ -1037,6 +1200,7 @@ export type Database = {
           account_status?: string | null
           auth_provider?: string | null
           auth_provider_id?: string | null
+          avatar_url?: string | null
           category?: string | null
           created_at?: string
           email: string
@@ -1048,11 +1212,13 @@ export type Database = {
           locked_until?: string | null
           login_count?: number | null
           name: string
+          phone?: string | null
           profile_complete?: boolean | null
           registration_ip?: string | null
           registration_status?: string | null
           registration_timestamp?: string | null
           role: string
+          timezone?: string | null
           updated_at?: string
           user_code?: string | null
         }
@@ -1060,6 +1226,7 @@ export type Database = {
           account_status?: string | null
           auth_provider?: string | null
           auth_provider_id?: string | null
+          avatar_url?: string | null
           category?: string | null
           created_at?: string
           email?: string
@@ -1071,11 +1238,13 @@ export type Database = {
           locked_until?: string | null
           login_count?: number | null
           name?: string
+          phone?: string | null
           profile_complete?: boolean | null
           registration_ip?: string | null
           registration_status?: string | null
           registration_timestamp?: string | null
           role?: string
+          timezone?: string | null
           updated_at?: string
           user_code?: string | null
         }
@@ -1834,6 +2003,7 @@ export type Database = {
           id: number
           token: string
           token_type: string
+          updated_at: string | null
           used: boolean | null
           used_at: string | null
           user_id: string
@@ -1844,6 +2014,7 @@ export type Database = {
           id?: number
           token: string
           token_type: string
+          updated_at?: string | null
           used?: boolean | null
           used_at?: string | null
           user_id: string
@@ -1854,6 +2025,7 @@ export type Database = {
           id?: number
           token?: string
           token_type?: string
+          updated_at?: string | null
           used?: boolean | null
           used_at?: string | null
           user_id?: string
@@ -2050,6 +2222,16 @@ export type Database = {
         }
         Returns: undefined
       }
+      auto_assign_workers_to_shift: {
+        Args: {
+          p_shift_id: string
+          p_count?: number
+        }
+        Returns: {
+          worker_id: string
+          assignment_id: string
+        }[]
+      }
       check_rate_limit: {
         Args: {
           p_ip_address: string
@@ -2082,6 +2264,17 @@ export type Database = {
         }
         Returns: string
       }
+      get_available_workers: {
+        Args: {
+          shift_id: string
+        }
+        Returns: {
+          worker_id: string
+          name: string
+          rating: number
+          experience_years: number
+        }[]
+      }
       get_current_tenant_id: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -2095,6 +2288,18 @@ export type Database = {
           error_message: string
           error_details: Json
           created_at: string
+        }[]
+      }
+      get_worker_performance_metrics: {
+        Args: {
+          p_worker_id: string
+          p_start_date?: string
+          p_end_date?: string
+        }
+        Returns: {
+          metric_name: string
+          metric_value: number
+          comparison_to_avg: number
         }[]
       }
       handle_failed_login: {
@@ -2237,6 +2442,12 @@ export type Database = {
           p_user_agent?: string
         }
         Returns: undefined
+      }
+      validate_business_hours: {
+        Args: {
+          p_shift_id: string
+        }
+        Returns: boolean
       }
       validate_category: {
         Args: {

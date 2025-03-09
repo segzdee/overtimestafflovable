@@ -1,3 +1,4 @@
+
 import { createContext, useContext, ReactNode, useEffect, useState, useCallback } from 'react';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { supabase, checkSupabaseConnection } from './client';
@@ -97,7 +98,7 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
 
   return (
     <SupabaseContext.Provider value={{
-      client: supabase,
+      client: supabase as SupabaseClient<any, 'public', any>,
       isConnected,
       isChecking,
       retryConnection
