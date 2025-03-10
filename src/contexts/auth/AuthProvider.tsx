@@ -2,12 +2,8 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/lib/supabase/client";
 import { AuthContext } from "./AuthContext";
 import { AuthUser, AIToken } from "./types";
-import { useAuthOperations } from "./useAuthOperations";
-import { useAuthHooks } from "@/hooks/useAuthHooks";
-import { RegistrationService } from "@/lib/registration/registration-service";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
 
@@ -18,117 +14,186 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const operations = useAuthOperations({ setUser, setAiTokens, navigate, toast });
-  const authHooks = useAuthHooks();
-  
-  useEffect(() => {
-    const registrationService = new RegistrationService();
-    registrationService.setAuthHooks(authHooks);
-    
-    const processPending = async () => {
-      try {
-        const pendingRegistration = registrationService.getPendingRegistration();
-        if (pendingRegistration) {
-          const result = await registrationService.processPendingRegistration();
-          if (result && result.success) {
-            toast({
-              title: "Registration Complete",
-              description: "Your pending registration was successfully processed.",
-              variant: "default",
-            });
-            registrationService.clearPendingRegistration();
-          }
-        }
-      } catch (err) {
-        console.error("Error processing pending registration:", err);
-      }
-    };
-    
-    processPending();
-  }, [authHooks, toast]);
 
-  useEffect(() => {
-    const handleAuthChange = supabase.auth.onAuthStateChange((event, session) => {
-      const handleAuthEvent = (event: string, session: any) => {
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          authHooks.sendAuthDiagnostic('login_success', 
-            { userId: session?.user?.id }, 
-            { event, sessionId: session?.access_token?.substring(0, 8) }
-          );
-        }
-        if (event === 'SIGNED_OUT') {
-          authHooks.sendAuthDiagnostic('logout', 
-            { userId: user?.id }, 
-            { event, manual: true }
-          );
+  // Simple registration handler that doesn't rely on Supabase auth
+  const register = async (
+    email: string,
+    password: string,
+    role: AuthUser["role"],
+    name: string,
+    category?: string
+  ) => {
+    try {
+      // Store user data in localStorage for demo purposes
+      const userId = `user_${Date.now()}`;
+      const newUser: AuthUser = {
+        id: userId,
+        email,
+        role,
+        name,
+        category,
+        profileComplete: false,
+        verificationStatus: 'pending',
+        emailVerified: false,
+        notificationPreferences: {
+          id: 0,
+          userId,
+          email: true,
+          sms: false,
+          push: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         }
       };
       
-      handleAuthEvent(event, session);
+      localStorage.setItem('auth_user', JSON.stringify(newUser));
       
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        localStorage.setItem('supabase.auth.token', session?.access_token || '');
-      }
-      if (event === 'SIGNED_OUT') {
-        localStorage.removeItem('supabase.auth.token');
-        setUser(null);
-      }
-    });
+      toast({
+        title: "Account created successfully",
+        description: "You can now log in with your credentials",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "Failed to create account"
+      });
+      throw error;
+    }
+  };
 
-    const initializeAuth = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user) {
-          console.log("Restoring session for user:", session.user.id);
-          await operations.setUserFromSupabase(session.user);
+  // Simple login without Supabase
+  const login = async (email: string, password: string) => {
+    try {
+      // In a real app, we would validate credentials
+      // For demo purposes, just check if the email exists in localStorage
+      const storedUser = localStorage.getItem('auth_user');
+      if (storedUser) {
+        const parsed = JSON.parse(storedUser);
+        if (parsed.email === email) {
+          setUser(parsed);
           
-          const { error: tokenError } = await supabase.auth.getUser(session.access_token);
-          if (tokenError) {
-            console.log("Invalid session token, signing out");
-            await supabase.auth.signOut();
-            setUser(null);
-          }
+          toast({
+            title: "Success",
+            description: "Logged in successfully",
+          });
+          
+          // Redirect based on user role
+          navigate(`/dashboard/${parsed.role}`);
+          return;
         }
-      } catch (error) {
-        console.error("Session initialization error:", error);
-        setError(error instanceof Error ? error : new Error('Unknown authentication error'));
-        setUser(null);
-      } finally {
-        setLoading(false);
+      }
+      
+      throw new Error("Invalid credentials");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Login failed",
+        description: error instanceof Error ? error.message : "Invalid credentials"
+      });
+      throw error;
+    }
+  };
+
+  const loginWithToken = async (token: string) => {
+    // Not implemented in the simplified version
+    toast({
+      variant: "destructive", 
+      title: "Not implemented",
+      description: "Token-based login is not available"
+    });
+  };
+
+  const devLogin = async (password: string) => {
+    // Not implemented in the simplified version
+    toast({
+      variant: "destructive",
+      title: "Not implemented", 
+      description: "Dev login is not available"
+    });
+  };
+
+  const logout = async () => {
+    setUser(null);
+    localStorage.removeItem('auth_user');
+    navigate("/login");
+    
+    toast({
+      title: "Logged out successfully"
+    });
+  };
+
+  const updateProfile = async (userId: string, profileData: Partial<AuthUser>) => {
+    if (user && user.id === userId) {
+      const updatedUser = { ...user, ...profileData, profileComplete: true };
+      setUser(updatedUser);
+      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+      
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been successfully updated"
+      });
+    }
+  };
+
+  const updateNotificationPreferences = async (preferences: Partial<any>) => {
+    if (user) {
+      const updatedUser = {
+        ...user,
+        notificationPreferences: {
+          ...user.notificationPreferences,
+          ...preferences
+        }
+      };
+      setUser(updatedUser);
+      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+      
+      toast({
+        title: "Preferences Updated",
+        description: "Your notification preferences have been saved."
+      });
+    }
+  };
+
+  const generateAiToken = async (name: string, userId: string): Promise<AIToken> => {
+    const newToken: AIToken = {
+      id: Math.random().toString(36).substring(2),
+      name,
+      createdAt: new Date().toISOString(),
+      isActive: true,
+      authorizedBy: {
+        id: userId,
+        name: user?.name || ""
       }
     };
+    setAiTokens((current) => [...current, newToken]);
+    return newToken;
+  };
 
-    initializeAuth();
+  const revokeAiToken = async (tokenId: string) => {
+    setAiTokens((current) => 
+      current.map(token => 
+        token.id === tokenId ? { ...token, isActive: false } : token
+      )
+    );
+  };
 
-    const refreshInterval = setInterval(async () => {
+  // Load user from localStorage on initial load
+  useEffect(() => {
+    const storedUser = localStorage.getItem('auth_user');
+    if (storedUser) {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          const { error } = await supabase.auth.refreshSession();
-          if (error) {
-            console.error("Session refresh error:", error);
-            await supabase.auth.signOut();
-            setUser(null);
-          }
-        }
+        setUser(JSON.parse(storedUser));
       } catch (err) {
-        console.error("Error refreshing session:", err);
+        console.error("Error parsing stored user:", err);
       }
-    }, 3600000);
-
-    return () => {
-      clearInterval(refreshInterval);
-      handleAuthChange.data.subscription.unsubscribe();
-    };
-  }, [authHooks, operations, user?.id]);
+    }
+    setLoading(false);
+  }, []);
 
   if (error) {
     return (
@@ -159,7 +224,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         value={{
           user,
           aiTokens,
-          ...operations
+          register,
+          login,
+          loginWithToken,
+          devLogin,
+          logout,
+          updateProfile,
+          updateNotificationPreferences,
+          generateAiToken,
+          revokeAiToken
         }}
       >
         {children}

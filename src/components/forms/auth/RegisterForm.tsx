@@ -1,3 +1,4 @@
+
 import { useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -7,10 +8,15 @@ import { UserDataFields } from "./components/UserDataFields";
 import { PasswordFields } from "./components/PasswordFields";
 import { TermsCheckbox } from "./TermsCheckbox";
 import { RegisterFormAlerts } from "./RegisterFormAlerts";
-import { registrationService } from "@/lib/registration/registration-service";
-import { executeWithConnectionRetry } from "@/lib/robust-connection-handler";
 import { RegistrationFooter } from "./components/RegistrationFooter";
-import { AuthFormData, AuthFormState, RegisterFormProps } from "./types";
+import { useAuth } from "@/contexts/auth";
+
+interface RegisterFormProps {
+  onNetworkError?: (formData: any) => void;
+  pendingRegistration?: any;
+  onRegistrationSuccess?: () => void;
+  initialRole?: string;
+}
 
 export function RegisterForm({ 
   onNetworkError, 
@@ -19,6 +25,7 @@ export function RegisterForm({
   initialRole = ""
 }: RegisterFormProps) {
   const { toast } = useToast();
+  const { register } = useAuth();
   
   const [formData, setFormData] = useState({
     email: "",
@@ -100,45 +107,25 @@ export function RegisterForm({
         return;
       }
       
-      const result = await executeWithConnectionRetry(
-        async () => registrationService.register({
-          email: formData.email,
-          password: formData.password,
-          role: validRole as "company" | "agency" | "shift-worker" | "admin" | "aiagent",
-          name: formData.name,
-          category: formData.category
-        }),
-        { criticalOperation: true }
+      await register(
+        formData.email,
+        formData.password,
+        validRole as "company" | "agency" | "shift-worker" | "admin" | "aiagent",
+        formData.name,
+        formData.category
       );
       
-      handleRegistrationResult(result);
-    } catch (err) {
-      handleRegistrationError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const handleRegistrationResult = (result: any) => {
-    if (result.success) {
-      setSuccessMessage(result.message || "Account created successfully! Please check your email to verify your account before logging in.");
-      toast({
-        title: "Account created successfully",
-        description: "Please check your email to verify your account",
-      });
+      setSuccessMessage("Account created successfully! You can now login.");
       
       if (onRegistrationSuccess) {
         onRegistrationSuccess();
       }
       
       resetForm();
-    } else {
-      setError(result.message || "Registration failed");
-      toast({
-        variant: "destructive",
-        title: "Registration failed",
-        description: result.message || "An error occurred during registration"
-      });
+    } catch (err) {
+      handleRegistrationError(err);
+    } finally {
+      setLoading(false);
     }
   };
   
