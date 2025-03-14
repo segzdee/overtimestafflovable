@@ -10,6 +10,9 @@ import { TermsCheckbox } from "./TermsCheckbox";
 import { RegisterFormAlerts } from "./RegisterFormAlerts";
 import { RegistrationFooter } from "./components/RegistrationFooter";
 import { useAuth } from "@/contexts/auth";
+import { checkConnection } from "@/lib/robust-connection-handler";
+import { AuthFormData } from "./types";
+import { registerUser, storeRegistrationForLater } from "@/services/authService";
 
 interface RegisterFormProps {
   onNetworkError?: (formData: any) => void;
@@ -27,7 +30,7 @@ export function RegisterForm({
   const { toast } = useToast();
   const { register } = useAuth();
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<AuthFormData>({
     email: "",
     password: "",
     confirmPassword: "",
@@ -107,11 +110,31 @@ export function RegisterForm({
         return;
       }
       
+      // First check connection
+      const isConnected = await checkConnection();
+      if (!isConnected) {
+        setNetworkError(true);
+        if (onNetworkError) {
+          onNetworkError(formData);
+        }
+        // Store registration data for later submission
+        storeRegistrationForLater({
+          email: formData.email,
+          password: formData.password || "",
+          role: validRole as "company" | "agency" | "shift-worker" | "admin" | "aiagent",
+          name: formData.name || "",
+          category: formData.category
+        });
+        setLoading(false);
+        return;
+      }
+      
+      // Use the auth context register function
       await register(
         formData.email,
-        formData.password,
+        formData.password || "",
         validRole as "company" | "agency" | "shift-worker" | "admin" | "aiagent",
-        formData.name,
+        formData.name || "",
         formData.category
       );
       
@@ -141,6 +164,15 @@ export function RegisterForm({
       if (onNetworkError) {
         onNetworkError(formData);
       }
+      
+      // Store registration data for later
+      storeRegistrationForLater({
+        email: formData.email,
+        password: formData.password || "",
+        role: formData.role as "company" | "agency" | "shift-worker" | "admin" | "aiagent",
+        name: formData.name || "",
+        category: formData.category
+      });
     }
     
     toast({

@@ -17,7 +17,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   
   // Effect to handle loading state
   useEffect(() => {
-    // We can simply wait a brief moment for auth to initialize
+    // Simple timer to simulate auth initialization
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -47,6 +47,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   
   // Normal authentication flow
   if (!user) {
+    // Store the location they were trying to access for redirect after login
     return <Navigate 
       to="/login" 
       replace 
@@ -54,9 +55,11 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     />;
   }
   
+  // Check if user has the required role for this route
   if (!allowedRoles.includes(user.role)) {
     return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
   }
   
+  // If everything checks out, render the protected content
   return <>{children}</>;
 }

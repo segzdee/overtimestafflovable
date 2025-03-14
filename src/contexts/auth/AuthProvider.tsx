@@ -6,6 +6,7 @@ import { AuthContext } from "./AuthContext";
 import { AuthUser, AIToken } from "./types";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
+import { loginUser, registerUser } from "@/services/authService";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -14,12 +15,12 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Simple registration handler that doesn't rely on Supabase auth
+  // User registration that works with the new auth schema
   const register = async (
     email: string,
     password: string,
@@ -28,29 +29,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     category?: string
   ) => {
     try {
-      // Store user data in localStorage for demo purposes
-      const userId = `user_${Date.now()}`;
-      const newUser: AuthUser = {
-        id: userId,
+      // In a real implementation, this would call the API to insert into auth.users
+      // and the appropriate profile table based on role
+      const userData = await registerUser({
         email,
+        password,
         role,
         name,
-        category,
-        profileComplete: false,
-        verificationStatus: 'pending',
-        emailVerified: false,
-        notificationPreferences: {
-          id: 0,
-          userId,
-          email: true,
-          sms: false,
-          push: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      };
+        category
+      });
       
-      localStorage.setItem('auth_user', JSON.stringify(newUser));
+      // Store the user data in localStorage for this demo
+      localStorage.setItem('auth_user', JSON.stringify(userData));
       
       toast({
         title: "Account created successfully",
@@ -66,26 +56,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  // Simple login without Supabase
+  // Login with the new auth schema
   const login = async (email: string, password: string) => {
     try {
-      // In a real app, we would validate credentials
-      // For demo purposes, just check if the email exists in localStorage
-      const storedUser = localStorage.getItem('auth_user');
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser);
-        if (parsed.email === email) {
-          setUser(parsed);
-          
-          toast({
-            title: "Success",
-            description: "Logged in successfully",
-          });
-          
-          // Redirect based on user role
-          navigate(`/dashboard/${parsed.role}`);
-          return;
-        }
+      // In a real implementation, this would verify credentials against auth.users
+      const userData = await loginUser(email, password);
+      
+      if (userData) {
+        setUser(userData);
+        localStorage.setItem('auth_user', JSON.stringify(userData));
+        
+        toast({
+          title: "Success",
+          description: "Logged in successfully",
+        });
+        
+        // Redirect based on user role
+        navigate(`/dashboard/${userData.role}`);
+        return;
       }
       
       throw new Error("Invalid credentials");
@@ -100,20 +88,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const loginWithToken = async (token: string) => {
-    // Not implemented in the simplified version
+    // This would verify against auth.ai_agent_profiles.api_token
     toast({
       variant: "destructive", 
       title: "Not implemented",
-      description: "Token-based login is not available"
+      description: "Token-based login is not available in this demo"
     });
   };
 
   const devLogin = async (password: string) => {
-    // Not implemented in the simplified version
+    // For development purposes only
     toast({
       variant: "destructive",
       title: "Not implemented", 
-      description: "Dev login is not available"
+      description: "Dev login is not available in this demo"
     });
   };
 
