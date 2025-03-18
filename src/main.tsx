@@ -37,6 +37,3 @@ document.addEventListener('DOMContentLoaded', () => {
     </React.StrictMode>
   );
 });
-
-// The unload event handler for cleanup is not needed anymore since 
-// we're not storing the result of initConnectionHandling()

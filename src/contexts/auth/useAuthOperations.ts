@@ -5,11 +5,12 @@ import { setUserFromSupabase } from "./utils/authUtils";
 import { 
   register, 
   login, 
-  loginWithToken, 
-  devLogin,
+  logout,
   updateProfile,
   generateAiToken,
-  revokeAiToken
+  revokeAiToken,
+  resetPassword,
+  updatePassword
 } from "./operations/authOperations";
 import { supabase } from "@/lib/supabase/client";
 import { NotificationPreferences } from "@/lib/types";
@@ -48,14 +49,6 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
 
   const handleLogin = async (email: string, password: string) => {
     await login(email, password, navigate, toast);
-  };
-
-  const handleLoginWithToken = async (token: string) => {
-    await loginWithToken(token, setUser);
-  };
-
-  const handleDevLogin = async (password: string) => {
-    await devLogin(password, setUser, toast);
   };
 
   const handleUpdateProfile = async (userId: string, profileData: Partial<AuthUser>) => {
@@ -111,11 +104,10 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
     await revokeAiToken(tokenId, setAiTokens);
   };
 
-  const logout = async () => {
+  const handleLogout = async () => {
     const result = await executeWithConnectionRetry(
       async () => {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
+        await logout();
         return { success: true, error: null };
       },
       {
@@ -134,16 +126,50 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
     });
   };
 
+  const handleResetPassword = async (email: string) => {
+    try {
+      await resetPassword(email);
+      toast({
+        title: "Password reset email sent",
+        description: "Please check your email for further instructions"
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Password reset failed",
+        description: error instanceof Error ? error.message : "Failed to send reset email"
+      });
+      throw error;
+    }
+  };
+
+  const handleUpdatePassword = async (password: string) => {
+    try {
+      await updatePassword(password);
+      toast({
+        title: "Password updated",
+        description: "Your password has been successfully changed"
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Password update failed",
+        description: error instanceof Error ? error.message : "Failed to update password"
+      });
+      throw error;
+    }
+  };
+
   return {
     setUserFromSupabase: (user: any) => setUserFromSupabase(user, setUser),
     register: handleRegister,
     login: handleLogin,
-    loginWithToken: handleLoginWithToken,
-    devLogin: handleDevLogin,
-    logout,
+    logout: handleLogout,
     updateProfile: handleUpdateProfile,
     updateNotificationPreferences: handleUpdateNotificationPreferences,
     generateAiToken: handleGenerateAiToken,
-    revokeAiToken: handleRevokeAiToken
+    revokeAiToken: handleRevokeAiToken,
+    resetPassword: handleResetPassword,
+    updatePassword: handleUpdatePassword
   };
 }
