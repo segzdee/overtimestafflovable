@@ -52,9 +52,9 @@ export function CompanyDashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Company Dashboard</h1>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1">
             <Clock className="h-4 w-4" />
@@ -68,7 +68,7 @@ export function CompanyDashboardPage() {
       </div>
       
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <StatsCard 
           title="Current Month Shifts" 
           value="28" 
@@ -93,19 +93,19 @@ export function CompanyDashboardPage() {
       
       {/* Upcoming Shifts */}
       <Card className="hover:shadow-md transition-shadow">
-        <CardHeader className="flex flex-row items-center justify-between py-4 px-6">
+        <CardHeader className="flex flex-row items-center justify-between py-3 px-4">
           <CardTitle className="text-lg font-medium">Upcoming Shifts</CardTitle>
           <Button className="text-sm bg-teal-600 text-white px-3 py-1 rounded">
             + Request New Shift
           </Button>
         </CardHeader>
-        <CardContent className="px-6">
+        <CardContent className="px-4">
           <UpcomingShiftsTable shifts={upcomingShifts} onCancelShift={handleCancelShift} />
         </CardContent>
       </Card>
       
       {/* Other Cards Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <PendingRequestsCard requests={pendingRequests} />
         <FavoriteStaffCard staff={favoriteStaff} />
         <RecentInvoicesCard invoices={recentInvoices} />
@@ -113,12 +113,12 @@ export function CompanyDashboardPage() {
       
       {/* Performance Monitoring */}
       <Card className="hover:shadow-md transition-shadow">
-        <CardHeader className="flex flex-row items-center justify-between py-4 px-6">
+        <CardHeader className="flex flex-row items-center justify-between py-3 px-4">
           <CardTitle className="text-lg font-medium">Staffing Performance</CardTitle>
           <Button variant="outline" size="sm">View Details</Button>
         </CardHeader>
-        <CardContent className="px-6">
-          <div className="space-y-4">
+        <CardContent className="px-4">
+          <div className="space-y-3">
             <div>
               <div className="flex justify-between">
                 <h3 className="text-sm font-medium">Staff Confirmation Rate</h3>

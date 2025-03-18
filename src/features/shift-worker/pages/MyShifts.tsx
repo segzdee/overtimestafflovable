@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -71,20 +70,20 @@ export function MyShifts() {
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <h1 className="text-2xl font-bold">My Shifts</h1>
       
       <Tabs defaultValue="upcoming" className="w-full">
-        <TabsList className="mb-4">
+        <TabsList className="mb-3">
           <TabsTrigger value="upcoming">Upcoming Shifts</TabsTrigger>
           <TabsTrigger value="past">Past Shifts</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="upcoming" className="space-y-4">
+        <TabsContent value="upcoming" className="space-y-3">
           {upcomingShifts.map(shift => (
             <Card key={shift.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <CardContent className="p-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-lg">{shift.company}</h3>
@@ -103,7 +102,7 @@ export function MyShifts() {
                     <p className="text-sm">{shift.location}</p>
                   </div>
                   
-                  <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
                     <div className="flex items-center gap-1 text-green-600">
                       <DollarSign className="h-4 w-4" />
                       <span className="font-medium">{shift.pay}</span>
@@ -117,11 +116,11 @@ export function MyShifts() {
           ))}
         </TabsContent>
         
-        <TabsContent value="past" className="space-y-4">
+        <TabsContent value="past" className="space-y-3">
           {pastShifts.map(shift => (
             <Card key={shift.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <CardContent className="p-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-lg">{shift.company}</h3>
@@ -140,7 +139,7 @@ export function MyShifts() {
                     <p className="text-sm">{shift.location}</p>
                   </div>
                   
-                  <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
                     <div className="flex items-center gap-1 text-green-600">
                       <DollarSign className="h-4 w-4" />
                       <span className="font-medium">{shift.pay}</span>

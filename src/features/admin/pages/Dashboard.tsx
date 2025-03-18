@@ -71,8 +71,8 @@ export function AdminDashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1">
@@ -87,7 +87,7 @@ export function AdminDashboardPage() {
       </div>
       
       {/* Platform Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {platformStats.map(stat => (
           <StatsCard 
             key={stat.id}
@@ -100,24 +100,24 @@ export function AdminDashboardPage() {
       
       {/* Recent Users Table */}
       <Card className="hover:shadow-md transition-shadow">
-        <CardHeader className="flex flex-row items-center justify-between py-4 px-6">
+        <CardHeader className="flex flex-row items-center justify-between py-3 px-4">
           <CardTitle className="text-lg font-medium">Recent User Registrations</CardTitle>
           <Button variant="link" size="sm" className="text-blue-600">View All Users</Button>
         </CardHeader>
-        <CardContent className="px-6">
+        <CardContent className="px-4">
           <RecentUsersTable users={recentUsers} onViewUser={handleViewUser} />
         </CardContent>
       </Card>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <SystemAlertsCard alerts={systemAlerts} onResolveAlert={handleResolveAlert} />
         <RecentTransactionsCard transactions={recentTransactions} />
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <div className="lg:col-span-2">
           <Card className="hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between py-4 px-6">
+            <CardHeader className="flex flex-row items-center justify-between py-3 px-4">
               <CardTitle className="text-lg font-medium">Platform Growth</CardTitle>
               <div className="flex space-x-2">
                 <Button variant="outline" size="sm" className="text-xs py-1 px-2 h-7 bg-blue-50">Monthly</Button>
@@ -125,7 +125,7 @@ export function AdminDashboardPage() {
                 <Button variant="outline" size="sm" className="text-xs py-1 px-2 h-7">Yearly</Button>
               </div>
             </CardHeader>
-            <CardContent className="px-6 py-4">
+            <CardContent className="px-4 py-3">
               <PlatformGrowthChart data={shiftStats} />
             </CardContent>
           </Card>

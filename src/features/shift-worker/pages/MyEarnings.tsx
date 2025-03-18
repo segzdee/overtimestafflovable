@@ -46,10 +46,10 @@ export function MyEarnings() {
   const totalUpcoming = upcomingPayments.reduce((sum, payment) => sum + payment.amount, 0);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <h1 className="text-2xl font-bold">My Earnings</h1>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
@@ -82,12 +82,12 @@ export function MyEarnings() {
         </Card>
       </div>
       
-      <Card className="pt-4">
+      <Card className="pt-3">
         <CardHeader>
           <CardTitle>Earnings Overview</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={280}>
             <LineChart
               data={earningsData}
               margin={{
@@ -113,14 +113,14 @@ export function MyEarnings() {
       </Card>
       
       <Tabs defaultValue="transactions" className="w-full">
-        <TabsList className="mb-4">
+        <TabsList className="mb-3">
           <TabsTrigger value="transactions">Payment History</TabsTrigger>
           <TabsTrigger value="upcoming">Upcoming Payments</TabsTrigger>
         </TabsList>
         
         <TabsContent value="transactions">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-row items-center justify-between py-3">
               <CardTitle>Payment History</CardTitle>
               <Button variant="outline" size="sm">
                 <Download className="mr-2 h-4 w-4" />

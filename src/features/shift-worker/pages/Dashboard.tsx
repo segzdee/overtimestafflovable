@@ -1,4 +1,3 @@
-
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { StatsOverview } from "../components/StatsOverview";
@@ -52,8 +51,8 @@ export function ShiftWorkerDashboard() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1">
@@ -69,7 +68,7 @@ export function ShiftWorkerDashboard() {
       
       <StatsOverview />
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <div className="lg:col-span-2">
           <ShiftWorkerStats 
             weeklyProgress={weeklyProgress} 
@@ -84,7 +83,7 @@ export function ShiftWorkerDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div>
                 <div className="flex justify-between text-sm mb-1">
                   <span>Punctuality</span>
@@ -126,13 +125,13 @@ export function ShiftWorkerDashboard() {
         </Card>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <UpcomingShifts shifts={upcomingShifts} />
         <RecentEarnings earnings={recentEarnings} />
       </div>
       
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-4">Available Shifts</h2>
+      <div className="mt-4">
+        <h2 className="text-xl font-semibold mb-3">Available Shifts</h2>
         <AvailableShiftsTable shifts={availableShifts} onApply={handleApplyShift} />
       </div>
     </div>

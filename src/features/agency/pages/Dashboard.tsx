@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,8 +42,8 @@ export function AgencyDashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Agency Dashboard</h1>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1">
@@ -59,7 +58,7 @@ export function AgencyDashboardPage() {
       </div>
       
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <StatsCard 
           title="Active Workers" 
           value="42" 
@@ -88,27 +87,27 @@ export function AgencyDashboardPage() {
       
       {/* Staff Table */}
       <Card className="hover:shadow-md transition-shadow">
-        <CardHeader className="flex flex-row items-center justify-between py-4 px-6">
+        <CardHeader className="flex flex-row items-center justify-between py-3 px-4">
           <CardTitle className="text-lg font-medium">Worker Roster</CardTitle>
           <Button className="text-sm bg-blue-600 text-white px-3 py-1 rounded">
             + Add Worker
           </Button>
         </CardHeader>
-        <CardContent className="px-6">
+        <CardContent className="px-4">
           <AgencyStaffTable staff={agencyStaff} onViewProfile={handleViewStaffProfile} />
         </CardContent>
       </Card>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <ActiveShiftsCard shifts={activeShifts} />
         <TopClientsCard clients={topClients} />
         <Card className="hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between py-4 px-6">
+          <CardHeader className="flex flex-row items-center justify-between py-3 px-4">
             <CardTitle className="text-lg font-medium">Staff Status</CardTitle>
             <Button variant="outline" size="sm">View All</Button>
           </CardHeader>
-          <CardContent className="px-6">
-            <div className="space-y-3">
+          <CardContent className="px-4">
+            <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="font-medium">On Shift</h3>
@@ -148,7 +147,7 @@ export function AgencyDashboardPage() {
       
       {/* Revenue Chart */}
       <Card className="hover:shadow-md transition-shadow">
-        <CardHeader className="flex flex-row items-center justify-between py-4 px-6">
+        <CardHeader className="flex flex-row items-center justify-between py-3 px-4">
           <CardTitle className="text-lg font-medium">Revenue Overview</CardTitle>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" className="text-xs">Monthly</Button>
@@ -156,7 +155,7 @@ export function AgencyDashboardPage() {
             <Button variant="outline" size="sm" className="text-xs bg-blue-50">Annual</Button>
           </div>
         </CardHeader>
-        <CardContent className="px-6">
+        <CardContent className="px-4">
           <RevenueChart />
         </CardContent>
       </Card>
