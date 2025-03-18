@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -411,7 +410,7 @@ export function Settings() {
               </Button>
               
               <Button variant="outline" className="w-full justify-start" onClick={() => handleSaveSettings('security')}>
-                <Language className="mr-2 h-4 w-4" />
+                <Languages className="mr-2 h-4 w-4" />
                 View Login Activity
               </Button>
             </CardContent>
