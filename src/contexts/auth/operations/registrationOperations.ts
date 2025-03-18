@@ -11,24 +11,28 @@ export const register = async (
   category?: string
 ) => {
   // Use the registration service for improved reliability
-  const registrationResult = await executeWithConnectionRetry(
-    async () => registrationService.register({
-      email,
-      password,
-      role,
-      name,
-      category
-    }),
+  const result = await executeWithConnectionRetry(
+    async () => {
+      const response = await registrationService.register({
+        email,
+        password,
+        role,
+        name,
+        category
+      });
+      
+      if (!response.success) {
+        throw new Error(response.message || "Registration failed");
+      }
+      
+      return response;
+    },
     { criticalOperation: true }
   );
   
-  if (!registrationResult.success) {
-    throw new Error(registrationResult.message || "Registration failed");
-  }
-  
   return {
     success: true,
-    userId: registrationResult.userId,
-    message: registrationResult.message
+    userId: result.userId,
+    message: result.message
   };
 };

@@ -20,7 +20,7 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 
 // Initialize connection handling
-const cleanupConnectionHandling = initConnectionHandling();
+initConnectionHandling();
 
 // Ensure the DOM is fully loaded before rendering
 document.addEventListener('DOMContentLoaded', () => {
@@ -38,9 +38,5 @@ document.addEventListener('DOMContentLoaded', () => {
   );
 });
 
-// Clean up connection handling when the app is unmounted
-window.addEventListener('unload', () => {
-  if (cleanupConnectionHandling) {
-    cleanupConnectionHandling();
-  }
-});
+// The unload event handler for cleanup is not needed anymore since 
+// we're not storing the result of initConnectionHandling()

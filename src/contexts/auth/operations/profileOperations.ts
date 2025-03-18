@@ -1,4 +1,3 @@
-
 import { supabase } from "@/lib/supabase/client";
 import { AuthUser, AIToken } from "../types";
 import { executeWithConnectionRetry } from "@/lib/robust-connection-handler";
@@ -11,9 +10,9 @@ export const updateProfile = async (
   toast: any
 ) => {
   try {
-    const result = await executeWithConnectionRetry(
+    await executeWithConnectionRetry(
       async () => {
-        const { error } = await supabase
+        const response = await supabase
           .from('profiles')
           .update({
             ...profileData,
@@ -22,8 +21,8 @@ export const updateProfile = async (
           })
           .eq('id', userId);
           
-        if (error) throw error;
-        return { success: true };
+        if (response.error) throw response.error;
+        return response;
       },
       {
         maxRetries: 3,
@@ -32,24 +31,22 @@ export const updateProfile = async (
     );
 
     // Get the updated profile data
-    const profileResult = await executeWithConnectionRetry(
+    const updatedProfile = await executeWithConnectionRetry(
       async () => {
-        const { data, error } = await supabase
+        const response = await supabase
           .from('profiles')
           .select('*')
           .eq('id', userId)
           .single();
           
-        if (error) throw error;
-        return data;
+        if (response.error) throw response.error;
+        return response.data;
       },
       {
         maxRetries: 2,
         criticalOperation: true
       }
     );
-
-    const updatedProfile = profileResult;
 
     if (updatedProfile) {
       setUser((prev: AuthUser | null) => prev ? {
