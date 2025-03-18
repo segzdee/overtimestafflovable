@@ -19,7 +19,7 @@ import {
   DollarSign,
   LogOut,
   HelpCircle,
-  Language,
+  Languages,
   Plus
 } from "lucide-react";
 
