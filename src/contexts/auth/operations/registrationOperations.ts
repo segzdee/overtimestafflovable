@@ -11,7 +11,7 @@ export const register = async (
   category?: string
 ) => {
   // Use the registration service for improved reliability
-  const result = await executeWithConnectionRetry(
+  const registrationResult = await executeWithConnectionRetry(
     async () => registrationService.register({
       email,
       password,
@@ -22,13 +22,13 @@ export const register = async (
     { criticalOperation: true }
   );
   
-  if (!result.success) {
-    throw new Error(result.message);
+  if (!registrationResult.success) {
+    throw new Error(registrationResult.message);
   }
   
   return {
     success: true,
-    userId: result.userId,
-    message: result.message
+    userId: registrationResult.userId,
+    message: registrationResult.message
   };
 };

@@ -11,7 +11,7 @@ export const updateProfile = async (
   toast: any
 ) => {
   try {
-    const result = await executeWithConnectionRetry(
+    const updateResult = await executeWithConnectionRetry(
       async () => {
         const { error } = await supabase
           .from('profiles')
@@ -23,7 +23,7 @@ export const updateProfile = async (
           .eq('id', userId);
           
         if (error) throw error;
-        return { success: true, error: null };
+        return { success: true };
       },
       {
         maxRetries: 3,
@@ -31,10 +31,8 @@ export const updateProfile = async (
       }
     );
 
-    if (result.error) throw result.error;
-
     // Get the updated profile data
-    const result2 = await executeWithConnectionRetry(
+    const profileResult = await executeWithConnectionRetry(
       async () => {
         const { data, error } = await supabase
           .from('profiles')
@@ -43,7 +41,7 @@ export const updateProfile = async (
           .single();
           
         if (error) throw error;
-        return { data, error: null };
+        return data;
       },
       {
         maxRetries: 2,
@@ -51,8 +49,7 @@ export const updateProfile = async (
       }
     );
 
-    if (result2.error) throw result2.error;
-    const updatedProfile = result2.data;
+    const updatedProfile = profileResult;
 
     if (updatedProfile) {
       setUser((prev: AuthUser | null) => prev ? {
@@ -132,8 +129,6 @@ export const updateNotificationPreferences = async (
         criticalOperation: false
       }
     );
-
-    if (result.error) throw result.error;
 
     setUser(currentUser => {
       if (!currentUser) return null;

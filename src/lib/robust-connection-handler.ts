@@ -111,7 +111,7 @@ export async function executeWithConnectionRetry<T>(
     retryDelay?: number;
     criticalOperation?: boolean;
   } = {}
-): Promise<{ success: boolean; result?: T; error: Error | null }> {
+): Promise<T> {
   const { 
     maxRetries = 3, 
     retryDelay = 1000,
@@ -134,16 +134,13 @@ export async function executeWithConnectionRetry<T>(
       
       // Attempt the operation
       const result = await operation();
-      return { success: true, result, error: null };
+      return result;
     } catch (error) {
       attempts++;
       
       // If it's a network error or we've reached max retries
       if (attempts > maxRetries || !isNetworkError(error)) {
-        return { 
-          success: false, 
-          error: error instanceof Error ? error : new Error(String(error))
-        };
+        throw error instanceof Error ? error : new Error(String(error));
       }
       
       // Exponential backoff
@@ -153,10 +150,7 @@ export async function executeWithConnectionRetry<T>(
     }
   }
   
-  return { 
-    success: false, 
-    error: new Error(`Failed after ${maxRetries} attempts`)
-  };
+  throw new Error(`Failed after ${maxRetries} attempts`);
 }
 
 /**

@@ -13,7 +13,7 @@ export const login = async (
 ) => {
   try {
     // Use connection-resilient executor for login
-    const { user } = await executeWithConnectionRetry(
+    const signInResult = await executeWithConnectionRetry(
       async () => {
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
@@ -32,12 +32,12 @@ export const login = async (
     );
 
     // Get user profile to determine where to redirect
-    const profile = await executeWithConnectionRetry(
+    const profileData = await executeWithConnectionRetry(
       async () => {
         const { data, error } = await supabase
           .from('profiles')
           .select('role')
-          .eq('id', user.id)
+          .eq('id', signInResult.user.id)
           .maybeSingle();
           
         if (error) throw error;
@@ -58,7 +58,7 @@ export const login = async (
     });
     
     // Redirect based on user role
-    switch (profile.role) {
+    switch (profileData.role) {
       case 'shift-worker':
         navigate('/dashboard/shift-worker');
         break;
@@ -91,7 +91,7 @@ export const loginWithToken = async (
 ) => {
   try {
     // Check Supabase connection with retry logic
-    const { user } = await executeWithConnectionRetry(
+    const userData = await executeWithConnectionRetry(
       async () => {
         const { data, error } = await supabase.auth.getUser(token);
         
@@ -107,7 +107,7 @@ export const loginWithToken = async (
     );
 
     // Get the user's profile
-    const profile = await getProfileByUserId(user.id);
+    const profile = await getProfileByUserId(userData.user.id);
 
     // Get notification preferences
     const notificationPrefs = await getNotificationPreferences(profile.id);
@@ -118,7 +118,7 @@ export const loginWithToken = async (
       role: profile.role,
       name: profile.name,
       profileComplete: profile.profile_complete,
-      emailVerified: user.email_confirmed_at ? true : false,
+      emailVerified: userData.user.email_confirmed_at ? true : false,
       verificationStatus: 'pending',
       notificationPreferences: notificationPrefs || {
         id: 0,
