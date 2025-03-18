@@ -1,17 +1,17 @@
 
 import React from 'react';
-import { HeroSection } from '@/components/home/HeroSection';
+import HeroSection from '@/components/home/HeroSection';
 import { Header } from '@/components/layout/Header';
-import { HowItWorks } from '@/components/home/HowItWorks';
-import { MarketUpdates } from '@/components/home/MarketUpdates';
-import { LoginCards } from '@/components/home/LoginCards';
-import { Footer } from '@/components/layout/Footer';
+import HowItWorks from '@/components/home/HowItWorks';
+import MarketUpdates from '@/components/home/MarketUpdates';
+import LoginCards from '@/components/home/LoginCards';
+import Footer from '@/components/layout/Footer';
 
 const Home = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation Header */}
-      <Header />
+      <Header notifications={3} />
       
       {/* Main Content */}
       <main className="flex-1">
