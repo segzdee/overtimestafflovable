@@ -1,10 +1,14 @@
 
+import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 import { StatsOverview } from "../components/StatsOverview";
 import { UpcomingShifts } from "../components/UpcomingShifts";
 import { RecentEarnings } from "../components/RecentEarnings";
 import { AvailableShiftsTable } from "../components/AvailableShiftsTable";
-import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { ShiftWorkerStats } from "../components/ShiftWorkerStats";
+import { CalendarDays, Clock, TrendingUp } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export function ShiftWorkerDashboard() {
   const { toast } = useToast();
@@ -41,11 +45,86 @@ export function ShiftWorkerDashboard() {
     });
   };
 
+  const [performanceData] = useState({
+    punctuality: 98,
+    customerRating: 4.9,
+    completionRate: 100,
+  });
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1">
+            <Clock className="h-4 w-4" />
+            <span>Set Availability</span>
+          </Button>
+          <Button size="sm" className="bg-primary text-white flex items-center gap-1">
+            <CalendarDays className="h-4 w-4" />
+            <span>Find Shifts</span>
+          </Button>
+        </div>
+      </div>
       
       <StatsOverview />
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <ShiftWorkerStats 
+            weeklyProgress={weeklyProgress} 
+            availableShiftsCount={availableShifts.length} 
+          />
+        </div>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              Performance Metrics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span>Punctuality</span>
+                  <span className="font-medium">{performanceData.punctuality}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                  <div 
+                    className="bg-green-500 h-1.5 rounded-full" 
+                    style={{ width: `${performanceData.punctuality}%` }}
+                  ></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span>Customer Rating</span>
+                  <span className="font-medium">{performanceData.customerRating}/5.0</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                  <div 
+                    className="bg-primary h-1.5 rounded-full" 
+                    style={{ width: `${(performanceData.customerRating/5)*100}%` }}
+                  ></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span>Completion Rate</span>
+                  <span className="font-medium">{performanceData.completionRate}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                  <div 
+                    className="bg-blue-500 h-1.5 rounded-full" 
+                    style={{ width: `${performanceData.completionRate}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <UpcomingShifts shifts={upcomingShifts} />

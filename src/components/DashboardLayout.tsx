@@ -19,8 +19,12 @@ import {
   X,
   LogOut,
   User,
+  Briefcase,
+  MapPin,
+  MessageSquare,
+  Home,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -31,6 +35,7 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -39,61 +44,68 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children, className }: DashboardLayoutProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notifications] = useState(3);
   
   const getMenuItems = () => {
     switch (user?.role) {
       case 'agency':
         return [
           { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/agency" },
-          { icon: Users, label: "Worker Roster", path: "/workers" },
-          { icon: Building2, label: "Clients", path: "/clients" },
-          { icon: CalendarDays, label: "Shift Management", path: "/shifts" },
-          { icon: DollarSign, label: "Finance", path: "/finance" },
-          { icon: Bell, label: "Announcements", path: "/announcements" },
-          { icon: Settings, label: "Settings", path: "/settings" },
+          { icon: Users, label: "Worker Roster", path: "/dashboard/agency/workers" },
+          { icon: Building2, label: "Clients", path: "/dashboard/agency/clients" },
+          { icon: CalendarDays, label: "Shift Management", path: "/dashboard/agency/shifts" },
+          { icon: DollarSign, label: "Finance", path: "/dashboard/agency/finance" },
+          { icon: Bell, label: "Announcements", path: "/dashboard/agency/announcements" },
+          { icon: Settings, label: "Settings", path: "/dashboard/agency/settings" },
         ];
       case 'company':
         return [
           { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/company" },
-          { icon: CalendarDays, label: "Shift Posts", path: "/shifts" },
-          { icon: Users, label: "Applicants", path: "/applicants" },
-          { icon: DollarSign, label: "Payments", path: "/payments" },
-          { icon: FileText, label: "Work Reports", path: "/reports" },
-          { icon: Bell, label: "Announcements", path: "/announcements" },
-          { icon: Settings, label: "Settings", path: "/settings" },
+          { icon: CalendarDays, label: "Shift Posts", path: "/dashboard/company/shifts" },
+          { icon: Users, label: "Applicants", path: "/dashboard/company/applicants" },
+          { icon: DollarSign, label: "Payments", path: "/dashboard/company/payments" },
+          { icon: FileText, label: "Work Reports", path: "/dashboard/company/reports" },
+          { icon: Bell, label: "Announcements", path: "/dashboard/company/announcements" },
+          { icon: Settings, label: "Settings", path: "/dashboard/company/settings" },
         ];
-      case 'shift-worker':
+      case 'shift_worker':
+      default:
         return [
           { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/shift-worker" },
-          { icon: Clock, label: "Availability", path: "/availability" },
-          { icon: Search, label: "Find Shifts", path: "/find-shifts" },
-          { icon: ChevronRight, label: "Performance", path: "/performance" },
-          { icon: DollarSign, label: "Earnings", path: "/earnings" },
-          { icon: Bell, label: "Notifications", path: "/notifications" },
-          { icon: Settings, label: "Settings", path: "/settings" },
+          { icon: CalendarDays, label: "My Shifts", path: "/dashboard/shift-worker/shifts" },
+          { icon: DollarSign, label: "My Earnings", path: "/dashboard/shift-worker/earnings" },
+          { icon: Search, label: "Find Shifts", path: "/dashboard/shift-worker/find-shifts" },
+          { icon: Building2, label: "Companies", path: "/dashboard/shift-worker/companies" },
+          { icon: Users, label: "Teams", path: "/dashboard/shift-worker/teams" },
+          { icon: MessageSquare, label: "Messages", path: "/dashboard/shift-worker/messages", badge: notifications },
+          { icon: User, label: "Profile", path: "/dashboard/shift-worker/profile" },
+          { icon: Settings, label: "Settings", path: "/dashboard/shift-worker/settings" },
         ];
       case 'admin':
         return [
           { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/admin" },
-          { icon: Users, label: "User Management", path: "/users" },
-          { icon: Building2, label: "Organizations", path: "/organizations" },
-          { icon: FileText, label: "Reports", path: "/reports" },
-          { icon: Bell, label: "System Alerts", path: "/alerts" },
-          { icon: Settings, label: "System Settings", path: "/settings" },
+          { icon: Users, label: "User Management", path: "/dashboard/admin/users" },
+          { icon: Building2, label: "Organizations", path: "/dashboard/admin/organizations" },
+          { icon: FileText, label: "Reports", path: "/dashboard/admin/reports" },
+          { icon: Bell, label: "System Alerts", path: "/dashboard/admin/alerts" },
+          { icon: Settings, label: "System Settings", path: "/dashboard/admin/settings" },
         ];
-      default:
-        return [];
     }
   };
 
   const menuItems = getMenuItems();
   const portalType = user?.role === 'agency' ? 'Agency Portal' : 
                     user?.role === 'company' ? 'Business Portal' : 
-                    user?.role === 'shift-worker' ? 'Staff Portal' : 
+                    user?.role === 'shift_worker' ? 'Staff Portal' : 
                     user?.role === 'admin' ? 'Admin Portal' :
-                    'Portal';
+                    'Staff Portal';
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
     <div className="min-h-screen bg-[#f8f9fc]">
@@ -121,6 +133,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
       )}>
         <div className="h-20 flex items-center justify-center border-b border-gray-100">
           <Logo className="h-8 transition-transform duration-200 hover:scale-105" />
+          <span className="ml-2 font-semibold text-lg">ShiftMate</span>
         </div>
 
         <div className="p-4">
@@ -135,14 +148,26 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                   setSidebarOpen(false);
                 }}
                 className={cn(
-                  "w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg",
-                  "text-[#525f7f] hover:text-primary hover:bg-[#f6f9fc]",
+                  "w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg",
+                  isActive(item.path)
+                    ? "bg-primary/10 text-primary"
+                    : "text-[#525f7f] hover:text-primary hover:bg-[#f6f9fc]",
                   "transition-all duration-200 hover:translate-x-1",
                   "active:scale-95"
                 )}
               >
-                <item.icon className="h-5 w-5 text-gray-400 transition-transform duration-200 group-hover:text-primary" />
-                {item.label}
+                <div className="flex items-center gap-3">
+                  <item.icon className={cn(
+                    "h-5 w-5", 
+                    isActive(item.path) ? "text-primary" : "text-gray-400"
+                  )} />
+                  {item.label}
+                </div>
+                {item.badge && (
+                  <Badge variant="default" className="bg-primary text-white">
+                    {item.badge}
+                  </Badge>
+                )}
               </button>
             ))}
           </div>
@@ -158,8 +183,8 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-sm font-medium">{user?.name || "User"}</p>
-                <p className="text-xs text-muted-foreground">{user?.role || "Role"}</p>
+                <p className="text-sm font-medium">{user?.name || "Staff Member"}</p>
+                <p className="text-xs text-muted-foreground">{user?.role || "Shift Worker"}</p>
               </div>
             </div>
             <DropdownMenu>
@@ -171,10 +196,10 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/dashboard/shift-worker/profile")}>
                   <User className="mr-2 h-4 w-4" /> Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/dashboard/shift-worker/settings")}>
                   <Settings className="mr-2 h-4 w-4" /> Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -195,14 +220,25 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
         {/* Header */}
         <div className="bg-gradient-to-r from-primary to-primary/80 pb-20 pt-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 className="text-white text-2xl font-semibold">{portalType}</h1>
+            <div>
+              <h1 className="text-white text-2xl font-semibold">{portalType}</h1>
+              <p className="text-white/80 text-sm mt-1">Welcome back, {user?.name || "User"}</p>
+            </div>
             <div className="flex items-center gap-4">
-              <Button variant="ghost" className="text-white hover:bg-white/10">
+              <Button variant="ghost" className="text-white hover:bg-white/10 relative">
                 <Bell className="h-5 w-5" />
+                {notifications > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">
+                    {notifications}
+                  </span>
+                )}
               </Button>
-              <Button variant="ghost" className="text-white hover:bg-white/10">
-                <Settings className="h-5 w-5" />
-              </Button>
+              <Avatar className="h-9 w-9 border-2 border-white/50">
+                <AvatarImage src="" alt={user?.name || "User"} />
+                <AvatarFallback className="bg-primary-700 text-white">
+                  {user?.name?.charAt(0) || "U"}
+                </AvatarFallback>
+              </Avatar>
             </div>
           </div>
         </div>
