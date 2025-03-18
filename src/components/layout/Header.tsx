@@ -1,55 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import { Logo } from '@/components/ui/logo';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
-import MobileMenu from './MobileMenu';
-const Header: React.FC = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-  return <header className={`sticky top-0 z-40 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-sm shadow-md py-2' : 'bg-white py-3'}`}>
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <Logo />
+
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { LogOut, User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/auth";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+
+export function Header() {
+  const { user, logout } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account",
+      });
+      navigate('/login');
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Logout failed",
+        description: "There was an error logging out",
+      });
+    }
+  };
+
+  return (
+    <div className="bg-white border-b shadow-sm py-2 px-4">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="flex items-center">
+          <User className="h-4 w-4 text-gray-500 mr-2" />
+          <p className="text-gray-700 text-sm">
+            Welcome, <span className="font-medium">{user?.name || "User"}</span>
+          </p>
+        </div>
         
-        {/* Mobile menu button */}
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label={mobileMenuOpen ? "Close menu" : "Open menu"} className="md:hidden p-2 text-gray-600 hover:text-purple-600 focus:outline-none transition-colors bg-violet-300">
-          {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
-        
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-6 lg:gap-8">
-          <Link to="/find-shifts" className="text-base text-gray-700 hover:text-purple-600 transition-colors font-medium">
-            Find Extra Shifts
-          </Link>
-          <Link to="/find-staff" className="text-base text-gray-700 hover:text-purple-600 transition-colors font-medium">
-            Find Extra Staff
-          </Link>
-          <Link to="/login" className="text-base text-gray-700 hover:text-purple-600 transition-colors font-medium">
-            Login
-          </Link>
-          <Link to="/register">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 shadow-sm hover:shadow-md transition-all">
-              Sign up
-            </Button>
-          </Link>
+        <div className="flex items-center gap-3">
+          <Avatar className="h-8 w-8 border border-gray-200">
+            <AvatarImage src="" alt={user?.name || "User"} />
+            <AvatarFallback className="bg-primary-700 text-white text-xs">
+              {user?.name?.charAt(0) || "U"}
+            </AvatarFallback>
+          </Avatar>
+          
+          <Button 
+            onClick={handleLogout}
+            variant="ghost" 
+            size="sm" 
+            className="text-gray-700 hover:bg-gray-100 flex items-center"
+          >
+            <LogOut className="h-4 w-4 mr-1" />
+            <span className="hidden sm:inline">Logout</span>
+          </Button>
         </div>
       </div>
-      
-      {/* Mobile Menu Dropdown with animation */}
-      <div className={`md:hidden overflow-hidden transition-all duration-300 ${mobileMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
-        {mobileMenuOpen && <MobileMenu onLinkClick={() => setMobileMenuOpen(false)} />}
-      </div>
-    </header>;
-};
-export default Header;
+    </div>
+  );
+}
