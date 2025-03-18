@@ -30,6 +30,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/components/ui/use-toast";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -39,8 +40,26 @@ interface SidebarProps {
 export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
   const [notifications] = React.useState(3);
+  
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account",
+      });
+      navigate('/login');
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Logout failed",
+        description: "There was an error logging out",
+      });
+    }
+  };
   
   const getMenuItems = () => {
     switch (user?.role) {
@@ -90,11 +109,11 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   };
 
   const menuItems = getMenuItems();
-  const portalType = user?.role === 'agency' ? 'Agency Portal' : 
-                    user?.role === 'company' ? 'Business Portal' : 
-                    user?.role === 'shift-worker' ? 'Staff Portal' : 
-                    user?.role === 'admin' ? 'Admin Portal' :
-                    'Staff Portal';
+  const userRoleName = user?.role === 'agency' ? 'Agency' : 
+                    user?.role === 'company' ? 'Business' : 
+                    user?.role === 'shift-worker' ? 'Worker' : 
+                    user?.role === 'admin' ? 'Administrator' :
+                    'Worker';
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -106,12 +125,26 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       "backdrop-blur-lg backdrop-filter",
       sidebarOpen ? "translate-x-0" : "-translate-x-full"
     )}>
-      <div className="h-20 flex items-center justify-center border-b border-gray-100">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
         <Logo className="h-8 transition-transform duration-200 hover:scale-105" />
+        <Button variant="ghost" size="sm" className="lg:hidden" onClick={() => setSidebarOpen(false)}>
+          <LogOut className="h-4 w-4" />
+        </Button>
       </div>
 
       <div className="p-4">
-        <p className="text-sm font-semibold text-[#8898aa] uppercase mb-4 tracking-wider">{portalType}</p>
+        <div className="flex items-center mb-4">
+          <Avatar className="h-10 w-10 mr-3">
+            <AvatarImage src="" alt={user?.name || "User"} />
+            <AvatarFallback className="bg-primary/10 text-primary">
+              {user?.name?.charAt(0) || "U"}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="text-sm font-semibold">{user?.name || "User"}</p>
+            <p className="text-xs text-gray-500">{userRoleName}</p>
+          </div>
+        </div>
         
         <div className="space-y-1">
           {menuItems.map((item) => (
@@ -122,7 +155,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
                 setSidebarOpen(false);
               }}
               className={cn(
-                "w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg",
+                "w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-lg",
                 isActive(item.path)
                   ? "bg-primary/10 text-primary"
                   : "text-[#525f7f] hover:text-primary hover:bg-[#f6f9fc]",
@@ -148,41 +181,14 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-9 w-9">
-              <AvatarImage src="" alt={user?.name || "User"} />
-              <AvatarFallback className="bg-primary/10 text-primary">
-                {user?.name?.charAt(0) || "U"}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-sm font-medium">{user?.name || "Staff Member"}</p>
-              <p className="text-xs text-muted-foreground">{user?.role || "Shift Worker"}</p>
-            </div>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/dashboard/shift-worker/profile")}>
-                <User className="mr-2 h-4 w-4" /> Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/dashboard/shift-worker/settings")}>
-                <Settings className="mr-2 h-4 w-4" /> Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer" onClick={() => logout()}>
-                <LogOut className="mr-2 h-4 w-4" /> Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <Button 
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700"
+          size="sm"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </Button>
       </div>
     </nav>
   );
