@@ -1,10 +1,9 @@
 
 import { supabase } from "@/lib/supabase/client";
 import { executeWithConnectionRetry } from "@/lib/robust-connection-handler";
-import { NavigateFunction } from "react-router-dom";
 import { AuthUser } from "../types";
 
-export const login = async (email: string, password: string, navigate?: NavigateFunction, toast?: any) => {
+export const login = async (email: string, password: string) => {
   try {
     const result = await executeWithConnectionRetry(
       async () => {
@@ -23,27 +22,12 @@ export const login = async (email: string, password: string, navigate?: Navigate
       { criticalOperation: true }
     );
 
-    if (navigate && toast) {
-      toast({
-        title: "Login successful",
-        description: "Welcome back!"
-      });
-      navigate("/dashboard");
-    }
-
     return {
       user: result.data.user || null,
       session: result.data.session || null,
     };
   } catch (error: any) {
     console.error("Login error:", error);
-    if (toast) {
-      toast({
-        variant: "destructive",
-        title: "Login failed",
-        description: error.message || "Invalid credentials"
-      });
-    }
     throw error;
   }
 };
