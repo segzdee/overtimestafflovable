@@ -1,75 +1,47 @@
 
-import React, { useState, useEffect } from 'react';
-import { Logo } from '@/components/ui/logo';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
-import MobileMenu from './MobileMenu';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Bell } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/auth";
 
-const Header: React.FC = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+interface HeaderProps {
+  notifications: number;
+}
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+export function Header({ notifications }: HeaderProps) {
+  const { user } = useAuth();
+  
+  const portalType = user?.role === 'agency' ? 'Agency Portal' : 
+                    user?.role === 'company' ? 'Business Portal' : 
+                    user?.role === 'shift-worker' ? 'Staff Portal' : 
+                    user?.role === 'admin' ? 'Admin Portal' :
+                    'Staff Portal';
 
   return (
-    <header className={`sticky top-0 z-40 transition-all duration-300 ${
-      scrolled ? 'bg-white/95 backdrop-blur-sm shadow-md py-2' : 'bg-white py-3'
-    }`}>
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <Logo />
-        
-        {/* Mobile menu button */}
-        <button 
-          className="md:hidden p-2 text-gray-600 hover:text-purple-600 focus:outline-none transition-colors"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-        >
-          {mobileMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
-        
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-6 lg:gap-8">
-          <Link to="/find-shifts" className="text-base text-gray-700 hover:text-purple-600 transition-colors font-medium">
-            Find Extra Shifts
-          </Link>
-          <Link to="/find-staff" className="text-base text-gray-700 hover:text-purple-600 transition-colors font-medium">
-            Find Extra Staff
-          </Link>
-          <Link to="/login" className="text-base text-gray-700 hover:text-purple-600 transition-colors font-medium">
-            Login
-          </Link>
-          <Link to="/register">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 shadow-sm hover:shadow-md transition-all">
-              Sign up
-            </Button>
-          </Link>
+    <div className="bg-gradient-to-r from-primary to-primary/80 pb-20 pt-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div>
+          <h1 className="text-white text-2xl font-semibold">{portalType}</h1>
+          <p className="text-white/80 text-sm mt-1">Welcome back, {user?.name || "User"}</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" className="text-white hover:bg-white/10 relative">
+            <Bell className="h-5 w-5" />
+            {notifications > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">
+                {notifications}
+              </span>
+            )}
+          </Button>
+          <Avatar className="h-9 w-9 border-2 border-white/50">
+            <AvatarImage src="" alt={user?.name || "User"} />
+            <AvatarFallback className="bg-primary-700 text-white">
+              {user?.name?.charAt(0) || "U"}
+            </AvatarFallback>
+          </Avatar>
         </div>
       </div>
-      
-      {/* Mobile Menu Dropdown with animation */}
-      <div className={`md:hidden overflow-hidden transition-all duration-300 ${
-        mobileMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
-      }`}>
-        {mobileMenuOpen && <MobileMenu onLinkClick={() => setMobileMenuOpen(false)} />}
-      </div>
-    </header>
+    </div>
   );
-};
-
-export default Header;
+}
