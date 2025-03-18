@@ -13,17 +13,17 @@ export const login = async (
 ) => {
   try {
     // Use connection-resilient executor for login
-    const signInResult = await executeWithConnectionRetry(
+    const { data, error } = await executeWithConnectionRetry(
       async () => {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const result = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         
-        if (error) throw error;
-        if (!data.user) throw new Error('No user returned from sign in');
+        if (result.error) throw result.error;
+        if (!result.data.user) throw new Error('No user returned from sign in');
         
-        return data;
+        return result.data;
       },
       {
         maxRetries: 4,
@@ -34,16 +34,16 @@ export const login = async (
     // Get user profile to determine where to redirect
     const profileData = await executeWithConnectionRetry(
       async () => {
-        const { data, error } = await supabase
+        const result = await supabase
           .from('profiles')
           .select('role')
-          .eq('id', signInResult.user.id)
+          .eq('id', data.user.id)
           .maybeSingle();
           
-        if (error) throw error;
-        if (!data) throw new Error('User profile not found');
+        if (result.error) throw result.error;
+        if (!result.data) throw new Error('User profile not found');
         
-        return data;
+        return result.data;
       },
       {
         maxRetries: 3,
@@ -91,14 +91,14 @@ export const loginWithToken = async (
 ) => {
   try {
     // Check Supabase connection with retry logic
-    const userData = await executeWithConnectionRetry(
+    const { data, error } = await executeWithConnectionRetry(
       async () => {
-        const { data, error } = await supabase.auth.getUser(token);
+        const result = await supabase.auth.getUser(token);
         
-        if (error) throw error;
-        if (!data.user) throw new Error('Invalid token');
+        if (result.error) throw result.error;
+        if (!result.data.user) throw new Error('Invalid token');
         
-        return data;
+        return result.data;
       },
       {
         maxRetries: 3,
@@ -107,7 +107,7 @@ export const loginWithToken = async (
     );
 
     // Get the user's profile
-    const profile = await getProfileByUserId(userData.user.id);
+    const profile = await getProfileByUserId(data.user.id);
 
     // Get notification preferences
     const notificationPrefs = await getNotificationPreferences(profile.id);
@@ -118,7 +118,7 @@ export const loginWithToken = async (
       role: profile.role,
       name: profile.name,
       profileComplete: profile.profile_complete,
-      emailVerified: userData.user.email_confirmed_at ? true : false,
+      emailVerified: data.user.email_confirmed_at ? true : false,
       verificationStatus: 'pending',
       notificationPreferences: notificationPrefs || {
         id: 0,

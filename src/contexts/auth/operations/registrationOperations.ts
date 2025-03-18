@@ -23,7 +23,7 @@ export const register = async (
   );
   
   if (!registrationResult.success) {
-    throw new Error(registrationResult.message);
+    throw new Error(registrationResult.message || "Registration failed");
   }
   
   return {

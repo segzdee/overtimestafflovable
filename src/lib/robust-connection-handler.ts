@@ -1,227 +1,213 @@
 
 /**
- * Provides robust connection handling functionality for the application
- * This helps detect network issues and manage offline/online states
+ * Connection resilience utilities for handling network errors and retry logic
  */
 
-// Store connection state
-let isOnline = navigator.onLine;
-const listeners: Array<(online: boolean) => void> = [];
+// Track connection state
+let isConnected = navigator.onLine;
+const connectionListeners: Array<(connected: boolean) => void> = [];
 
-/**
- * Initialize connection handling by setting up event listeners
- * for online and offline events
- */
-export function initConnectionHandling() {
-  // Set up event listeners for connection changes
-  window.addEventListener('online', handleConnectionChange);
-  window.addEventListener('offline', handleConnectionChange);
-  
-  // Initial connection status
-  isOnline = navigator.onLine;
-  console.log(`Initial connection status: ${isOnline ? 'Online' : 'Offline'}`);
-  
-  return () => {
-    // Cleanup function
-    window.removeEventListener('online', handleConnectionChange);
-    window.removeEventListener('offline', handleConnectionChange);
-  };
-}
+// Function to check if we're connected to the internet
+export async function checkConnection(): Promise<boolean> {
+  if (!navigator.onLine) return false;
 
-/**
- * Handle connection change events (online/offline)
- */
-function handleConnectionChange() {
-  const wasOnline = isOnline;
-  isOnline = navigator.onLine;
-  
-  // Only notify if the state actually changed
-  if (wasOnline !== isOnline) {
-    console.log(`Connection status changed: ${isOnline ? 'Online' : 'Offline'}`);
-    // Notify all listeners
-    listeners.forEach(listener => listener(isOnline));
-  }
-}
-
-/**
- * Subscribe to connection status changes
- * @param listener Function to call when connection status changes
- * @returns Function to unsubscribe
- */
-export function subscribeToConnectionChanges(listener: (online: boolean) => void) {
-  listeners.push(listener);
-  
-  // Immediately call with current status
-  listener(isOnline);
-  
-  // Return unsubscribe function
-  return () => {
-    const index = listeners.indexOf(listener);
-    if (index !== -1) {
-      listeners.splice(index, 1);
-    }
-  };
-}
-
-/**
- * Check if the application is currently connected to the internet
- * @param testUrl Optional URL to ping to verify connection
- * @returns Promise that resolves to a boolean indicating connection status
- */
-export async function checkConnection(testUrl?: string): Promise<boolean> {
-  // First check the navigator.onLine property
-  if (!navigator.onLine) {
+  try {
+    // Try to fetch a small resource to check actual connectivity
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    const response = await fetch('/favicon.ico', { 
+      method: 'HEAD',
+      signal: controller.signal,
+      cache: 'no-store'
+    });
+    
+    clearTimeout(timeoutId);
+    return response.ok;
+  } catch (e) {
     return false;
   }
-  
-  // If a test URL is provided, try to fetch it to confirm connection
-  if (testUrl) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-      
-      await fetch(testUrl, { 
-        method: 'HEAD',
-        mode: 'no-cors',
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      return true;
-    } catch (error) {
-      console.warn('Connection test failed:', error);
-      return false;
-    }
-  }
-  
-  // If no test URL, just rely on navigator.onLine
-  return isOnline;
 }
 
-/**
- * Execute a function with automatic retry on connection failure
- * @param operation Function to execute 
- * @param options Configuration options
- * @returns Promise with the operation result
- */
+// Function to execute an operation with retry logic
 export async function executeWithConnectionRetry<T>(
   operation: () => Promise<T>,
   options: {
     maxRetries?: number;
     retryDelay?: number;
     criticalOperation?: boolean;
+    onRetry?: (attempt: number) => void;
   } = {}
 ): Promise<T> {
-  const { 
-    maxRetries = 3, 
-    retryDelay = 1000,
-    criticalOperation = false
-  } = options;
+  const maxRetries = options.maxRetries || 3;
+  const retryDelay = options.retryDelay || 1000;
+  const isCritical = options.criticalOperation || false;
   
-  let attempts = 0;
-  
-  while (attempts <= maxRetries) {
+  let attempt = 0;
+
+  while (attempt <= maxRetries) {
     try {
-      // Check connection before attempting critical operations
-      if (criticalOperation && attempts > 0) {
-        const isConnected = await checkConnection();
-        if (!isConnected) {
-          console.log(`Waiting for connection before retry ${attempts}/${maxRetries}...`);
-          await new Promise(resolve => setTimeout(resolve, retryDelay * 2));
-          continue;
+      const connected = await checkConnection();
+      
+      if (!connected) {
+        console.warn('No internet connection detected');
+        
+        if (isCritical) {
+          throw new Error('No internet connection. Please check your connection and try again.');
+        } else {
+          console.warn('Skipping non-critical operation due to connection issues');
+          throw new Error('Operation skipped: No internet connection');
         }
       }
       
-      // Attempt the operation
-      const result = await operation();
-      return result;
-    } catch (error) {
-      attempts++;
+      // Execute the operation
+      return await operation();
       
-      // If it's a network error or we've reached max retries
-      if (attempts > maxRetries || !isNetworkError(error)) {
-        throw error instanceof Error ? error : new Error(String(error));
+    } catch (error) {
+      attempt++;
+      
+      // Check if the error is connection related
+      const isConnectionError = isNetworkError(error);
+      
+      if (isConnectionError && attempt <= maxRetries) {
+        // Log and notify about retry
+        console.warn(`Connection error, retrying (${attempt}/${maxRetries})...`, error);
+        
+        if (options.onRetry) {
+          options.onRetry(attempt);
+        }
+        
+        // Wait before next retry with exponential backoff
+        const backoffDelay = retryDelay * Math.pow(2, attempt - 1);
+        await new Promise(resolve => setTimeout(resolve, backoffDelay));
+        continue;
       }
       
-      // Exponential backoff
-      const delay = retryDelay * Math.pow(2, attempts - 1);
-      console.log(`Operation failed, retrying in ${delay}ms (${attempts}/${maxRetries})`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      // If we've reached max retries or it's not a connection error, throw
+      throw error;
     }
   }
   
-  throw new Error(`Failed after ${maxRetries} attempts`);
+  throw new Error(`Operation failed after ${maxRetries} attempts`);
 }
 
-/**
- * Check if an error is likely a network-related error
- */
+// Function to determine if an error is network related
 function isNetworkError(error: any): boolean {
   if (!error) return false;
   
-  // Check for common network error patterns
-  return (
-    error.name === 'AbortError' ||
-    error.message?.includes('network') ||
-    error.message?.includes('connection') ||
-    error.message?.includes('offline') ||
-    error.message?.includes('timeout') ||
-    error.message?.includes('abort') ||
-    error.code === 'ECONNREFUSED' ||
-    error.code === 'ETIMEDOUT' ||
-    error.code === 'ERR_NETWORK'
+  const errorMessage = error.message || String(error);
+  const networkErrorKeywords = [
+    'network',
+    'internet',
+    'offline',
+    'connection',
+    'unreachable',
+    'timeout',
+    'failed to fetch',
+    'cors',
+    'aborted'
+  ];
+  
+  return networkErrorKeywords.some(keyword => 
+    errorMessage.toLowerCase().includes(keyword)
   );
 }
 
-/**
- * Store information for later processing when back online
- * @param storageKey Key to use in localStorage
- * @param data Data to store
- */
-export function storeForLaterProcessing(storageKey: string, data: any): void {
-  try {
-    const existingData = localStorage.getItem(storageKey);
-    let pendingItems = existingData ? JSON.parse(existingData) : [];
+// Initialize connection monitoring
+export function initConnectionHandling() {
+  // Setup online/offline listeners
+  window.addEventListener('online', () => {
+    console.log('Browser reports online status');
+    updateConnectionState(true);
+  });
+  
+  window.addEventListener('offline', () => {
+    console.log('Browser reports offline status');
+    updateConnectionState(false);
+  });
+  
+  // Periodically check actual connection (browser online event is not always reliable)
+  setInterval(async () => {
+    const connected = await checkConnection();
+    updateConnectionState(connected);
+  }, 30000); // Check every 30 seconds
+  
+  // Initial connection check
+  checkConnection().then(connected => {
+    updateConnectionState(connected);
+  });
+}
+
+// Update the connection state and notify listeners
+function updateConnectionState(connected: boolean) {
+  if (connected !== isConnected) {
+    isConnected = connected;
+    console.log(`Connection state changed: ${connected ? 'online' : 'offline'}`);
     
-    // Ensure pendingItems is an array
-    if (!Array.isArray(pendingItems)) {
-      pendingItems = [pendingItems];
-    }
-    
-    // Add the new item with timestamp
-    pendingItems.push({
-      ...data,
-      timestamp: new Date().toISOString()
-    });
-    
-    localStorage.setItem(storageKey, JSON.stringify(pendingItems));
-    console.log(`Stored item for later processing under ${storageKey}`);
-  } catch (error) {
-    console.error('Error storing data for later processing:', error);
+    // Notify all listeners
+    connectionListeners.forEach(listener => listener(connected));
   }
 }
 
-/**
- * Retrieve information stored for later processing
- * @param storageKey Key used in localStorage
- * @returns Array of stored items or null if none found
- */
-export function retrieveStoredItems<T>(storageKey: string): T[] | null {
+// Subscribe to connection state changes
+export function subscribeToConnectionChanges(
+  callback: (connected: boolean) => void
+): () => void {
+  connectionListeners.push(callback);
+  
+  // Return unsubscribe function
+  return () => {
+    const index = connectionListeners.indexOf(callback);
+    if (index !== -1) {
+      connectionListeners.splice(index, 1);
+    }
+  };
+}
+
+// Store data for later submission when offline
+export function storeForLaterSubmission(key: string, data: any): void {
   try {
-    const storedData = localStorage.getItem(storageKey);
-    if (!storedData) return null;
-    
-    return JSON.parse(storedData) as T[];
-  } catch (error) {
-    console.error('Error retrieving stored items:', error);
+    const offlineQueue = JSON.parse(localStorage.getItem('offlineQueue') || '{}');
+    offlineQueue[key] = {
+      data,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('offlineQueue', JSON.stringify(offlineQueue));
+  } catch (e) {
+    console.error('Failed to store data for later submission:', e);
+  }
+}
+
+// Retrieve offline data
+export function getOfflineData(key: string): any {
+  try {
+    const offlineQueue = JSON.parse(localStorage.getItem('offlineQueue') || '{}');
+    return offlineQueue[key]?.data || null;
+  } catch (e) {
+    console.error('Failed to retrieve offline data:', e);
     return null;
   }
 }
 
-/**
- * Remove stored items from localStorage
- * @param storageKey Key used in localStorage
- */
-export function clearStoredItems(storageKey: string): void {
-  localStorage.removeItem(storageKey);
+// Check if there are any pending operations
+export function hasPendingOperations(): boolean {
+  try {
+    const offlineQueue = JSON.parse(localStorage.getItem('offlineQueue') || '{}');
+    return Object.keys(offlineQueue).length > 0;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Clear a specific pending operation
+export function clearPendingOperation(key: string): void {
+  try {
+    const offlineQueue = JSON.parse(localStorage.getItem('offlineQueue') || '{}');
+    if (offlineQueue[key]) {
+      delete offlineQueue[key];
+      localStorage.setItem('offlineQueue', JSON.stringify(offlineQueue));
+    }
+  } catch (e) {
+    console.error('Failed to clear pending operation:', e);
+  }
 }

@@ -11,7 +11,7 @@ export const updateProfile = async (
   toast: any
 ) => {
   try {
-    const updateResult = await executeWithConnectionRetry(
+    const result = await executeWithConnectionRetry(
       async () => {
         const { error } = await supabase
           .from('profiles')
@@ -114,7 +114,7 @@ export const updateNotificationPreferences = async (
   toast: any
 ) => {
   try {
-    const result = await executeWithConnectionRetry(
+    await executeWithConnectionRetry(
       async () => {
         const { error } = await supabase
           .from('notification_preferences')
@@ -122,7 +122,7 @@ export const updateNotificationPreferences = async (
           .eq('user_id', userId);
           
         if (error) throw error;
-        return { error: null };
+        return { success: true };
       },
       {
         maxRetries: 2,
