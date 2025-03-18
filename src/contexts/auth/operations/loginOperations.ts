@@ -32,8 +32,8 @@ export const login = async (email: string, password: string, navigate?: Navigate
     }
 
     return {
-      user: result.data?.user || null,
-      session: result.data?.session || null,
+      user: result.data.user || null,
+      session: result.data.session || null,
     };
   } catch (error: any) {
     console.error("Login error:", error);
@@ -92,7 +92,7 @@ export const updatePassword = async (password: string) => {
     }
     
     return {
-      user: response.data?.user || null,
+      user: response.data.user || null,
     };
   } catch (error: any) {
     console.error("Update password error:", error);
