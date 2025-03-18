@@ -108,7 +108,6 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
     )}>
       <div className="h-20 flex items-center justify-center border-b border-gray-100">
         <Logo className="h-8 transition-transform duration-200 hover:scale-105" />
-        <span className="ml-2 font-semibold text-lg">ShiftMate</span>
       </div>
 
       <div className="p-4">
