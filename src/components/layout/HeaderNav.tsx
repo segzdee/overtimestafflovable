@@ -25,7 +25,9 @@ export const HeaderNav = ({
         <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="md:hidden">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <Logo />
+        <Link to="/" className="flex items-center">
+          <span className="font-bold text-xl">OVERTIME<span className="text-purple-600">STAFF</span></span>
+        </Link>
       </div>
       
       <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden text-base font-thin text-center rounded-sm px-[3px] py-[3px] text-zinc-50 bg-green-500 hover:bg-green-400">

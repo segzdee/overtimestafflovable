@@ -1,31 +1,36 @@
 
 import React from 'react';
 import HeroSection from '@/components/home/HeroSection';
-import { Header } from '@/components/layout/Header';
+import { HeaderNav } from '@/components/layout/HeaderNav';
 import HowItWorks from '@/components/home/HowItWorks';
 import MarketUpdates from '@/components/home/MarketUpdates';
 import LoginCards from '@/components/home/LoginCards';
 import Footer from '@/components/layout/Footer';
 
 const Home = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation Header */}
-      <Header notifications={3} />
+      <HeaderNav 
+        mobileMenuOpen={mobileMenuOpen} 
+        setMobileMenuOpen={setMobileMenuOpen} 
+      />
       
       {/* Main Content */}
       <main className="flex-1">
         {/* Hero Section */}
         <HeroSection />
         
-        {/* How It Works */}
-        <HowItWorks />
+        {/* Login Cards */}
+        <LoginCards />
         
         {/* Market Updates */}
         <MarketUpdates />
         
-        {/* Login Cards */}
-        <LoginCards />
+        {/* How It Works */}
+        <HowItWorks />
       </main>
 
       {/* Footer */}
