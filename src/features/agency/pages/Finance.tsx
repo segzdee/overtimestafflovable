@@ -5,9 +5,9 @@ import { DollarSign, Download, Filter, PieChart, TrendingUp } from "lucide-react
 
 export function Finance() {
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
-        <h1 className="text-2xl font-bold">Agency Finance</h1>
+    <div className="space-y-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+        <h1 className="text-xl font-bold">Agency Finance</h1>
         <div className="flex gap-2 mt-2 sm:mt-0">
           <Button variant="outline" size="sm" className="flex items-center gap-1">
             <Filter className="h-4 w-4" />
@@ -20,9 +20,9 @@ export function Finance() {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         <Card className="hover:shadow-md transition-shadow">
-          <CardHeader className="py-3 px-4">
+          <CardHeader className="py-2 px-4">
             <CardTitle className="text-base flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-primary" />
               Financial Management
@@ -35,7 +35,7 @@ export function Finance() {
         </Card>
         
         <Card className="hover:shadow-md transition-shadow">
-          <CardHeader className="py-3 px-4">
+          <CardHeader className="py-2 px-4">
             <CardTitle className="text-base flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-green-500" />
               Revenue Analysis
@@ -48,7 +48,7 @@ export function Finance() {
         </Card>
         
         <Card className="hover:shadow-md transition-shadow">
-          <CardHeader className="py-3 px-4">
+          <CardHeader className="py-2 px-4">
             <CardTitle className="text-base flex items-center gap-2">
               <PieChart className="h-5 w-5 text-blue-500" />
               Expense Tracking

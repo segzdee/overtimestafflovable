@@ -40,13 +40,13 @@ interface SidebarProps {
 export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user, logout } = useAuth();
   const { toast } = useToast();
   const [notifications] = React.useState(3);
   
   const handleLogout = async () => {
     try {
-      await signOut();
+      await logout();
       toast({
         title: "Logged out successfully",
         description: "You have been logged out of your account",
@@ -125,8 +125,8 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       "backdrop-blur-lg backdrop-filter",
       sidebarOpen ? "translate-x-0" : "-translate-x-full"
     )}>
-      <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
-        <Logo className="h-8 transition-transform duration-200 hover:scale-105" />
+      <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100">
+        <Logo className="h-7 transition-transform duration-200 hover:scale-105" />
         <Button variant="ghost" size="sm" className="lg:hidden" onClick={() => setSidebarOpen(false)}>
           <LogOut className="h-4 w-4" />
         </Button>
@@ -134,7 +134,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
 
       <div className="p-4">
         <div className="flex items-center mb-4">
-          <Avatar className="h-10 w-10 mr-3">
+          <Avatar className="h-9 w-9 mr-3">
             <AvatarImage src="" alt={user?.name || "User"} />
             <AvatarFallback className="bg-primary/10 text-primary">
               {user?.name?.charAt(0) || "U"}
@@ -180,7 +180,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100">
+      <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-gray-100">
         <Button 
           onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700"

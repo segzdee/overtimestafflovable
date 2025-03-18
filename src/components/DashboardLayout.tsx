@@ -13,7 +13,6 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children, className }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [notifications] = useState(3);
 
   return (
     <div className="min-h-screen bg-[#f8f9fc]">
@@ -28,8 +27,8 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
         "min-h-screen transition-all duration-300 ease-in-out",
         "lg:ml-64 bg-[#f8f9fc]"
       )}>
-        {/* Header Component */}
-        <Header notifications={notifications} />
+        {/* Topbar Component */}
+        <Header />
 
         {/* Content */}
         <ContentWrapper className={className}>
