@@ -1,18 +1,9 @@
 
 import { supabase } from "@/lib/supabase/client";
-import { NavigateFunction } from "react-router-dom";
 import { executeWithConnectionRetry } from "@/lib/robust-connection-handler";
-import { AuthUser } from "../types";
-import { getProfileByUserId, getNotificationPreferences } from "./authUtils";
 
-export const login = async (
-  email: string,
-  password: string,
-  navigate: NavigateFunction,
-  toast: any
-) => {
+export const login = async (email: string, password: string) => {
   try {
-    // Use connection-resilient executor for login
     const result = await executeWithConnectionRetry(
       async () => {
         const response = await supabase.auth.signInWithPassword({
@@ -20,128 +11,74 @@ export const login = async (
           password,
         });
         
-        if (response.error) throw response.error;
-        if (!response.data.user) throw new Error('No user returned from sign in');
+        // Handle error properly for the new API format
+        if (response.error) {
+          throw response.error;
+        }
         
-        return response.data;
+        return response;
       },
-      {
-        maxRetries: 4,
-        criticalOperation: true
-      }
+      { criticalOperation: true }
     );
 
-    // Get user profile to determine where to redirect
-    const profileData = await executeWithConnectionRetry(
-      async () => {
-        const response = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', result.user.id)
-          .maybeSingle();
-          
-        if (response.error) throw response.error;
-        if (!response.data) throw new Error('User profile not found');
-        
-        return response.data;
-      },
-      {
-        maxRetries: 3,
-        criticalOperation: true
-      }
-    );
+    return {
+      user: result.data?.user || null,
+      session: result.data?.session || null,
+    };
+  } catch (error: any) {
+    console.error("Login error:", error);
+    throw error;
+  }
+};
 
-    // Show success message
-    toast({
-      title: "Success",
-      description: "Logged in successfully",
+export const logout = async () => {
+  try {
+    const response = await supabase.auth.signOut();
+    
+    if (response.error) {
+      throw response.error;
+    }
+    
+    return true;
+  } catch (error: any) {
+    console.error("Logout error:", error);
+    throw error;
+  }
+};
+
+export const resetPassword = async (email: string) => {
+  try {
+    const response = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
     });
     
-    // Redirect based on user role
-    switch (profileData.role) {
-      case 'shift-worker':
-        navigate('/dashboard/shift-worker');
-        break;
-      case 'company':
-        navigate('/dashboard/company');
-        break;
-      case 'agency':
-        navigate('/dashboard/agency');
-        break;
-      case 'admin':
-        navigate('/dashboard/admin');
-        break;
-      default:
-        navigate('/login');
+    if (response.error) {
+      throw response.error;
     }
-  } catch (error) {
-    console.error('Login error:', error);
-    toast({
-      variant: "destructive",
-      title: "Login failed",
-      description: error instanceof Error ? error.message : "Invalid credentials"
-    });
+    
+    return true;
+  } catch (error: any) {
+    console.error("Reset password error:", error);
     throw error;
   }
 };
 
-export const loginWithToken = async (
-  token: string,
-  setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>
-) => {
+export const updatePassword = async (password: string) => {
   try {
-    // Check Supabase connection with retry logic
-    const userData = await executeWithConnectionRetry(
-      async () => {
-        const response = await supabase.auth.getUser(token);
-        
-        if (response.error) throw response.error;
-        if (!response.data.user) throw new Error('Invalid token');
-        
-        return response.data;
-      },
-      {
-        maxRetries: 3,
-        criticalOperation: true
-      }
-    );
-
-    // Get the user's profile
-    const profile = await getProfileByUserId(userData.user.id);
-
-    // Get notification preferences
-    const notificationPrefs = await getNotificationPreferences(profile.id);
-
-    setUser({
-      id: profile.id,
-      email: profile.email,
-      role: profile.role,
-      name: profile.name,
-      profileComplete: profile.profile_complete,
-      emailVerified: userData.user.email_confirmed_at ? true : false,
-      verificationStatus: 'pending',
-      notificationPreferences: notificationPrefs || {
-        id: 0,
-        userId: profile.id,
-        email: true,
-        sms: false,
-        push: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+    const response = await supabase.auth.updateUser({
+      password,
     });
-  } catch (error) {
-    console.error('Token login error:', error);
-    console.error('Token login error details:', JSON.stringify(error, null, 2));
+    
+    // Handle the response data correctly
+    if (response.error) {
+      throw response.error;
+    }
+    
+    return {
+      user: response.data?.user || null,
+    };
+  } catch (error: any) {
+    console.error("Update password error:", error);
     throw error;
   }
-};
-
-export const devLogin = async (
-  password: string,
-  setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>,
-  toast: any
-) => {
-  // Implementation for dev login if needed
-  throw new Error('Dev login not implemented');
 };
