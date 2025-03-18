@@ -20,6 +20,7 @@ export default function DashboardRouter() {
     checkAuth();
   }, []);
 
+  // Route to the appropriate dashboard based on user role
   switch (role) {
     case 'shift-worker':
       return <ShiftWorkerDashboard />;
