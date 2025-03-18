@@ -8,16 +8,16 @@ const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-12 md:py-16 overflow-hidden relative">
+    <section className="py-8 md:py-10 overflow-hidden relative">
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-purple-600 mb-2">
             AI Meets Hospitality
           </h1>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-800 mb-4">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-800 mb-3">
             Extra Staff, Anytime, Anywhere
           </h2>
-          <p className="text-base md:text-lg text-gray-700 mb-6 max-w-3xl mx-auto">
+          <p className="text-base md:text-lg text-gray-700 mb-5 max-w-3xl mx-auto">
             Got extra time? Need extra shifts? No dinner staff coverage? Plan canceled? The OVERTIMESTAFF Platform connects 
             people with spare time to hospitality companies and agencies using smart AI integration.
           </p>

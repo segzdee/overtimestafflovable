@@ -24,13 +24,19 @@ const Home = () => {
         <HeroSection />
         
         {/* Login Cards */}
-        <LoginCards />
+        <div className="py-4">
+          <LoginCards />
+        </div>
         
         {/* Market Updates */}
-        <MarketUpdates />
+        <div className="py-4">
+          <MarketUpdates />
+        </div>
         
         {/* How It Works */}
-        <HowItWorks />
+        <div className="py-4">
+          <HowItWorks />
+        </div>
       </main>
 
       {/* Footer */}
