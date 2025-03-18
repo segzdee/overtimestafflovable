@@ -48,26 +48,7 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
   };
 
   const handleLogin = async (email: string, password: string) => {
-    try {
-      // Pass only the required arguments to login
-      const result = await login(email, password);
-      
-      if (result.user) {
-        // Navigate after successful login
-        navigate("/dashboard");
-        toast({
-          title: "Login successful",
-          description: "Welcome back!"
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Login failed",
-        description: error instanceof Error ? error.message : "Invalid credentials"
-      });
-      throw error;
-    }
+    await login(email, password, navigate, toast);
   };
 
   const handleUpdateProfile = async (userId: string, profileData: Partial<AuthUser>) => {
