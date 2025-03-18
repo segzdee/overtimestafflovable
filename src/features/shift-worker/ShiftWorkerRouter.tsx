@@ -14,14 +14,14 @@ export function ShiftWorkerRouter() {
   return (
     <DashboardLayout>
       <Routes>
-        <Route index element={<ShiftWorkerDashboard />} />
-        <Route path="shifts" element={<MyShifts />} />
-        <Route path="earnings" element={<MyEarnings />} />
-        <Route path="profile" element={<WorkerProfile />} />
-        <Route path="companies" element={<Companies />} />
-        <Route path="teams" element={<Teams />} />
-        <Route path="messages" element={<Messages />} />
-        <Route path="settings" element={<Settings />} />
+        <Route path="/" element={<ShiftWorkerDashboard />} />
+        <Route path="/shifts" element={<MyShifts />} />
+        <Route path="/earnings" element={<MyEarnings />} />
+        <Route path="/profile" element={<WorkerProfile />} />
+        <Route path="/companies" element={<Companies />} />
+        <Route path="/teams" element={<Teams />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/dashboard/shift-worker" replace />} />
       </Routes>
     </DashboardLayout>
