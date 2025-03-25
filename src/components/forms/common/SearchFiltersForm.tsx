@@ -103,7 +103,7 @@ export function SearchFiltersForm<T extends z.ZodType<any, any>>({
   const searchField = (
     <FormField
       control={form.control}
-      name="searchTerm"
+      name={"searchTerm" as any}
       render={({ field }) => (
         <FormItem className="flex-1">
           <FormControl>
@@ -195,9 +195,9 @@ export function SearchFiltersForm<T extends z.ZodType<any, any>>({
                                 <div className="flex items-center space-x-2" key={option.value}>
                                   <FormControl>
                                     <Checkbox
-                                      checked={Array.isArray(field.value) && field.value.includes(option.value)}
+                                      checked={Array.isArray(field.value) && field.value?.includes(option.value)}
                                       onCheckedChange={(checked) => {
-                                        const currentValues = Array.isArray(field.value) ? field.value : [];
+                                        const currentValues = Array.isArray(field.value) ? [...field.value] : [];
                                         if (checked) {
                                           field.onChange([...currentValues, option.value]);
                                         } else {
