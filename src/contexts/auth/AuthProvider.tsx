@@ -1,8 +1,7 @@
-
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { BaseRole } from '@/lib/types';
 import { AuthUser, AuthContextType, AIToken } from './types';
@@ -24,7 +23,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
-  const { toast } = useToast();
   const navigate = useNavigate();
 
   // Fetch user profile from profiles table
