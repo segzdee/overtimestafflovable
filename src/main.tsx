@@ -6,6 +6,7 @@ import { DevModeProvider } from '@/contexts/dev/DevModeContext';
 import { Toaster } from '@/components/ui/toaster';
 import { initConnectionHandling } from '@/lib/robust-connection-handler';
 import { AuthProvider } from '@/contexts/auth/AuthProvider';
+import { initializePWA } from '@/utils/pwa';
 import App from './App';
 import './index.css';
 
@@ -21,6 +22,11 @@ const root = ReactDOM.createRoot(rootElement);
 
 // Initialize connection handling
 initConnectionHandling();
+
+// Initialize PWA features
+if (import.meta.env.MODE === 'production') {
+  initializePWA();
+}
 
 // Ensure the DOM is fully loaded before rendering
 document.addEventListener('DOMContentLoaded', () => {
