@@ -37,7 +37,8 @@ export interface AIToken {
 
 export interface AuthContextType {
   user: AuthUser | null;
-  register: (email: string, password: string, role: AuthUser["role"], name: string, category?: string) => Promise<void>;
+  aiTokens: AIToken[];
+  register: (email: string, password: string, role: BaseRole, name: string, category?: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   loginWithToken: (token: string) => Promise<void>;
   devLogin: (password: string) => Promise<void>;
@@ -46,5 +47,4 @@ export interface AuthContextType {
   updateNotificationPreferences: (preferences: Partial<NotificationPreferences>) => Promise<void>;
   generateAiToken: (name: string, userId: string) => Promise<AIToken>;
   revokeAiToken: (token: string) => Promise<void>;
-  aiTokens: AIToken[];
 }

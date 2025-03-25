@@ -3,10 +3,11 @@ import { useState, useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
 import { useDevMode } from "@/contexts/dev/DevModeContext";
+import { BaseRole } from "@/lib/types";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles: Array<"admin" | "shift-worker" | "company" | "agency" | "aiagent">;
+  allowedRoles: BaseRole[];
 }
 
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
@@ -37,7 +38,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   // If in developer mode and a role is selected, bypass authentication
   if (devMode && selectedRole) {
     // Check if selected role is allowed for this route
-    if (allowedRoles.includes(selectedRole)) {
+    if (allowedRoles.includes(selectedRole as BaseRole)) {
       return <>{children}</>;
     } else {
       // Redirect to appropriate dashboard based on selected role
