@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { Logo } from "@/components/ui/logo";
 import { ArrowLeft } from "lucide-react";
 import { PasswordInput } from "@/components/forms/auth/PasswordInput";
@@ -17,7 +17,6 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { login } = useAuth();
 
   // Simulate page loading

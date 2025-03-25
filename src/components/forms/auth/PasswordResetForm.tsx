@@ -3,12 +3,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase/client";
 
 export function PasswordResetForm() {
   const navigate = useNavigate();
-  const { toast } = useToast();
   
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);

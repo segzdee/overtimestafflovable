@@ -2,7 +2,7 @@
 import { createContext, useContext, ReactNode, useEffect, useState, useCallback } from 'react';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { supabase, checkSupabaseConnection } from './client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { AlertCircle, Loader2 } from 'lucide-react';
 
 const SupabaseContext = createContext<{
@@ -16,7 +16,6 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
   const [isConnected, setIsConnected] = useState(true);
   const [isChecking, setIsChecking] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
-  const { toast } = useToast();
   
   const isProduction = window.location.hostname === 'www.overtimestaff.com' || 
                       window.location.hostname === 'overtimestaff.com';
@@ -69,7 +68,7 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
       }
       return false;
     }
-  }, [isChecking, isConnected, isProduction, retryCount, toast]);
+  }, [isChecking, isConnected, isProduction, retryCount]);
 
   const retryConnection = useCallback(async () => {
     if (isChecking) return false;
@@ -78,7 +77,7 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
       description: "Attempting to reconnect to servers..."
     });
     return await checkConnection();
-  }, [checkConnection, isChecking, toast]);
+  }, [checkConnection, isChecking]);
 
   useEffect(() => {
     const initialCheck = async () => {

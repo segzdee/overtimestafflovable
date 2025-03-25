@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Upload, X, File } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 export interface FileUploadProps extends React.HTMLAttributes<HTMLDivElement> {
   onUploadComplete?: (path: string) => void;
@@ -30,7 +30,6 @@ export function FileUpload({
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const { toast } = useToast();
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -85,7 +84,7 @@ export function FileUpload({
     } finally {
       setUploading(false);
     }
-  }, [bucketName, onUploadComplete, onUploadError, toast]);
+  }, [bucketName, onUploadComplete, onUploadError]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

@@ -4,13 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 
 export function LoginForm() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { toast } = useToast();
   
   const [formData, setFormData] = useState({
     email: "",
