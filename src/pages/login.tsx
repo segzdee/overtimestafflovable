@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -9,7 +9,7 @@ const Login = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   
-  const { signIn, signUp, signInWithOAuth } = useAuth();
+  const { login, register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,29 +19,16 @@ const Login = () => {
     try {
       if (isLogin) {
         // Login
-        const { error } = await signIn(email, password);
-        if (error) throw error;
+        await login(email, password);
       } else {
         // Sign up
-        const { error } = await signUp(email, password);
-        if (error) throw error;
+        await register(email, password, 'company', email.split('@')[0]);
       }
     } catch (err: any) {
       console.error('Authentication error:', err);
       setError(err.message || 'Authentication failed');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleOAuthLogin = async (provider: 'github' | 'google' | 'facebook' | 'twitter') => {
-    setError(null);
-    try {
-      const { error } = await signInWithOAuth(provider);
-      if (error) throw error;
-    } catch (err: any) {
-      console.error('OAuth login error:', err);
-      setError(err.message || 'OAuth authentication failed');
     }
   };
 
@@ -104,32 +91,6 @@ const Login = () => {
             </button>
           </div>
         </form>
-
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
-            </div>
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            <button
-              onClick={() => handleOAuthLogin('github')}
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-            >
-              GitHub
-            </button>
-            <button
-              onClick={() => handleOAuthLogin('google')}
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-            >
-              Google
-            </button>
-          </div>
-        </div>
 
         <div className="text-sm text-center mt-4">
           <button

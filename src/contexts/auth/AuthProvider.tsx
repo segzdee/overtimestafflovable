@@ -1,4 +1,3 @@
-
 import { ReactNode, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -20,7 +19,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // User registration that works with the new auth schema
   const register = async (
     email: string,
     password: string,
@@ -29,8 +27,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     category?: string
   ) => {
     try {
-      // In a real implementation, this would call the API to insert into auth.users
-      // and the appropriate profile table based on role
       const userData = await registerUser({
         email,
         password,
@@ -39,7 +35,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         category
       });
       
-      // Store the user data in localStorage for this demo
       localStorage.setItem('auth_user', JSON.stringify(userData));
       
       toast({
@@ -56,10 +51,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  // Login with the new auth schema
   const login = async (email: string, password: string) => {
     try {
-      // In a real implementation, this would verify credentials against auth.users
       const userData = await loginUser(email, password);
       
       if (userData) {
@@ -71,7 +64,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
           description: "Logged in successfully",
         });
         
-        // Redirect based on user role
         navigate(`/dashboard/${userData.role}`);
         return;
       }
@@ -88,7 +80,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const loginWithToken = async (token: string) => {
-    // This would verify against auth.ai_agent_profiles.api_token
     toast({
       variant: "destructive", 
       title: "Not implemented",
@@ -97,7 +88,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const devLogin = async (password: string) => {
-    // For development purposes only
     toast({
       variant: "destructive",
       title: "Not implemented", 
@@ -170,7 +160,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     );
   };
 
-  // Load user from localStorage on initial load
   useEffect(() => {
     const storedUser = localStorage.getItem('auth_user');
     if (storedUser) {
@@ -212,7 +201,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         value={{
           user,
           aiTokens,
-          loading, // Add the missing loading property
+          loading,
           register,
           login,
           loginWithToken,
