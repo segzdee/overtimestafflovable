@@ -21,6 +21,15 @@ export interface AuthUser {
   verificationCompletedAt?: string;
   reviewNotes?: string;
   avatar_url?: string;
+  notificationPreferences?: {
+    id: number;
+    userId: string;
+    email: boolean;
+    sms: boolean;
+    push: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 export interface AIToken {

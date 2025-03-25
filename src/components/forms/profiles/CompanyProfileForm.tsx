@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { CompanyProfileFormData } from "./types";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants/categories";
+import { TeamMemberModal } from "@/components/modals/TeamMemberModal";
 import {
   Select,
   SelectContent,
