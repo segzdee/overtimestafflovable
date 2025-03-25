@@ -38,6 +38,7 @@ export interface AIToken {
 export interface AuthContextType {
   user: AuthUser | null;
   aiTokens: AIToken[];
+  loading: boolean;
   register: (email: string, password: string, role: BaseRole, name: string, category?: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   loginWithToken: (token: string) => Promise<void>;
