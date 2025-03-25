@@ -22,18 +22,16 @@ const root = ReactDOM.createRoot(rootElement);
 // Initialize connection handling
 initConnectionHandling();
 
-// Ensure the DOM is fully loaded before rendering
-document.addEventListener('DOMContentLoaded', () => {
-  root.render(
-    <React.StrictMode>
-      <BrowserRouter>
-        <DevModeProvider>
-          <AuthProvider>
-            <App />
-            <Toaster />
-          </AuthProvider>
-        </DevModeProvider>
-      </BrowserRouter>
-    </React.StrictMode>
-  );
-});
+// Render the app
+root.render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <DevModeProvider>
+        <AuthProvider>
+          <App />
+          <Toaster />
+        </AuthProvider>
+      </DevModeProvider>
+    </BrowserRouter>
+  </React.StrictMode>
+);
