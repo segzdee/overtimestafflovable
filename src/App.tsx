@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { db } from './lib/supabase';
 import { useAuth } from './contexts/AuthContext';

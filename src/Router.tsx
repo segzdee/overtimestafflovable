@@ -2,7 +2,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import App from './App';
-import Login from './pages/Login';
+import Login from './pages/login';
 
 export function Router() {
   const { user, loading } = useAuth();

@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './database.types';
 
@@ -82,7 +81,7 @@ export const db = {
       limit?: number,
       order?: { column: string, ascending?: boolean }
     }
-  ): Promise<{ data: T[] | null; error: any }> => {
+  ): Promise<{ data: T | null; error: any }> => {
     let query = supabase.from(table).select(options?.columns || '*');
     
     if (options?.filter) {
@@ -100,7 +99,7 @@ export const db = {
     }
 
     const { data, error } = await query;
-    return { data, error };
+    return { data: data as T, error };
   },
 
   // Insert function
