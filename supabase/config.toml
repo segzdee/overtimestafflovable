@@ -96,15 +96,16 @@ enable_confirmations = false
 # # or any other third-party OIDC providers.
 # url = ""
 
+# Functions configuration
 [functions]
+# The functions section should just have enabled = true or enabled = false
 enabled = true
 
 [storage]
 enabled = true
 
+# Fix the analytics section by removing the vector_dimension parameter
 [analytics]
 enabled = false
 # Port to use for the analytics server.
 port = 54327
-# Vector dimension, which is set at project creation time and cannot be changed.
-vector_dimension = 384
