@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +9,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, For
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { Shield, CreditCard, BuildingBank } from "lucide-react";
+import { Shield, CreditCard, Building } from "lucide-react";
 
 const bankDetailsSchema = z.object({
   accountType: z.enum(["checking", "savings"]),
@@ -50,8 +49,6 @@ export function BankDetailsForm({ onSuccess }: BankDetailsFormProps) {
     setIsLoading(true);
     
     try {
-      // In a real implementation, this would call an API to save bank details
-      // For demo purposes, we'll simulate an API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
