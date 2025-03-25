@@ -24,7 +24,7 @@ const LoginCards: React.FC = () => {
                 <h3 className="text-base md:text-lg font-semibold mb-2">Staffing Agency</h3>
                 <p className="text-sm text-gray-600 mb-4">Manage Multiple Venues and Staff</p>
               </div>
-              <Link to="/login?type=agency" className="w-full">
+              <Link to="/auth/login?type=agency" className="w-full">
                 <Button className="w-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white py-2 text-sm sm:text-base">
                   LOGIN
                 </Button>
@@ -42,7 +42,7 @@ const LoginCards: React.FC = () => {
                 <h3 className="text-base md:text-lg font-semibold mb-2">Hotels & Businesses</h3>
                 <p className="text-sm text-gray-600 mb-4">Post shifts and hire Extra Staff</p>
               </div>
-              <Link to="/login?type=company" className="w-full">
+              <Link to="/auth/login?type=company" className="w-full">
                 <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-2 text-sm sm:text-base">
                   LOGIN
                 </Button>
@@ -60,7 +60,7 @@ const LoginCards: React.FC = () => {
                 <h3 className="text-base md:text-lg font-semibold mb-2">Shift Workers</h3>
                 <p className="text-sm text-gray-600 mb-4">Clock-In for Extra Shifts</p>
               </div>
-              <Link to="/login?type=shift-worker" className="w-full">
+              <Link to="/auth/login?type=shift-worker" className="w-full">
                 <Button className="w-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white py-2 text-sm sm:text-base">
                   LOGIN
                 </Button>
@@ -78,7 +78,7 @@ const LoginCards: React.FC = () => {
                 <h3 className="text-base md:text-lg font-semibold mb-2">AI Agent</h3>
                 <p className="text-sm text-gray-600 mb-4">Activate Agent for Automation</p>
               </div>
-              <Link to="/login?type=ai-agent" className="w-full">
+              <Link to="/auth/login?type=aiagent" className="w-full">
                 <Button className="w-full bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white py-2 text-sm sm:text-base">
                   LOGIN
                 </Button>
