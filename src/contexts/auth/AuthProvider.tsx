@@ -1,230 +1,246 @@
 
-import { ReactNode, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
-import { AuthContext } from "./AuthContext";
-import { AuthUser, AIToken } from "./types";
-import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
-import { ErrorBoundary } from "@/components/error/ErrorBoundary";
-import { loginUser, registerUser } from "@/services/authService";
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
+import { BaseRole } from '@/lib/types';
 
-interface AuthProviderProps {
-  children: ReactNode;
+export interface AuthUser {
+  id: string;
+  email: string;
+  role: BaseRole;
+  name: string;
+  profileComplete?: boolean;
+  emailVerified?: boolean;
+  avatar_url?: string;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+interface AuthContextType {
+  user: AuthUser | null;
+  session: Session | null;
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, role: BaseRole, name: string, category?: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  updateProfile: (profile: Partial<AuthUser>) => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const navigate = useNavigate();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  // User registration that works with the new auth schema
-  const register = async (
-    email: string,
-    password: string,
-    role: AuthUser["role"],
-    name: string,
-    category?: string
-  ) => {
+  // Fetch user profile from profiles table
+  const fetchUserProfile = async (userId: string): Promise<AuthUser | null> => {
     try {
-      // In a real implementation, this would call the API to insert into auth.users
-      // and the appropriate profile table based on role
-      const userData = await registerUser({
-        email,
-        password,
-        role,
-        name,
-        category
-      });
-      
-      // Store the user data in localStorage for this demo
-      localStorage.setItem('auth_user', JSON.stringify(userData));
-      
-      toast({
-        title: "Account created successfully",
-        description: "You can now log in with your credentials",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Registration failed",
-        description: error instanceof Error ? error.message : "Failed to create account"
-      });
-      throw error;
-    }
-  };
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
 
-  // Login with the new auth schema
-  const login = async (email: string, password: string) => {
-    try {
-      // In a real implementation, this would verify credentials against auth.users
-      const userData = await loginUser(email, password);
-      
-      if (userData) {
-        setUser(userData);
-        localStorage.setItem('auth_user', JSON.stringify(userData));
-        
-        toast({
-          title: "Success",
-          description: "Logged in successfully",
-        });
-        
-        // Redirect based on user role
-        navigate(`/dashboard/${userData.role}`);
-        return;
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return null;
       }
-      
-      throw new Error("Invalid credentials");
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Login failed",
-        description: error instanceof Error ? error.message : "Invalid credentials"
-      });
-      throw error;
-    }
-  };
 
-  const loginWithToken = async (token: string) => {
-    // This would verify against auth.ai_agent_profiles.api_token
-    toast({
-      variant: "destructive", 
-      title: "Not implemented",
-      description: "Token-based login is not available in this demo"
-    });
-  };
+      if (!data) return null;
 
-  const devLogin = async (password: string) => {
-    // For development purposes only
-    toast({
-      variant: "destructive",
-      title: "Not implemented", 
-      description: "Dev login is not available in this demo"
-    });
-  };
-
-  const logout = async () => {
-    setUser(null);
-    localStorage.removeItem('auth_user');
-    navigate("/login");
-    
-    toast({
-      title: "Logged out successfully"
-    });
-  };
-
-  const updateProfile = async (userId: string, profileData: Partial<AuthUser>) => {
-    if (user && user.id === userId) {
-      const updatedUser = { ...user, ...profileData, profileComplete: true };
-      setUser(updatedUser);
-      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
-      
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been successfully updated"
-      });
-    }
-  };
-
-  const updateNotificationPreferences = async (preferences: Partial<any>) => {
-    if (user) {
-      const updatedUser = {
-        ...user,
-        notificationPreferences: {
-          ...user.notificationPreferences,
-          ...preferences
-        }
+      return {
+        id: data.id,
+        email: data.email,
+        role: data.role as BaseRole,
+        name: data.name,
+        profileComplete: data.profile_complete,
+        emailVerified: data.email_verified,
+        avatar_url: data.avatar_url
       };
-      setUser(updatedUser);
-      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
-      
-      toast({
-        title: "Preferences Updated",
-        description: "Your notification preferences have been saved."
-      });
+    } catch (error) {
+      console.error('Error in fetchUserProfile:', error);
+      return null;
     }
   };
 
-  const generateAiToken = async (name: string, userId: string): Promise<AIToken> => {
-    const newToken: AIToken = {
-      id: Math.random().toString(36).substring(2),
-      name,
-      createdAt: new Date().toISOString(),
-      isActive: true,
-      authorizedBy: {
-        id: userId,
-        name: user?.name || ""
-      }
-    };
-    setAiTokens((current) => [...current, newToken]);
-    return newToken;
-  };
-
-  const revokeAiToken = async (tokenId: string) => {
-    setAiTokens((current) => 
-      current.map(token => 
-        token.id === tokenId ? { ...token, isActive: false } : token
-      )
-    );
-  };
-
-  // Load user from localStorage on initial load
   useEffect(() => {
-    const storedUser = localStorage.getItem('auth_user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (err) {
-        console.error("Error parsing stored user:", err);
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, currentSession) => {
+        setSession(currentSession);
+        
+        if (currentSession && currentSession.user) {
+          const profile = await fetchUserProfile(currentSession.user.id);
+          setUser(profile);
+        } else {
+          setUser(null);
+        }
+        
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      
+      if (currentSession && currentSession.user) {
+        const profile = await fetchUserProfile(currentSession.user.id);
+        setUser(profile);
+      }
+      
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  if (error) {
-    return (
-      <ErrorBoundary>
-        <div className="flex flex-col items-center justify-center h-screen p-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md w-full text-center">
-            <h2 className="text-xl font-semibold text-red-800 mb-2">Authentication Error</h2>
-            <p className="text-red-700 mb-4">{error.message}</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-            >
-              Retry
-            </button>
-          </div>
-        </div>
-      </ErrorBoundary>
-    );
-  }
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Welcome back!",
+        description: "You have successfully signed in.",
+      });
+      
+      navigate('/dashboard');
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Sign in failed",
+        description: error.message || "An error occurred during sign in",
+      });
+      throw error;
+    }
+  };
 
-  if (loading) {
-    return <DashboardSkeleton />;
-  }
+  const signUp = async (email: string, password: string, role: BaseRole, name: string, category?: string) => {
+    try {
+      // First, create the auth user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+            role,
+            category
+          }
+        }
+      });
+      
+      if (authError) throw authError;
+
+      // We'll rely on the database trigger to create the profile record
+      // But we can fetch it to confirm it was created
+      if (authData.user) {
+        const profile = await fetchUserProfile(authData.user.id);
+        if (profile) {
+          setUser(profile);
+        }
+      }
+
+      toast({
+        title: "Account created",
+        description: "Your account has been created successfully. Please check your email for verification.",
+      });
+      
+      navigate('/dashboard');
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Sign up failed",
+        description: error.message || "An error occurred during sign up",
+      });
+      throw error;
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) throw error;
+      
+      setUser(null);
+      setSession(null);
+      
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
+      
+      navigate('/login');
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Sign out failed",
+        description: error.message || "An error occurred during sign out",
+      });
+      throw error;
+    }
+  };
+
+  const updateProfile = async (profile: Partial<AuthUser>) => {
+    try {
+      if (!user) throw new Error('No user is logged in');
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          name: profile.name,
+          avatar_url: profile.avatar_url,
+          profile_complete: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      // Update the local user state
+      setUser(prev => prev ? { ...prev, ...profile } : null);
+      
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been updated successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Profile update failed",
+        description: error.message || "An error occurred while updating profile",
+      });
+      throw error;
+    }
+  };
+
+  const value = {
+    user,
+    session,
+    loading,
+    signIn,
+    signUp,
+    signOut,
+    updateProfile
+  };
 
   return (
-    <ErrorBoundary>
-      <AuthContext.Provider
-        value={{
-          user,
-          aiTokens,
-          register,
-          login,
-          loginWithToken,
-          devLogin,
-          logout,
-          updateProfile,
-          updateNotificationPreferences,
-          generateAiToken,
-          revokeAiToken
-        }}
-      >
-        {children}
-      </AuthContext.Provider>
-    </ErrorBoundary>
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
   );
 }

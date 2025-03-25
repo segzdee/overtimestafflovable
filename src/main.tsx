@@ -2,10 +2,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { SupabaseProvider } from '@/lib/supabase/SupabaseProvider';
 import { DevModeProvider } from '@/contexts/dev/DevModeContext';
 import { Toaster } from '@/components/ui/toaster';
 import { initConnectionHandling } from '@/lib/robust-connection-handler';
+import { AuthProvider } from '@/contexts/auth/AuthProvider';
 import App from './App';
 import './index.css';
 
@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
   root.render(
     <React.StrictMode>
       <BrowserRouter>
-        <SupabaseProvider>
-          <DevModeProvider>
+        <DevModeProvider>
+          <AuthProvider>
             <App />
             <Toaster />
-          </DevModeProvider>
-        </SupabaseProvider>
+          </AuthProvider>
+        </DevModeProvider>
       </BrowserRouter>
     </React.StrictMode>
   );
