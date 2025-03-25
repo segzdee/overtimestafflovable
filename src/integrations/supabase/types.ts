@@ -9,6 +9,239 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_actions: {
+        Row: {
+          action_type: string
+          admin_id: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          ip_address: string | null
+          target_entity_id: string | null
+          target_entity_type: string | null
+          target_user_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action_type: string
+          admin_id: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          target_entity_id?: string | null
+          target_entity_type?: string | null
+          target_user_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action_type?: string
+          admin_id?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          target_entity_id?: string | null
+          target_entity_type?: string | null
+          target_user_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_actions_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_actions_target_user_id_fkey"
+            columns: ["target_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_audit_log: {
+        Row: {
+          action_details: Json
+          action_type: string
+          admin_id: string
+          affected_record_id: string | null
+          affected_table: string | null
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          status: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action_details: Json
+          action_type: string
+          admin_id: string
+          affected_record_id?: string | null
+          affected_table?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          status?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action_details?: Json
+          action_type?: string
+          admin_id?: string
+          affected_record_id?: string | null
+          affected_table?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          status?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_notifications: {
+        Row: {
+          action_url: string | null
+          admin_id: string | null
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          notification_type: string
+          priority: string | null
+          title: string
+        }
+        Insert: {
+          action_url?: string | null
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          notification_type: string
+          priority?: string | null
+          title: string
+        }
+        Update: {
+          action_url?: string | null
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          notification_type?: string
+          priority?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_notifications_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_sessions: {
+        Row: {
+          actions_performed: number | null
+          active: boolean | null
+          admin_id: string
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          session_end: string | null
+          session_start: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          actions_performed?: number | null
+          active?: boolean | null
+          admin_id: string
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          session_end?: string | null
+          session_start?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          actions_performed?: number | null
+          active?: boolean | null
+          admin_id?: string
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          session_end?: string | null
+          session_start?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_sessions_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_settings: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_sensitive: boolean | null
+          setting_group: string
+          setting_key: string
+          setting_value: Json
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_sensitive?: boolean | null
+          setting_group: string
+          setting_key: string
+          setting_value: Json
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_sensitive?: boolean | null
+          setting_group?: string
+          setting_key?: string
+          setting_value?: Json
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_settings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_users: {
         Row: {
           created_at: string | null
@@ -190,43 +423,139 @@ export type Database = {
       }
       agency_profiles: {
         Row: {
+          agency_description: string | null
+          agency_type: string | null
+          bank_details: Json | null
           billing_address: Json | null
           business_number: string | null
           business_verification_date: string | null
           commission_rate: number | null
+          company_rating: number | null
+          compliance_certifications: string[] | null
           created_at: string | null
+          default_currency: string | null
+          fee_structure: Json | null
+          headquarters_address: Json | null
+          incorporation_date: string | null
+          industries_served: string[] | null
+          insurance_details: Json | null
+          last_active_at: string | null
           license_number: string | null
+          logo_url: string | null
+          notification_preferences: Json | null
+          office_address: Json | null
+          onboarding_requirements: Json | null
+          payment_terms: string | null
+          primary_contact_email: string | null
+          primary_contact_name: string | null
+          primary_contact_phone: string | null
           profile_id: string
+          response_time_avg: number | null
           service_areas: string[] | null
+          shifts_filled: number | null
+          social_media_links: Json | null
+          specializations: string[] | null
+          status: string | null
+          tags: string[] | null
+          tax_id: string | null
           tenant_id: string
           updated_at: string | null
+          vat_number: string | null
+          verification_documents: Json | null
           verification_status: string | null
+          website_url: string | null
+          worker_count: number | null
+          worker_types: string[] | null
         }
         Insert: {
+          agency_description?: string | null
+          agency_type?: string | null
+          bank_details?: Json | null
           billing_address?: Json | null
           business_number?: string | null
           business_verification_date?: string | null
           commission_rate?: number | null
+          company_rating?: number | null
+          compliance_certifications?: string[] | null
           created_at?: string | null
+          default_currency?: string | null
+          fee_structure?: Json | null
+          headquarters_address?: Json | null
+          incorporation_date?: string | null
+          industries_served?: string[] | null
+          insurance_details?: Json | null
+          last_active_at?: string | null
           license_number?: string | null
+          logo_url?: string | null
+          notification_preferences?: Json | null
+          office_address?: Json | null
+          onboarding_requirements?: Json | null
+          payment_terms?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
           profile_id?: string
+          response_time_avg?: number | null
           service_areas?: string[] | null
+          shifts_filled?: number | null
+          social_media_links?: Json | null
+          specializations?: string[] | null
+          status?: string | null
+          tags?: string[] | null
+          tax_id?: string | null
           tenant_id: string
           updated_at?: string | null
+          vat_number?: string | null
+          verification_documents?: Json | null
           verification_status?: string | null
+          website_url?: string | null
+          worker_count?: number | null
+          worker_types?: string[] | null
         }
         Update: {
+          agency_description?: string | null
+          agency_type?: string | null
+          bank_details?: Json | null
           billing_address?: Json | null
           business_number?: string | null
           business_verification_date?: string | null
           commission_rate?: number | null
+          company_rating?: number | null
+          compliance_certifications?: string[] | null
           created_at?: string | null
+          default_currency?: string | null
+          fee_structure?: Json | null
+          headquarters_address?: Json | null
+          incorporation_date?: string | null
+          industries_served?: string[] | null
+          insurance_details?: Json | null
+          last_active_at?: string | null
           license_number?: string | null
+          logo_url?: string | null
+          notification_preferences?: Json | null
+          office_address?: Json | null
+          onboarding_requirements?: Json | null
+          payment_terms?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
           profile_id?: string
+          response_time_avg?: number | null
           service_areas?: string[] | null
+          shifts_filled?: number | null
+          social_media_links?: Json | null
+          specializations?: string[] | null
+          status?: string | null
+          tags?: string[] | null
+          tax_id?: string | null
           tenant_id?: string
           updated_at?: string | null
+          vat_number?: string | null
+          verification_documents?: Json | null
           verification_status?: string | null
+          website_url?: string | null
+          worker_count?: number | null
+          worker_types?: string[] | null
         }
         Relationships: [
           {
@@ -609,38 +938,110 @@ export type Database = {
         Row: {
           billing_address: Json | null
           business_number: string | null
+          business_type: string | null
           business_verification_date: string | null
+          company_description: string | null
           company_size: string | null
+          compliance_certifications: string[] | null
           created_at: string | null
+          credit_rating: string | null
+          default_currency: string | null
+          headquarters_address: Json | null
+          incorporation_date: string | null
           industry: string | null
+          last_active_at: string | null
+          logo_url: string | null
+          notification_preferences: Json | null
+          operating_regions: string[] | null
+          payment_terms: string | null
+          primary_contact_email: string | null
+          primary_contact_name: string | null
+          primary_contact_phone: string | null
           profile_id: string
+          shift_posting_preferences: Json | null
+          shipping_address: Json | null
+          social_media_links: Json | null
+          status: string | null
+          tags: string[] | null
+          tax_id: string | null
           tenant_id: string
           updated_at: string | null
+          vat_number: string | null
+          verification_documents: Json | null
           verification_status: string | null
+          website_url: string | null
         }
         Insert: {
           billing_address?: Json | null
           business_number?: string | null
+          business_type?: string | null
           business_verification_date?: string | null
+          company_description?: string | null
           company_size?: string | null
+          compliance_certifications?: string[] | null
           created_at?: string | null
+          credit_rating?: string | null
+          default_currency?: string | null
+          headquarters_address?: Json | null
+          incorporation_date?: string | null
           industry?: string | null
+          last_active_at?: string | null
+          logo_url?: string | null
+          notification_preferences?: Json | null
+          operating_regions?: string[] | null
+          payment_terms?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
           profile_id?: string
+          shift_posting_preferences?: Json | null
+          shipping_address?: Json | null
+          social_media_links?: Json | null
+          status?: string | null
+          tags?: string[] | null
+          tax_id?: string | null
           tenant_id: string
           updated_at?: string | null
+          vat_number?: string | null
+          verification_documents?: Json | null
           verification_status?: string | null
+          website_url?: string | null
         }
         Update: {
           billing_address?: Json | null
           business_number?: string | null
+          business_type?: string | null
           business_verification_date?: string | null
+          company_description?: string | null
           company_size?: string | null
+          compliance_certifications?: string[] | null
           created_at?: string | null
+          credit_rating?: string | null
+          default_currency?: string | null
+          headquarters_address?: Json | null
+          incorporation_date?: string | null
           industry?: string | null
+          last_active_at?: string | null
+          logo_url?: string | null
+          notification_preferences?: Json | null
+          operating_regions?: string[] | null
+          payment_terms?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
           profile_id?: string
+          shift_posting_preferences?: Json | null
+          shipping_address?: Json | null
+          social_media_links?: Json | null
+          status?: string | null
+          tags?: string[] | null
+          tax_id?: string | null
           tenant_id?: string
           updated_at?: string | null
+          vat_number?: string | null
+          verification_documents?: Json | null
           verification_status?: string | null
+          website_url?: string | null
         }
         Relationships: [
           {
@@ -1250,6 +1651,33 @@ export type Database = {
         }
         Relationships: []
       }
+      protected_routes: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          required_role: string
+          route_path: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          required_role?: string
+          route_path: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          required_role?: string
+          route_path?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       rate_limits: {
         Row: {
           action: string
@@ -1348,6 +1776,156 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      registrations: {
+        Row: {
+          admin_notes: string | null
+          created_at: string | null
+          email: string
+          email_verified: boolean | null
+          id: string
+          ip_address: string | null
+          profile_data: Json | null
+          role: Database["public"]["Enums"]["user_role"]
+          status: Database["public"]["Enums"]["registration_status"] | null
+          supabase_uid: string | null
+          updated_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string | null
+          email: string
+          email_verified?: boolean | null
+          id?: string
+          ip_address?: string | null
+          profile_data?: Json | null
+          role: Database["public"]["Enums"]["user_role"]
+          status?: Database["public"]["Enums"]["registration_status"] | null
+          supabase_uid?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string | null
+          email?: string
+          email_verified?: boolean | null
+          id?: string
+          ip_address?: string | null
+          profile_data?: Json | null
+          role?: Database["public"]["Enums"]["user_role"]
+          status?: Database["public"]["Enums"]["registration_status"] | null
+          supabase_uid?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      registrations_backup_20250319_0921: {
+        Row: {
+          admin_notes: string | null
+          created_at: string | null
+          email: string | null
+          email_verified: boolean | null
+          id: string | null
+          ip_address: string | null
+          profile_data: Json | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          status: Database["public"]["Enums"]["registration_status"] | null
+          supabase_uid: string | null
+          updated_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string | null
+          email?: string | null
+          email_verified?: boolean | null
+          id?: string | null
+          ip_address?: string | null
+          profile_data?: Json | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          status?: Database["public"]["Enums"]["registration_status"] | null
+          supabase_uid?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string | null
+          email?: string | null
+          email_verified?: boolean | null
+          id?: string | null
+          ip_address?: string | null
+          profile_data?: Json | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          status?: Database["public"]["Enums"]["registration_status"] | null
+          supabase_uid?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      security_violations: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          ip_address: string | null
+          resolution_status: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string | null
+          updated_at: string | null
+          user_agent: string | null
+          user_id: string | null
+          violation_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          ip_address?: string | null
+          resolution_status?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          violation_type: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          ip_address?: string | null
+          resolution_status?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          violation_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "security_violations_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "security_violations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shift_applications: {
         Row: {
@@ -1581,42 +2159,120 @@ export type Database = {
       shift_worker_profiles: {
         Row: {
           availability: Json | null
+          availability_calendar: Json | null
+          availability_notes: string | null
+          background_check_date: string | null
+          bio: string | null
+          canceled_shifts: number | null
+          certifications: string[] | null
+          completed_shifts: number | null
           created_at: string
+          education: string | null
+          employment_status: string | null
           experience_years: number | null
+          hourly_rate: number | null
+          identity_verified: boolean | null
           is_independent: boolean | null
+          languages: string[] | null
+          last_active_at: string | null
+          max_distance: number | null
+          min_hourly_rate: number | null
+          notification_preferences: Json | null
+          payment_details: Json | null
           phone: string | null
+          preferred_locations: string[] | null
           preferred_roles: string[] | null
+          preferred_shift_types: string[] | null
           profile_id: string
+          profile_photo_url: string | null
           rating: number | null
+          references_verified: boolean | null
+          reliability_score: number | null
           skills: string[] | null
+          specializations: string[] | null
+          status: string | null
+          tags: string[] | null
+          tax_information: Json | null
           updated_at: string
           verification_status: string
           worker_code: string
         }
         Insert: {
           availability?: Json | null
+          availability_calendar?: Json | null
+          availability_notes?: string | null
+          background_check_date?: string | null
+          bio?: string | null
+          canceled_shifts?: number | null
+          certifications?: string[] | null
+          completed_shifts?: number | null
           created_at?: string
+          education?: string | null
+          employment_status?: string | null
           experience_years?: number | null
+          hourly_rate?: number | null
+          identity_verified?: boolean | null
           is_independent?: boolean | null
+          languages?: string[] | null
+          last_active_at?: string | null
+          max_distance?: number | null
+          min_hourly_rate?: number | null
+          notification_preferences?: Json | null
+          payment_details?: Json | null
           phone?: string | null
+          preferred_locations?: string[] | null
           preferred_roles?: string[] | null
+          preferred_shift_types?: string[] | null
           profile_id: string
+          profile_photo_url?: string | null
           rating?: number | null
+          references_verified?: boolean | null
+          reliability_score?: number | null
           skills?: string[] | null
+          specializations?: string[] | null
+          status?: string | null
+          tags?: string[] | null
+          tax_information?: Json | null
           updated_at?: string
           verification_status: string
           worker_code: string
         }
         Update: {
           availability?: Json | null
+          availability_calendar?: Json | null
+          availability_notes?: string | null
+          background_check_date?: string | null
+          bio?: string | null
+          canceled_shifts?: number | null
+          certifications?: string[] | null
+          completed_shifts?: number | null
           created_at?: string
+          education?: string | null
+          employment_status?: string | null
           experience_years?: number | null
+          hourly_rate?: number | null
+          identity_verified?: boolean | null
           is_independent?: boolean | null
+          languages?: string[] | null
+          last_active_at?: string | null
+          max_distance?: number | null
+          min_hourly_rate?: number | null
+          notification_preferences?: Json | null
+          payment_details?: Json | null
           phone?: string | null
+          preferred_locations?: string[] | null
           preferred_roles?: string[] | null
+          preferred_shift_types?: string[] | null
           profile_id?: string
+          profile_photo_url?: string | null
           rating?: number | null
+          references_verified?: boolean | null
+          reliability_score?: number | null
           skills?: string[] | null
+          specializations?: string[] | null
+          status?: string | null
+          tags?: string[] | null
+          tax_information?: Json | null
           updated_at?: string
           verification_status?: string
           worker_code?: string
@@ -1807,6 +2463,70 @@ export type Database = {
         }
         Relationships: []
       }
+      tenant_verification_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string | null
+          document_links: Json | null
+          id: string
+          requested_by: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          tenant_id: string
+          updated_at: string | null
+          verification_type: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string | null
+          document_links?: Json | null
+          id?: string
+          requested_by: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          tenant_id: string
+          updated_at?: string | null
+          verification_type: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string | null
+          document_links?: Json | null
+          id?: string
+          requested_by?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          tenant_id?: string
+          updated_at?: string | null
+          verification_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_verification_requests_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_verification_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_verification_requests_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenants: {
         Row: {
           created_at: string | null
@@ -1943,6 +2663,73 @@ export type Database = {
           },
         ]
       }
+      user_complaints: {
+        Row: {
+          assigned_to: string | null
+          complainant_id: string
+          complaint_type: string
+          created_at: string | null
+          description: string
+          evidence_links: Json | null
+          id: string
+          resolution: string | null
+          status: string | null
+          subject_id: string | null
+          subject_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          complainant_id: string
+          complaint_type: string
+          created_at?: string | null
+          description: string
+          evidence_links?: Json | null
+          id?: string
+          resolution?: string | null
+          status?: string | null
+          subject_id?: string | null
+          subject_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          complainant_id?: string
+          complaint_type?: string
+          created_at?: string | null
+          description?: string
+          evidence_links?: Json | null
+          id?: string
+          resolution?: string | null
+          status?: string | null
+          subject_id?: string | null
+          subject_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_complaints_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_complaints_complainant_id_fkey"
+            columns: ["complainant_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_complaints_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_devices: {
         Row: {
           browser_name: string | null
@@ -2042,47 +2829,76 @@ export type Database = {
       }
       users: {
         Row: {
+          admin_notes: string | null
+          admin_restricted: boolean | null
           auth_id: string | null
           avatar_url: string | null
           created_at: string | null
           email: string
           full_name: string | null
           id: string
+          impersonated_by_admin_id: string | null
+          last_admin_action_at: string | null
           phone: string | null
           role: string
           tenant_id: string
           updated_at: string | null
+          verified_by_admin_id: string | null
         }
         Insert: {
+          admin_notes?: string | null
+          admin_restricted?: boolean | null
           auth_id?: string | null
           avatar_url?: string | null
           created_at?: string | null
           email: string
           full_name?: string | null
           id?: string
+          impersonated_by_admin_id?: string | null
+          last_admin_action_at?: string | null
           phone?: string | null
           role: string
           tenant_id: string
           updated_at?: string | null
+          verified_by_admin_id?: string | null
         }
         Update: {
+          admin_notes?: string | null
+          admin_restricted?: boolean | null
           auth_id?: string | null
           avatar_url?: string | null
           created_at?: string | null
           email?: string
           full_name?: string | null
           id?: string
+          impersonated_by_admin_id?: string | null
+          last_admin_action_at?: string | null
           phone?: string | null
           role?: string
           tenant_id?: string
           updated_at?: string | null
+          verified_by_admin_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "users_impersonated_by_admin_id_fkey"
+            columns: ["impersonated_by_admin_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "users_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "users_verified_by_admin_id_fkey"
+            columns: ["verified_by_admin_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -2216,6 +3032,54 @@ export type Database = {
       }
     }
     Functions: {
+      admin_handle_complaint: {
+        Args: {
+          admin_id: string
+          complaint_id: string
+          new_status: string
+          resolution?: string
+        }
+        Returns: undefined
+      }
+      admin_impersonate_user: {
+        Args: {
+          admin_id: string
+          user_id: string
+        }
+        Returns: undefined
+      }
+      admin_restrict_user: {
+        Args: {
+          admin_id: string
+          user_id: string
+          restriction_reason: string
+        }
+        Returns: undefined
+      }
+      admin_unrestrict_user: {
+        Args: {
+          admin_id: string
+          user_id: string
+          unrestriction_reason: string
+        }
+        Returns: undefined
+      }
+      admin_verify_tenant: {
+        Args: {
+          admin_id: string
+          tenant_id: string
+          verification_notes?: string
+        }
+        Returns: undefined
+      }
+      admin_verify_user: {
+        Args: {
+          admin_id: string
+          user_id: string
+          verification_notes?: string
+        }
+        Returns: undefined
+      }
       assign_admin_role: {
         Args: {
           tenant_id: string
@@ -2248,6 +3112,16 @@ export type Database = {
         }
         Returns: Json
       }
+      current_user_is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      end_admin_session: {
+        Args: {
+          session_id: string
+        }
+        Returns: undefined
+      }
       generate_unique_id: {
         Args: {
           prefix: string
@@ -2263,6 +3137,23 @@ export type Database = {
           p_expires_hours?: number
         }
         Returns: string
+      }
+      get_admin_actions_for_user: {
+        Args: {
+          user_id: string
+        }
+        Returns: {
+          id: string
+          admin_id: string
+          admin_email: string
+          action_type: string
+          details: Json
+          created_at: string
+        }[]
+      }
+      get_admin_dashboard_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
       get_available_workers: {
         Args: {
@@ -2320,6 +3211,20 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      is_admin_user: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      log_admin_action: {
+        Args: {
+          admin_id: string
+          action_type: string
+          affected_table: string
+          affected_record_id: string
+          action_details: Json
+        }
+        Returns: undefined
+      }
       process_registration_backup: {
         Args: {
           backup_id: number
@@ -2334,6 +3239,12 @@ export type Database = {
           record_id: string
           event_type: string
           payload: Json
+        }
+        Returns: undefined
+      }
+      record_admin_session_action: {
+        Args: {
+          session_id: string
         }
         Returns: undefined
       }
@@ -2403,6 +3314,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      start_admin_session: {
+        Args: {
+          admin_id: string
+        }
+        Returns: string
+      }
+      stop_admin_impersonation: {
+        Args: {
+          user_id: string
+        }
+        Returns: undefined
+      }
       store_supabase_settings: {
         Args: {
           supabase_url: string
@@ -2471,6 +3394,7 @@ export type Database = {
         | "completed"
         | "failed"
         | "refunded"
+      registration_status: "pending" | "approved" | "rejected"
       shift_status:
         | "draft"
         | "open"
@@ -2478,8 +3402,10 @@ export type Database = {
         | "in_progress"
         | "completed"
         | "cancelled"
+      subscription_status: "inactive" | "active" | "expired"
       subscription_tier: "free" | "basic" | "premium" | "enterprise"
       tenant_status: "active" | "inactive" | "suspended" | "pending"
+      tenant_type: "company" | "agency"
       user_role: "admin" | "shift_worker" | "agency" | "company"
     }
     CompositeTypes: {
