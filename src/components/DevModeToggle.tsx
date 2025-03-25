@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
-import { Bot, Code, Layers, AlertCircle, RefreshCw, FileCode, TestTube, Layout, Zap } from "lucide-react";
+import { Bot, Code, Layers, AlertCircle, RefreshCw, FileCode, TestTube, Layout, Zap, Search } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/lib/supabase/client";
+import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
@@ -25,13 +25,11 @@ export const DevModeToggle = () => {
   const [codeSnippet, setCodeSnippet] = useState("");
   const [fileContext, setFileContext] = useState("");
   const [consoleOutput, setConsoleOutput] = useState("");
+  const [fileSearch, setFileSearch] = useState("");
+  const [searchResults, setSearchResults] = useState<string[]>([]);
   const navigate = useNavigate();
-  const { toast } = useToast();
   
-  // Only show in development environment - REMOVING THIS CHECK TO ALWAYS SHOW
-  // if (import.meta.env.PROD) {
-  //   return null;
-  // }
+  // Always show in development and production
   
   // Capture console outputs for debugging
   useEffect(() => {
@@ -80,6 +78,50 @@ export const DevModeToggle = () => {
     setConsoleOutput("");
   };
 
+  const simulateFileSearch = (query: string) => {
+    // This is a simulated file search
+    // In a real implementation, this would search through project files
+    const mockFiles = [
+      "src/App.tsx",
+      "src/contexts/auth/AuthProvider.tsx",
+      "src/contexts/auth/useAuth.tsx",
+      "src/components/DevModeToggle.tsx",
+      "src/components/ui/use-toast.ts",
+      "src/hooks/use-toast.ts",
+      "src/Router.tsx",
+      "supabase/functions/thropic-assistant/index.ts"
+    ];
+    
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    
+    const results = mockFiles.filter(file => 
+      file.toLowerCase().includes(query.toLowerCase())
+    );
+    setSearchResults(results);
+  };
+
+  const handleFileSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setFileSearch(query);
+    simulateFileSearch(query);
+  };
+
+  const selectFile = (file: string) => {
+    setFileContext(file);
+    setFileSearch("");
+    setSearchResults([]);
+    setActiveTab("code");
+    
+    // In a real implementation, this would fetch the file content
+    toast({
+      title: "File selected",
+      description: `Selected ${file} for context`,
+    });
+  };
+
   const handleThropicRequest = async () => {
     if (!prompt.trim()) {
       toast({
@@ -122,12 +164,12 @@ export const DevModeToggle = () => {
   };
 
   const quickPrompts = [
-    { name: "Debug Code", icon: <AlertCircle size={14} />, prompt: "Debug this code and identify potential issues:" },
+    { name: "Debug Error", icon: <AlertCircle size={14} />, prompt: "Debug this error and identify potential issues:" },
     { name: "Generate UI", icon: <Layers size={14} />, prompt: "Generate a component for:" },
     { name: "Refactor", icon: <Code size={14} />, prompt: "Refactor this code to improve:" },
     { name: "Write Tests", icon: <TestTube size={14} />, prompt: "Write tests for this component:" },
     { name: "API Endpoint", icon: <Zap size={14} />, prompt: "Create an API endpoint for:" },
-    { name: "Page Layout", icon: <Layout size={14} />, prompt: "Design a page layout for:" },
+    { name: "Fix Hooks", icon: <Code size={14} />, prompt: "Fix React hooks issues in:" },
   ];
   
   return (
@@ -187,9 +229,10 @@ export const DevModeToggle = () => {
                 </h4>
                 
                 <Tabs defaultValue="prompt" className="w-full" onValueChange={setActiveTab}>
-                  <TabsList className="grid grid-cols-3 mb-2">
+                  <TabsList className="grid grid-cols-4 mb-2">
                     <TabsTrigger value="prompt">Prompt</TabsTrigger>
-                    <TabsTrigger value="code">Code Context</TabsTrigger>
+                    <TabsTrigger value="code">Code</TabsTrigger>
+                    <TabsTrigger value="files">Files</TabsTrigger>
                     <TabsTrigger value="console">Console</TabsTrigger>
                   </TabsList>
                   
@@ -224,12 +267,51 @@ export const DevModeToggle = () => {
                       onChange={(e) => setCodeSnippet(e.target.value)}
                       className="min-h-[100px] text-sm font-mono"
                     />
-                    <Input
-                      placeholder="File path for context (optional)"
-                      value={fileContext}
-                      onChange={(e) => setFileContext(e.target.value)}
-                      className="text-sm"
-                    />
+                    <div className="text-xs text-muted-foreground">
+                      {fileContext && (
+                        <div className="flex items-center justify-between">
+                          <span>Context file: {fileContext}</span>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-6 p-0 text-xs"
+                            onClick={() => setFileContext("")}
+                          >
+                            Clear
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="files" className="space-y-3">
+                    <div className="relative">
+                      <Input
+                        placeholder="Search for files in project..."
+                        value={fileSearch}
+                        onChange={handleFileSearchChange}
+                        className="pr-8"
+                      />
+                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    </div>
+                    
+                    {searchResults.length > 0 && (
+                      <ScrollArea className="h-[120px] w-full rounded-md border p-2">
+                        <div className="space-y-1">
+                          {searchResults.map((file) => (
+                            <Button
+                              key={file}
+                              variant="ghost"
+                              size="sm"
+                              className="w-full justify-start text-xs font-mono"
+                              onClick={() => selectFile(file)}
+                            >
+                              {file}
+                            </Button>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    )}
                   </TabsContent>
                   
                   <TabsContent value="console" className="space-y-3">
