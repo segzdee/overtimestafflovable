@@ -1,7 +1,6 @@
 
 // This file provides the core toast functionality
 import { Toast, ToastActionElement, ToastProps } from "@/components/ui/toast";
-import { useToast as useToastPrimitive } from "@radix-ui/react-toast";
 import * as React from "react";
 
 const TOAST_LIMIT = 20;
