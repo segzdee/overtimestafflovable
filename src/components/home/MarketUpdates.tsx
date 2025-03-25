@@ -20,21 +20,34 @@ const MarketUpdates: React.FC = () => {
   };
 
   const handleLogin = () => {
-    navigate('/login');
+    navigate('/auth/login');
     setShowLoginDialog(false);
   };
 
   const handleSignUp = () => {
-    navigate('/register');
+    navigate('/auth/register');
     setShowLoginDialog(false);
   };
 
+  const viewFullMarket = () => {
+    navigate('/market');
+  };
+
   return (
-    <section className="py-6 md:py-8 lg:py-10">
+    <section className="py-4 md:py-6">
       <div className="container mx-auto px-4">
-        <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 mb-4 md:mb-6 text-center">
-          Live Hospitality Market
-        </h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
+            Live Hospitality Market
+          </h2>
+          <Button 
+            variant="outline" 
+            onClick={viewFullMarket} 
+            className="text-sm"
+          >
+            View Full Market
+          </Button>
+        </div>
         
         <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-xl p-4 md:p-6 max-w-6xl mx-auto text-white overflow-hidden border border-gray-700">
           <div className="flex justify-between items-center mb-4 px-2">
@@ -79,20 +92,6 @@ const MarketUpdates: React.FC = () => {
                 <p className="text-xs text-gray-300">Azure Beach Resort</p>
                 <p className="text-xs text-white">St. Julian's, Malta</p>
               </div>
-              
-              <div 
-                className="bg-gray-800/80 p-3 md:p-4 rounded-lg hover:bg-gray-800 transition-colors duration-200 border border-gray-700/50 cursor-pointer transform hover:scale-[1.01] transition-transform"
-                onClick={handleCardClick}
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs bg-amber-500 px-2 py-1 rounded-md text-gray-900 font-medium">SWAP</span>
-                  <span className="text-xs bg-amber-500/20 px-2 py-1 rounded-md text-amber-300 font-medium">MEDIUM</span>
-                  <span className="text-sm font-bold text-green-400">€32/hr</span>
-                </div>
-                <h3 className="font-semibold text-sm md:text-base text-white mb-1">Head Bartender - Cocktail Bar</h3>
-                <p className="text-xs text-gray-300">The Mixology Lab</p>
-                <p className="text-xs text-white">Sliema, Malta</p>
-              </div>
             </div>
             
             {/* Premium shifts - Column 2 */}
@@ -112,79 +111,17 @@ const MarketUpdates: React.FC = () => {
               </div>
               
               <div 
-                className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50 cursor-pointer transform hover:scale-[1.01] transition-transform"
+                className="bg-gray-800/80 p-3 md:p-4 rounded-lg hover:bg-gray-800 transition-colors duration-200 border border-gray-700/50 cursor-pointer transform hover:scale-[1.01] transition-transform"
                 onClick={handleCardClick}
               >
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs bg-purple-500 px-2 py-1 rounded-md text-white font-medium">PREMIUM</span>
-                  <span className="text-xs bg-green-500/20 px-2 py-1 rounded-md text-green-300 font-medium">LOW</span>
-                  <span className="text-sm font-bold text-green-400">€39/hr</span>
-                </div>
-                <h3 className="font-semibold text-sm md:text-base text-white mb-1">Pastry Chef - 5-Star Hotel</h3>
-                <p className="text-xs text-gray-300">Le Grand Patisserie</p>
-                <p className="text-xs text-white">Port Louis, Italy</p>
-              </div>
-              
-              <div 
-                className="bg-purple-900/80 p-3 md:p-4 rounded-lg hover:bg-purple-900 transition-colors duration-200 border border-purple-800/50 cursor-pointer transform hover:scale-[1.01] transition-transform"
-                onClick={handleCardClick}
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs bg-purple-500 px-2 py-1 rounded-md text-white font-medium">PREMIUM</span>
+                  <span className="text-xs bg-red-500 px-2 py-1 rounded-md text-white font-medium">URGENT</span>
                   <span className="text-xs bg-red-500/20 px-2 py-1 rounded-md text-red-300 font-medium">HIGH</span>
-                  <span className="text-sm font-bold text-green-400">€50/hr</span>
+                  <span className="text-sm font-bold text-green-400">€40/hr</span>
                 </div>
-                <h3 className="font-semibold text-sm md:text-base text-white mb-1">Executive Pastry Chef</h3>
-                <p className="text-xs text-gray-300">Royal Dining Group</p>
-                <p className="text-xs text-white">Milan, Italy</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Emergency & Shift Swap Index */}
-          <div className="mt-4 md:mt-5">
-            <div className="flex justify-between items-center px-2 mb-3">
-              <div className="flex items-center gap-3">
-                <h3 className="text-xs font-bold text-red-400 tracking-wider">EMERGENCY SHIFT INDEX</h3>
-                <div className="px-2 py-1 bg-red-500/20 rounded-md text-red-300 text-xs font-medium">
-                  2 Active
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="px-2 py-1 text-xs bg-gray-700 rounded-md text-white">LON</span>
-                <span className="text-xs text-gray-300">9:49:30 PM UTC</span>
-              </div>
-            </div>
-            
-            <div className="bg-gray-800/80 border border-gray-700 rounded-lg p-4">
-              <div className="space-y-4">
-                {/* Emergency Shift 1 */}
-                <div 
-                  className="border-b border-gray-700 pb-4 cursor-pointer hover:bg-gray-700/30 p-2 rounded transition-colors"
-                  onClick={handleCardClick}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs bg-red-500 px-2 py-1 rounded-md text-white font-medium">URGENT</span>
-                    <span className="text-sm font-bold text-green-400">€40/hr</span>
-                  </div>
-                  <h3 className="font-semibold text-sm md:text-base text-white mb-1">Sous Chef - Michelin Restaurant</h3>
-                  <p className="text-xs text-gray-300">Casa del Mar</p>
-                  <p className="text-xs text-white">Barcelona, Spain</p>
-                </div>
-                
-                {/* Emergency Shift 2 */}
-                <div
-                  className="cursor-pointer hover:bg-gray-700/30 p-2 rounded transition-colors"
-                  onClick={handleCardClick}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs bg-amber-500 px-2 py-1 rounded-md text-gray-900 font-medium">SWAP</span>
-                    <span className="text-sm font-bold text-green-400">€35/hr</span>
-                  </div>
-                  <h3 className="font-semibold text-sm md:text-base text-white mb-1">Restaurant Manager - Urgent Cover</h3>
-                  <p className="text-xs text-gray-300">El Paradiso Beach Club</p>
-                  <p className="text-xs text-white">Ibiza, Spain</p>
-                </div>
+                <h3 className="font-semibold text-sm md:text-base text-white mb-1">Sous Chef - Michelin Restaurant</h3>
+                <p className="text-xs text-gray-300">Casa del Mar</p>
+                <p className="text-xs text-white">Barcelona, Spain</p>
               </div>
             </div>
           </div>
@@ -193,8 +130,14 @@ const MarketUpdates: React.FC = () => {
           <div className="flex flex-wrap justify-between items-center mt-4 px-2 text-xs text-gray-400">
             <p className="text-white">Updated 5 minutes ago</p>
             <p className="text-white">69 new positions added today</p>
-            <p className="text-white">Emergency tracking in real-time</p>
-            <p className="text-white">7 active emergencies</p>
+            <Button
+              variant="link"
+              size="sm"
+              onClick={viewFullMarket}
+              className="text-green-400 hover:text-green-300 p-0"
+            >
+              View all positions →
+            </Button>
           </div>
         </div>
       </div>

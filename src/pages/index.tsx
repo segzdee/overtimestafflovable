@@ -24,17 +24,17 @@ const Home = () => {
         <HeroSection />
         
         {/* Login Cards */}
-        <section className="py-8">
+        <section className="py-4">
           <LoginCards />
         </section>
         
         {/* Market Updates */}
-        <section className="py-8 bg-white">
+        <section className="py-4 bg-white">
           <MarketUpdates />
         </section>
         
         {/* How It Works */}
-        <section className="py-8">
+        <section className="py-4">
           <HowItWorks />
         </section>
       </main>

@@ -5,6 +5,7 @@ import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 import Profile from "@/pages/Profile";
 import Home from "@/pages/index";
+import LiveMarket from "@/pages/LiveMarket";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Dashboard from "@/pages/Dashboard";
 
@@ -15,6 +16,7 @@ export default function Router() {
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<Home />} />
+      <Route path="/market" element={<LiveMarket />} />
       
       {/* Auth routes */}
       <Route path="/auth/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
