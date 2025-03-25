@@ -8,6 +8,7 @@ import Home from "@/pages/index";
 import LiveMarket from "@/pages/LiveMarket";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Dashboard from "@/pages/Dashboard";
+import AIAssistant from "@/pages/AIAssistant";
 
 export default function Router() {
   const { user } = useAuth();
@@ -26,6 +27,12 @@ export default function Router() {
       <Route path="/profile" element={
         <ProtectedRoute allowedRoles={["admin", "shift-worker", "company", "agency", "aiagent"]}>
           <Profile />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/ai-assistant" element={
+        <ProtectedRoute allowedRoles={["admin", "shift-worker", "company", "agency", "aiagent"]}>
+          <AIAssistant />
         </ProtectedRoute>
       } />
 
