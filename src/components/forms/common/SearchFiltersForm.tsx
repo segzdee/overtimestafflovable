@@ -27,7 +27,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from "@/components/ui/card";
 import { 
   Collapsible, 
@@ -49,7 +48,7 @@ interface FilterOption {
   multiple?: boolean;
 }
 
-interface SearchFiltersFormProps<T extends z.ZodType<any>> {
+interface SearchFiltersFormProps<T extends z.ZodType<any, any>> {
   onSubmit: (data: z.infer<T>) => void;
   defaultValues?: Partial<z.infer<T>>;
   schema: T;
@@ -61,7 +60,7 @@ interface SearchFiltersFormProps<T extends z.ZodType<any>> {
   onReset?: () => void;
 }
 
-export function SearchFiltersForm<T extends z.ZodType<any>>({
+export function SearchFiltersForm<T extends z.ZodType<any, any>>({
   onSubmit,
   defaultValues,
   schema,
@@ -196,9 +195,9 @@ export function SearchFiltersForm<T extends z.ZodType<any>>({
                                 <div className="flex items-center space-x-2" key={option.value}>
                                   <FormControl>
                                     <Checkbox
-                                      checked={field.value?.includes(option.value)}
+                                      checked={Array.isArray(field.value) && field.value.includes(option.value)}
                                       onCheckedChange={(checked) => {
-                                        const currentValues = field.value || [];
+                                        const currentValues = Array.isArray(field.value) ? field.value : [];
                                         if (checked) {
                                           field.onChange([...currentValues, option.value]);
                                         } else {
