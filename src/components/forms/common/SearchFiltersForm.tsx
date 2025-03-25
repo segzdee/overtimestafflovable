@@ -237,7 +237,12 @@ export function SearchFiltersForm<T extends z.ZodType<any, any>>({
                           size="icon"
                           className="h-3 w-3 p-0 ml-1"
                           onClick={() => {
-                            form.setValue(filterId as any, filter.type === "checkbox" ? [] : "");
+                            // Fix for the type error - properly cast the value based on filter type
+                            if (filter.type === "checkbox") {
+                              form.setValue(filterId as any, [] as any);
+                            } else {
+                              form.setValue(filterId as any, "" as any);
+                            }
                             setActiveFilters(prev => prev.filter(id => id !== filterId));
                           }}
                         >
