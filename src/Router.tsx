@@ -1,14 +1,12 @@
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth/AuthProvider";
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 import Profile from "@/pages/Profile";
-import Home from "@/pages/Home";
+import Home from "@/pages/index";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Dashboard from "@/pages/Dashboard";
-
-// Import pages
-
 
 export default function Router() {
   const { user } = useAuth();
@@ -57,7 +55,9 @@ export default function Router() {
         </ProtectedRoute>
       } />
 
-      {/* Add the rest of your routes here */}
+      {/* These routes redirect to their equivalents in the auth folder for better organization */}
+      <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+      <Route path="/register" element={<Navigate to="/auth/register" replace />} />
     </Routes>
   );
 }

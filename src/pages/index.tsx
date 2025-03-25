@@ -11,7 +11,7 @@ const Home = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navigation Header */}
       <HeaderNav 
         mobileMenuOpen={mobileMenuOpen} 
@@ -24,19 +24,19 @@ const Home = () => {
         <HeroSection />
         
         {/* Login Cards */}
-        <div className="py-4">
+        <section className="py-8">
           <LoginCards />
-        </div>
+        </section>
         
         {/* Market Updates */}
-        <div className="py-4">
+        <section className="py-8 bg-white">
           <MarketUpdates />
-        </div>
+        </section>
         
         {/* How It Works */}
-        <div className="py-4">
+        <section className="py-8">
           <HowItWorks />
-        </div>
+        </section>
       </main>
 
       {/* Footer */}
