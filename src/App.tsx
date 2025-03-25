@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Router from "./Router";
 import { useAuth } from "@/contexts/auth/AuthProvider";
 import { setupStorage } from "@/utils/setupStorage";
+import { DevModeToggle } from "@/components/DevModeToggle";
 
 function App() {
   const { user, loading } = useAuth();
@@ -24,7 +25,12 @@ function App() {
     }
   }, [user, loading, navigate, location]);
 
-  return <Router />;
+  return (
+    <>
+      <Router />
+      <DevModeToggle />
+    </>
+  );
 }
 
 export default App;

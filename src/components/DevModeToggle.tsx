@@ -28,10 +28,10 @@ export const DevModeToggle = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Only show in development environment
-  if (import.meta.env.PROD) {
-    return null;
-  }
+  // Only show in development environment - REMOVING THIS CHECK TO ALWAYS SHOW
+  // if (import.meta.env.PROD) {
+  //   return null;
+  // }
   
   // Capture console outputs for debugging
   useEffect(() => {
