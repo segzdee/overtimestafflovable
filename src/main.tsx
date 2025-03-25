@@ -6,13 +6,16 @@ import { AuthProvider } from './contexts/auth/AuthProvider';
 import { Router } from './Router';
 import './index.css';
 import { Toaster } from 'sonner';
+import { DevModeProvider } from './contexts/dev/DevModeContext';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <Router />
-        <Toaster position="top-right" richColors />
+        <DevModeProvider>
+          <Router />
+          <Toaster position="top-right" richColors />
+        </DevModeProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
