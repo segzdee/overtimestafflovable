@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bot, UserCircle, Building2, Building } from 'lucide-react';
+import { Bot, UserCircle, Building2, Building, CheckCircle } from 'lucide-react';
 
 const LoginCards: React.FC = () => {
   return (
@@ -68,19 +68,30 @@ const LoginCards: React.FC = () => {
             </CardContent>
           </Card>
           
-          {/* AI Agent Card */}
-          <Card className="bg-white shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 h-full transform hover:-translate-y-1">
+          {/* AI Agent Card - Updated with subscription highlight */}
+          <Card className="bg-gradient-to-r from-indigo-50 to-blue-50 shadow-md hover:shadow-lg transition-all duration-300 border-2 border-indigo-200 h-full transform hover:-translate-y-1 relative overflow-hidden">
+            <div className="absolute top-2 right-2 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+              $10/mo
+            </div>
             <CardContent className="p-4 md:p-6 flex flex-col items-center justify-between h-full">
               <div className="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
                 <Bot className="h-7 w-7 text-indigo-600" />
               </div>
               <div className="text-center mb-4">
                 <h3 className="text-base md:text-lg font-semibold mb-2">AI Agent</h3>
-                <p className="text-sm text-gray-600 mb-4">Activate Agent for Automation</p>
+                <p className="text-sm text-gray-600 mb-2">Automate Your Operations</p>
+                <div className="flex items-center justify-center text-xs text-indigo-700 mt-1">
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  <span>Automated Scheduling</span>
+                </div>
+                <div className="flex items-center justify-center text-xs text-indigo-700 mt-1">
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  <span>Smart Recommendations</span>
+                </div>
               </div>
               <Link to="/auth/login?type=aiagent" className="w-full">
                 <Button className="w-full bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white py-2 text-sm sm:text-base">
-                  LOGIN
+                  SUBSCRIBE
                 </Button>
               </Link>
             </CardContent>
