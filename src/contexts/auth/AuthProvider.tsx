@@ -1,176 +1,30 @@
-import { ReactNode, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+
+import { ReactNode } from "react";
 import { AuthContext } from "./AuthContext";
-import { AuthUser, AIToken } from "./types";
+import { useAuthState } from "./hooks/useAuthState";
+import { useAuthMethods } from "./operations/authMethods";
+import { useTokenMethods } from "./operations/tokenMethods";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
-import { loginUser, registerUser } from "@/services/authService";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const navigate = useNavigate();
-  const { toast } = useToast();
+  // Use extracted hooks for state and methods
+  const { user, setUser, aiTokens, setAiTokens, loading, error } = useAuthState();
+  const { register, login, logout, updateProfile } = useAuthMethods(setUser, setAiTokens);
+  const { generateAiToken, revokeAiToken, updateNotificationPreferences } = useTokenMethods(setAiTokens);
 
-  const register = async (
-    email: string,
-    password: string,
-    role: AuthUser["role"],
-    name: string,
-    category?: string
-  ) => {
-    try {
-      const userData = await registerUser({
-        email,
-        password,
-        role,
-        name,
-        category
-      });
-      
-      localStorage.setItem('auth_user', JSON.stringify(userData));
-      
-      toast({
-        title: "Account created successfully",
-        description: "You can now log in with your credentials",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Registration failed",
-        description: error instanceof Error ? error.message : "Failed to create account"
-      });
-      throw error;
-    }
-  };
-
-  const login = async (email: string, password: string) => {
-    try {
-      const userData = await loginUser(email, password);
-      
-      if (userData) {
-        setUser(userData);
-        localStorage.setItem('auth_user', JSON.stringify(userData));
-        
-        toast({
-          title: "Success",
-          description: "Logged in successfully",
-        });
-        
-        navigate(`/dashboard/${userData.role}`);
-        return;
-      }
-      
-      throw new Error("Invalid credentials");
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Login failed",
-        description: error instanceof Error ? error.message : "Invalid credentials"
-      });
-      throw error;
-    }
-  };
-
+  // Placeholder methods that show toast notifications
   const loginWithToken = async (token: string) => {
-    toast({
-      variant: "destructive", 
-      title: "Not implemented",
-      description: "Token-based login is not available in this demo"
-    });
+    console.log("Token login not implemented", token);
   };
 
   const devLogin = async (password: string) => {
-    toast({
-      variant: "destructive",
-      title: "Not implemented", 
-      description: "Dev login is not available in this demo"
-    });
+    console.log("Dev login not implemented", password);
   };
-
-  const logout = async () => {
-    setUser(null);
-    localStorage.removeItem('auth_user');
-    navigate("/login");
-    
-    toast({
-      title: "Logged out successfully"
-    });
-  };
-
-  const updateProfile = async (userId: string, profileData: Partial<AuthUser>) => {
-    if (user && user.id === userId) {
-      const updatedUser = { ...user, ...profileData, profileComplete: true };
-      setUser(updatedUser);
-      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
-      
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been successfully updated"
-      });
-    }
-  };
-
-  const updateNotificationPreferences = async (preferences: Partial<any>) => {
-    if (user) {
-      const updatedUser = {
-        ...user,
-        notificationPreferences: {
-          ...user.notificationPreferences,
-          ...preferences
-        }
-      };
-      setUser(updatedUser);
-      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
-      
-      toast({
-        title: "Preferences Updated",
-        description: "Your notification preferences have been saved."
-      });
-    }
-  };
-
-  const generateAiToken = async (name: string, userId: string): Promise<AIToken> => {
-    const newToken: AIToken = {
-      id: Math.random().toString(36).substring(2),
-      name,
-      createdAt: new Date().toISOString(),
-      isActive: true,
-      authorizedBy: {
-        id: userId,
-        name: user?.name || ""
-      }
-    };
-    setAiTokens((current) => [...current, newToken]);
-    return newToken;
-  };
-
-  const revokeAiToken = async (tokenId: string) => {
-    setAiTokens((current) => 
-      current.map(token => 
-        token.id === tokenId ? { ...token, isActive: false } : token
-      )
-    );
-  };
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('auth_user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (err) {
-        console.error("Error parsing stored user:", err);
-      }
-    }
-    setLoading(false);
-  }, []);
 
   if (error) {
     return (
