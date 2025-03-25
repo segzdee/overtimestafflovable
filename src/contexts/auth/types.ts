@@ -1,6 +1,5 @@
 
-import { User } from "@supabase/supabase-js";
-import { BaseRole, NotificationPreferences } from "@/lib/types";
+import { BaseRole } from "@/lib/types";
 
 export type VerificationStatus = 'pending' | 'verified' | 'under_review' | 'rejected';
 
@@ -10,18 +9,18 @@ export interface AuthUser {
   role: BaseRole;
   name: string;
   category?: string;
-  profileComplete: boolean;
+  profileComplete?: boolean;
   agencyName?: string;
   address?: string;
   phoneNumber?: string;
   specialization?: string;
   staffingCapacity?: number;
-  verificationStatus: VerificationStatus;
-  emailVerified: boolean;
+  verificationStatus?: VerificationStatus;
+  emailVerified?: boolean;
   verificationSentAt?: string;
   verificationCompletedAt?: string;
   reviewNotes?: string;
-  notificationPreferences?: NotificationPreferences;
+  avatar_url?: string;
 }
 
 export interface AIToken {
@@ -29,7 +28,7 @@ export interface AIToken {
   name: string;
   createdAt: string;
   isActive: boolean;
-  authorizedBy: {
+  authorizedBy?: {
     id: string;
     name: string;
   };
@@ -37,14 +36,21 @@ export interface AIToken {
 
 export interface AuthContextType {
   user: AuthUser | null;
-  register: (email: string, password: string, role: AuthUser["role"], name: string, category?: string) => Promise<void>;
+  session: any | null;
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, role: BaseRole, name: string, category?: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  updateProfile: (profile: Partial<AuthUser>) => Promise<void>;
+  
+  // Aliases for consistent naming
   login: (email: string, password: string) => Promise<void>;
-  loginWithToken: (token: string) => Promise<void>;
-  devLogin: (password: string) => Promise<void>;
+  register: (email: string, password: string, role: BaseRole, name: string, category?: string) => Promise<void>;
   logout: () => Promise<void>;
-  updateProfile: (userId: string, profileData: Partial<AuthUser>) => Promise<void>;
-  updateNotificationPreferences: (preferences: Partial<NotificationPreferences>) => Promise<void>;
-  generateAiToken: (name: string, userId: string) => Promise<AIToken>;
-  revokeAiToken: (token: string) => Promise<void>;
-  aiTokens: AIToken[];
+  
+  // Optional methods
+  loginWithToken?: (token: string) => Promise<void>;
+  generateAiToken?: (name: string, userId: string) => Promise<AIToken>;
+  revokeAiToken?: (tokenId: string) => Promise<void>;
+  aiTokens?: AIToken[];
 }

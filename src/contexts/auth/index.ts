@@ -1,5 +1,3 @@
 
-export * from './AuthContext';
-export * from './AuthProvider';
-export * from './useAuth';
-export * from './types';
+// Re-export all from AuthProvider
+export { AuthProvider, useAuth, type AuthUser } from './AuthProvider';

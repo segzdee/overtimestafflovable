@@ -1,30 +1,11 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { BaseRole } from '@/lib/types';
-
-export interface AuthUser {
-  id: string;
-  email: string;
-  role: BaseRole;
-  name: string;
-  profileComplete?: boolean;
-  emailVerified?: boolean;
-  avatar_url?: string;
-}
-
-interface AuthContextType {
-  user: AuthUser | null;
-  session: Session | null;
-  loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, role: BaseRole, name: string, category?: string) => Promise<void>;
-  signOut: () => Promise<void>;
-  updateProfile: (profile: Partial<AuthUser>) => Promise<void>;
-}
+import { AuthUser, AuthContextType, AIToken } from './types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -36,10 +17,13 @@ export function useAuth() {
   return context;
 }
 
+export { type AuthUser };
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -66,7 +50,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name: data.name,
         profileComplete: data.profile_complete,
         emailVerified: data.email_verified,
-        avatar_url: data.avatar_url
+        avatar_url: data.avatar_url,
+        category: data.category,
+        address: data.address,
+        phoneNumber: data.phone_number,
+        agencyName: data.agency_name,
+        specialization: data.specialization,
+        staffingCapacity: data.staffing_capacity,
+        verificationStatus: data.verification_status
       };
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
@@ -184,7 +175,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "You have been successfully signed out.",
       });
       
-      navigate('/login');
+      navigate('/auth/login');
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -195,16 +186,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateProfile = async (profile: Partial<AuthUser>) => {
+  const updateProfile = async (profileData: Partial<AuthUser>) => {
     try {
       if (!user) throw new Error('No user is logged in');
 
       const { error } = await supabase
         .from('profiles')
         .update({
-          name: profile.name,
-          avatar_url: profile.avatar_url,
+          name: profileData.name,
+          avatar_url: profileData.avatar_url,
           profile_complete: true,
+          category: profileData.category,
+          agency_name: profileData.agencyName,
+          address: profileData.address,
+          phone_number: profileData.phoneNumber,
+          specialization: profileData.specialization,
+          staffing_capacity: profileData.staffingCapacity,
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id);
@@ -212,7 +209,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
 
       // Update the local user state
-      setUser(prev => prev ? { ...prev, ...profile } : null);
+      setUser(prev => prev ? { ...prev, ...profileData } : null);
       
       toast({
         title: "Profile updated",
@@ -228,14 +225,109 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const value = {
+  // Generate an AI token for API access
+  const generateAiToken = async (name: string, userId: string): Promise<AIToken> => {
+    try {
+      const { data, error } = await supabase
+        .from('ai_tokens')
+        .insert({
+          name,
+          user_id: userId,
+          is_active: true
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newToken: AIToken = {
+        id: data.id,
+        name: data.name,
+        createdAt: data.created_at,
+        isActive: data.is_active,
+        authorizedBy: {
+          id: userId,
+          name: user?.name || "Unknown"
+        }
+      };
+
+      setAiTokens(prev => [...prev, newToken]);
+      return newToken;
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Failed to generate token",
+        description: error.message || "An error occurred"
+      });
+      throw error;
+    }
+  };
+
+  // Revoke an AI token
+  const revokeAiToken = async (tokenId: string): Promise<void> => {
+    try {
+      const { error } = await supabase
+        .from('ai_tokens')
+        .update({ is_active: false })
+        .eq('id', tokenId);
+
+      if (error) throw error;
+
+      setAiTokens(prev => 
+        prev.map(token => 
+          token.id === tokenId ? { ...token, isActive: false } : token
+        )
+      );
+      
+      toast({
+        title: "Token revoked",
+        description: "The AI token has been successfully revoked."
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Failed to revoke token",
+        description: error.message || "An error occurred"
+      });
+      throw error;
+    }
+  };
+
+  // Login with token (for AI agent access)
+  const loginWithToken = async (token: string): Promise<void> => {
+    try {
+      // In a real implementation, validate the token against ai_tokens table
+      toast({
+        title: "Token login",
+        description: "This feature is not fully implemented yet."
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Token login failed",
+        description: error.message || "An error occurred"
+      });
+      throw error;
+    }
+  };
+
+  const value: AuthContextType = {
     user,
     session,
     loading,
     signIn,
     signUp,
     signOut,
-    updateProfile
+    updateProfile,
+    // Aliases for consistent naming
+    login: signIn,
+    register: signUp,
+    logout: signOut,
+    // Optional methods
+    generateAiToken,
+    revokeAiToken,
+    loginWithToken,
+    aiTokens
   };
 
   return (

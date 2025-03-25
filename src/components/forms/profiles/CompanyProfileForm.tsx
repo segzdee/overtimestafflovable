@@ -1,13 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/contexts/auth";
+import { useAuth } from "@/contexts/auth/AuthProvider";
 import { CompanyProfileFormData } from "./types";
-import { FileInput } from "@/components/ui/file-input";
-import { supabase } from "@/lib/supabase/client";
-import { TeamMemberModal } from "@/components/modals/TeamMemberModal";
+import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants/categories";
 import {
@@ -66,13 +63,13 @@ export function CompanyProfileForm() {
       return;
     }
 
-    setTeamMembers(data.map(member => ({
+    setTeamMembers(data?.map(member => ({
       id: member.id,
       name: member.name,
       email: member.email,
       role: member.role,
       accessLevel: member.access_level
-    })));
+    })) || []);
   };
 
   const handleSaveMember = async (member: TeamMember) => {
@@ -151,7 +148,7 @@ export function CompanyProfileForm() {
     try {
       if (!user) throw new Error("No user found");
       
-      await updateProfile(user.id, {
+      await updateProfile({
         ...formData,
         profileComplete: true
       });

@@ -1,11 +1,12 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/contexts/auth";
+import { useAuth } from "@/contexts/auth/AuthProvider";
 import { FreelancerProfileFormData } from "./types";
 import { FileInput } from "@/components/ui/file-input";
-import { supabase } from "@/lib/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
   SelectContent,
@@ -97,7 +98,7 @@ export function FreelancerProfileForm() {
         await uploadDocuments();
       }
 
-      await updateProfile(user.id, {
+      await updateProfile({
         ...formData,
         profileComplete: true
       });

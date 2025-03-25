@@ -1,41 +1,42 @@
 
-export const CATEGORIES = {
-  company: [
-    { group: 'Hotels', items: [
-      'Full-Service Hotel', 'Limited-Service Hotel', 'Boutique Hotel', 'Luxury Hotel',
-      'Extended Stay Hotel', 'Budget Hotel', 'Capsule Hotel', 'Motel', 'Heritage Hotel',
-      'Eco-Hotel', 'Business Hotel', 'Airport Hotel', 'Design Hotel', 'Theme Hotel'
-    ]},
-    { group: 'Resorts', items: [
-      'Beach Resort', 'Ski Resort', 'Golf Resort', 'Spa Resort', 'All-Inclusive Resort',
-      'Eco-Resort', 'Adventure Resort', 'Family Resort', 'Casino Resort', 'Luxury Resort',
-      'Boutique Resort', 'Island Resort', 'Mountain Resort', 'Urban Resort'
-    ]},
-    { group: 'Alternative Accommodations', items: [
-      'Bed and Breakfast (B&B)', 'Hostel', 'Vacation Rental', 'Serviced Apartment',
-      'Inn', 'Lodge', 'Glamping Site', 'Treehouse', 'Farm Stay', 'Wellness Retreat'
-    ]}
+interface CategoryGroup {
+  group: string;
+  items: string[];
+}
+
+export const CATEGORIES: Record<string, CategoryGroup[]> = {
+  "shift-worker": [
+    {
+      group: "Hospitality",
+      items: ["Bartender", "Waiter/Waitress", "Chef", "Host/Hostess", "Barista", "Food Runner"]
+    },
+    {
+      group: "Retail",
+      items: ["Sales Associate", "Cashier", "Stock Clerk", "Visual Merchandiser", "Customer Service"]
+    },
+    {
+      group: "Events",
+      items: ["Event Staff", "Security", "Catering", "Usher", "Ticket Attendant"]
+    }
   ],
-  agency: [
-    { group: 'Staffing Services', items: [
-      'Staffing Agency', 'Temping Agency', 'Recruitment Agency', 'Executive Search Firm'
-    ]},
-    { group: 'Specialized Services', items: [
-      'Event Planning Agency', 'Food and Beverage Consulting Agency',
-      'Training and Development Agency', 'Vendor and Supplier Agency'
-    ]},
-    { group: 'Support Services', items: [
-      'Management Consulting Agency', 'Marketing and PR Agency',
-      'Technology and Software Agency', 'Design and Branding Agency'
-    ]}
+  "company": [
+    {
+      group: "Hospitality",
+      items: ["Restaurant", "Hotel", "Cafe", "Bar", "Catering Service"]
+    },
+    {
+      group: "Retail",
+      items: ["Department Store", "Boutique", "Supermarket", "Shopping Mall", "Specialty Store"]
+    },
+    {
+      group: "Events",
+      items: ["Concert Venue", "Conference Center", "Exhibition Hall", "Sports Arena", "Theater"]
+    }
   ],
-  'shift-worker': [
-    { group: 'Employment Type', items: [
-      'Full-Time Staff', 'Part-Time Staff', 'Casual Staff', 'Seasonal Staff',
-      'Temporary Staff', 'Contract Employees', 'On-Call Staff', 'Per Diem Staff'
-    ]},
-    { group: 'Specialized Roles', items: [
-      'Extra-Hands', 'Freelancers', 'Independent Contractors', 'Shift Workers'
-    ]}
+  "agency": [
+    {
+      group: "Staffing Type",
+      items: ["Hospitality Staffing", "Retail Staffing", "Event Staffing", "General Labor", "Mixed Staffing"]
+    }
   ]
 };

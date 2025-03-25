@@ -1,9 +1,18 @@
 
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+interface TeamMember {
+  id?: string;
+  name: string;
+  email: string;
+  role: string;
+  accessLevel: string;
+}
 
 interface TeamMemberModalProps {
   open: boolean;
@@ -12,105 +21,110 @@ interface TeamMemberModalProps {
   initialData?: TeamMember;
 }
 
-interface TeamMember {
-  name: string;
-  email: string;
-  role: string;
-  accessLevel: string;
-}
-
-const ACCESS_LEVELS = ["admin", "manager", "viewer"];
-const TEAM_ROLES = ["HR Manager", "Shift Supervisor", "Recruiter", "Account Manager"];
-
 export function TeamMemberModal({ open, onClose, onSave, initialData }: TeamMemberModalProps) {
-  const [member, setMember] = useState<TeamMember>(
-    initialData || {
-      name: "",
-      email: "",
-      role: "",
-      accessLevel: "viewer"
+  const [formData, setFormData] = useState<TeamMember>({
+    name: "",
+    email: "",
+    role: "staff",
+    accessLevel: "user"
+  });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    } else {
+      setFormData({
+        name: "",
+        email: "",
+        role: "staff",
+        accessLevel: "user"
+      });
     }
-  );
+  }, [initialData, open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(member);
+    onSave(formData);
     onClose();
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{initialData ? "Edit Team Member" : "Add Team Member"}</DialogTitle>
+          <DialogTitle>
+            {initialData?.id ? "Edit Team Member" : "Add Team Member"}
+          </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Name</label>
+            <Label htmlFor="name">Name</Label>
             <Input
-              value={member.name}
-              onChange={(e) => setMember({ ...member, name: e.target.value })}
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Full name"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Email</label>
+            <Label htmlFor="email">Email</Label>
             <Input
+              id="email"
               type="email"
-              value={member.email}
-              onChange={(e) => setMember({ ...member, email: e.target.value })}
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              placeholder="Email address"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Role</label>
+            <Label htmlFor="role">Role</Label>
             <Select
-              value={member.role}
-              onValueChange={(value) => setMember({ ...member, role: value })}
+              value={formData.role}
+              onValueChange={(value) => setFormData({ ...formData, role: value })}
             >
-              <SelectTrigger>
+              <SelectTrigger id="role">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
-                {TEAM_ROLES.map((role) => (
-                  <SelectItem key={role} value={role}>
-                    {role}
-                  </SelectItem>
-                ))}
+                <SelectItem value="manager">Manager</SelectItem>
+                <SelectItem value="supervisor">Supervisor</SelectItem>
+                <SelectItem value="staff">Staff</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Access Level</label>
+            <Label htmlFor="access">Access Level</Label>
             <Select
-              value={member.accessLevel}
-              onValueChange={(value) => setMember({ ...member, accessLevel: value })}
+              value={formData.accessLevel}
+              onValueChange={(value) => setFormData({ ...formData, accessLevel: value })}
             >
-              <SelectTrigger>
+              <SelectTrigger id="access">
                 <SelectValue placeholder="Select access level" />
               </SelectTrigger>
               <SelectContent>
-                {ACCESS_LEVELS.map((level) => (
-                  <SelectItem key={level} value={level}>
-                    {level.charAt(0).toUpperCase() + level.slice(1)}
-                  </SelectItem>
-                ))}
+                <SelectItem value="admin">Admin</SelectItem>
+                <SelectItem value="editor">Editor</SelectItem>
+                <SelectItem value="user">User</SelectItem>
+                <SelectItem value="viewer">Viewer</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="flex justify-end gap-4">
+          <DialogFooter className="pt-4">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
             <Button type="submit">
-              {initialData ? "Update" : "Add"} Member
+              {initialData?.id ? "Update" : "Add"} Member
             </Button>
-          </div>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
