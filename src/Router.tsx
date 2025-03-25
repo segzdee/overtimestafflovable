@@ -2,7 +2,11 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/auth';
 import App from './App';
-import Login from './pages/login';  // Changed casing to match actual file name
+import Login from './pages/login';
+import Home from './pages/index';
+import { ShiftWorkerRouter } from './features/shift-worker/ShiftWorkerRouter';
+import { DevModeToggle } from './components/DevModeToggle';
+import { ConnectionStatus } from './components/ConnectionStatus';
 
 export function Router() {
   const { user, loading } = useAuth();
@@ -12,9 +16,25 @@ export function Router() {
   }
 
   return (
-    <Routes>
-      <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-      <Route path="/" element={user ? <App /> : <Navigate to="/login" />} />
-    </Routes>
+    <>
+      {/* Always render these components regardless of route */}
+      <DevModeToggle />
+      <ConnectionStatus />
+      
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+        
+        {/* Protected routes */}
+        <Route path="/dashboard" element={user ? <App /> : <Navigate to="/login" />} />
+        <Route path="/dashboard/shift-worker/*" element={
+          user ? <ShiftWorkerRouter /> : <Navigate to="/login" />
+        } />
+        
+        {/* Fallback route */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
 }
