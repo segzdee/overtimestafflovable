@@ -212,6 +212,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         value={{
           user,
           aiTokens,
+          loading, // Add the missing loading property
           register,
           login,
           loginWithToken,
