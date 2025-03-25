@@ -46,6 +46,16 @@ const RegistrationSuccess = lazy(() => import("./pages/registration-success"));
 const CompleteProfile = lazy(() => import("./pages/CompleteProfile"));
 const UserTypeSelection = lazy(() => import("./pages/UserTypeSelection"));
 
+// Error and Status Pages
+const Forbidden = lazy(() => import("./pages/Forbidden"));
+const ServerError = lazy(() => import("./pages/ServerError"));
+const Maintenance = lazy(() => import("./pages/Maintenance"));
+
+// Help and Support Pages
+const HelpCenter = lazy(() => import("./pages/help/index"));
+const Faq = lazy(() => import("./pages/help/Faq"));
+const SupportTicket = lazy(() => import("./pages/help/SupportTicket"));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -192,6 +202,58 @@ const App = () => {
                   element={
                     <Suspense fallback={<PageLoading />}>
                       <BlogPost />
+                    </Suspense>
+                  } 
+                />
+                
+                {/* Error and Status Pages */}
+                <Route 
+                  path="/forbidden" 
+                  element={
+                    <Suspense fallback={<PageLoading />}>
+                      <Forbidden />
+                    </Suspense>
+                  } 
+                />
+                <Route 
+                  path="/server-error" 
+                  element={
+                    <Suspense fallback={<PageLoading />}>
+                      <ServerError />
+                    </Suspense>
+                  } 
+                />
+                <Route 
+                  path="/maintenance" 
+                  element={
+                    <Suspense fallback={<PageLoading />}>
+                      <Maintenance />
+                    </Suspense>
+                  } 
+                />
+                
+                {/* Help and Support Pages */}
+                <Route 
+                  path="/help" 
+                  element={
+                    <Suspense fallback={<PageLoading />}>
+                      <HelpCenter />
+                    </Suspense>
+                  } 
+                />
+                <Route 
+                  path="/help/faq" 
+                  element={
+                    <Suspense fallback={<PageLoading />}>
+                      <Faq />
+                    </Suspense>
+                  } 
+                />
+                <Route 
+                  path="/help/ticket" 
+                  element={
+                    <Suspense fallback={<PageLoading />}>
+                      <SupportTicket />
                     </Suspense>
                   } 
                 />
