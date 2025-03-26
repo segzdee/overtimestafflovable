@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "tsc"
-      "dev": "vite",
-  "build:dev": "vite build --mode development"
-}
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:dev": "vite build --mode development",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
