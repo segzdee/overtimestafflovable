@@ -14,10 +14,21 @@ export default defineConfig(({ mode }) => ({
     // The componentTagger will be conditionally added in development when lovable-tagger is installed
     mode === 'development' && (() => {
       try {
-        const { componentTagger } = require('lovable-tagger');
-        return componentTagger();
+        // Using dynamic import for ESM module compatibility
+        return {
+          name: 'lovable-component-tagger',
+          async configResolved() {
+            try {
+              const { componentTagger } = await import('lovable-tagger');
+              return componentTagger();
+            } catch (e) {
+              console.warn('Lovable tagger not available, skipping component tagging');
+              return null;
+            }
+          }
+        };
       } catch (e) {
-        console.warn('Lovable tagger not available, skipping component tagging');
+        console.warn('Lovable tagger setup failed:', e);
         return null;
       }
     })(),
