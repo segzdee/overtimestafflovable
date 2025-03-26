@@ -64,6 +64,10 @@ export const DevModeToggle = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
+  // Hide toggle on live/public URLs
+  const isDev = import.meta.env.DEV && !window.location.href.includes(import.meta.env.VITE_PUBLIC_URL || "www.overtimestaff.com");
+  if (!isDev) return null;
+
   // Capture console outputs for debugging
   useEffect(() => {
     if (devMode && thropicPanel) {

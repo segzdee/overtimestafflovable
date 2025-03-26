@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -62,50 +61,47 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   };
   
   const getMenuItems = () => {
-    switch (user?.role) {
-      case 'agency':
-        return [
-          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/agency" },
-          { icon: Users, label: "Worker Roster", path: "/dashboard/agency/workers" },
-          { icon: Building2, label: "Clients", path: "/dashboard/agency/clients" },
-          { icon: CalendarDays, label: "Shift Management", path: "/dashboard/agency/shifts" },
-          { icon: DollarSign, label: "Finance", path: "/dashboard/agency/finance" },
-          { icon: Bell, label: "Announcements", path: "/dashboard/agency/announcements" },
-          { icon: Settings, label: "Settings", path: "/dashboard/agency/settings" },
-        ];
-      case 'company':
-        return [
-          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/company" },
-          { icon: CalendarDays, label: "Shift Posts", path: "/dashboard/company/shifts" },
-          { icon: Users, label: "Applicants", path: "/dashboard/company/applicants" },
-          { icon: DollarSign, label: "Payments", path: "/dashboard/company/payments" },
-          { icon: FileText, label: "Work Reports", path: "/dashboard/company/reports" },
-          { icon: Bell, label: "Announcements", path: "/dashboard/company/announcements" },
-          { icon: Settings, label: "Settings", path: "/dashboard/company/settings" },
-        ];
-      case 'shift-worker':
-      default:
-        return [
-          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/shift-worker" },
-          { icon: CalendarDays, label: "My Shifts", path: "/dashboard/shift-worker/shifts" },
-          { icon: DollarSign, label: "My Earnings", path: "/dashboard/shift-worker/earnings" },
-          { icon: Search, label: "Find Shifts", path: "/dashboard/shift-worker/find-shifts" },
-          { icon: Building2, label: "Companies", path: "/dashboard/shift-worker/companies" },
-          { icon: Users, label: "Teams", path: "/dashboard/shift-worker/teams" },
-          { icon: MessageSquare, label: "Messages", path: "/dashboard/shift-worker/messages", badge: notifications },
-          { icon: User, label: "Profile", path: "/dashboard/shift-worker/profile" },
-          { icon: Settings, label: "Settings", path: "/dashboard/shift-worker/settings" },
-        ];
-      case 'admin':
-        return [
-          { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/admin" },
-          { icon: Users, label: "User Management", path: "/dashboard/admin/users" },
-          { icon: Building2, label: "Organizations", path: "/dashboard/admin/organizations" },
-          { icon: FileText, label: "Reports", path: "/dashboard/admin/reports" },
-          { icon: Bell, label: "System Alerts", path: "/dashboard/admin/alerts" },
-          { icon: Settings, label: "System Settings", path: "/dashboard/admin/settings" },
-        ];
-    }
+    const menuConfig = {
+      agency: [
+        { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/agency" },
+        { icon: Users, label: "Worker Roster", path: "/dashboard/agency/workers" },
+        { icon: Building2, label: "Clients", path: "/dashboard/agency/clients" },
+        { icon: CalendarDays, label: "Shift Management", path: "/dashboard/agency/shifts" },
+        { icon: DollarSign, label: "Finance", path: "/dashboard/agency/finance" },
+        { icon: Bell, label: "Announcements", path: "/dashboard/agency/announcements" },
+        { icon: Settings, label: "Settings", path: "/dashboard/agency/settings" },
+      ],
+      company: [
+        { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/company" },
+        { icon: CalendarDays, label: "Shift Posts", path: "/dashboard/company/shifts" },
+        { icon: Users, label: "Applicants", path: "/dashboard/company/applicants" },
+        { icon: DollarSign, label: "Payments", path: "/dashboard/company/payments" },
+        { icon: FileText, label: "Work Reports", path: "/dashboard/company/reports" },
+        { icon: Bell, label: "Announcements", path: "/dashboard/company/announcements" },
+        { icon: Settings, label: "Settings", path: "/dashboard/company/settings" },
+      ],
+      'shift-worker': [
+        { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/shift-worker" },
+        { icon: CalendarDays, label: "My Shifts", path: "/dashboard/shift-worker/shifts" },
+        { icon: DollarSign, label: "My Earnings", path: "/dashboard/shift-worker/earnings" },
+        { icon: Search, label: "Find Shifts", path: "/dashboard/shift-worker/find-shifts" },
+        { icon: Building2, label: "Companies", path: "/dashboard/shift-worker/companies" },
+        { icon: Users, label: "Teams", path: "/dashboard/shift-worker/teams" },
+        { icon: MessageSquare, label: "Messages", path: "/dashboard/shift-worker/messages", badge: notifications },
+        { icon: User, label: "Profile", path: "/dashboard/shift-worker/profile" },
+        { icon: Settings, label: "Settings", path: "/dashboard/shift-worker/settings" },
+      ],
+      admin: [
+        { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard/admin" },
+        { icon: Users, label: "User Management", path: "/dashboard/admin/users" },
+        { icon: Building2, label: "Organizations", path: "/dashboard/admin/organizations" },
+        { icon: FileText, label: "Reports", path: "/dashboard/admin/reports" },
+        { icon: Bell, label: "System Alerts", path: "/dashboard/admin/alerts" },
+        { icon: Settings, label: "System Settings", path: "/dashboard/admin/settings" },
+      ],
+    };
+
+    return menuConfig[user?.role] || [];
   };
 
   const menuItems = getMenuItems();

@@ -1,0 +1,271 @@
+// src/services/marketData.service.ts
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase/client';
+import { demoShifts } from '@/data/demoShifts';
+
+export type MarketUpdate = {
+  id: string;
+  type: 'URGENT' | 'PREMIUM' | 'SWAP' | 'REGULAR';
+  title: string;
+  location: string;
+  region: string;
+  rate: string;
+  urgency_level: 'high' | 'medium' | 'low';
+  highlight: boolean;
+  isNew: boolean;
+  isUpdating: boolean;
+  timestamp: number;
+};
+
+export function useMarketUpdates(region = 'Global', currency = 'USD', refreshInterval = 60000) {
+  const [updates, setUpdates] = useState<MarketUpdate[]>([]);
+  const [lastUpdateTime, setLastUpdateTime] = useState(new Date());
+  const [isLoading, setIsLoading] = useState(true);
+  const [newUpdatesCount, setNewUpdatesCount] = useState(0);
+  const [selectedRegion, setSelectedRegion] = useState(region);
+  const [selectedCurrency, setSelectedCurrency] = useState(currency);
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({
+    'USD': 1,
+    'EUR': 0.85,
+    'GBP': 0.75,
+    'AUD': 1.45,
+    'CAD': 1.30
+  });
+  const [regions, setRegions] = useState(['Global', 'North America', 'Europe', 'Asia Pacific', 'Middle East', 'Africa']);
+  
+  // Load initial data
+  useEffect(() => {
+    fetchMarketData();
+    
+    // Set up refresh interval
+    const intervalId = setInterval(() => {
+      fetchMarketData();
+    }, refreshInterval);
+    
+    // Set up demo data refresh (every 6 hours)
+    const demoRefreshId = setInterval(() => {
+      refreshDemoData();
+    }, 6 * 60 * 60 * 1000); // 6 hours
+    
+    return () => {
+      clearInterval(intervalId);
+      clearInterval(demoRefreshId);
+    };
+  }, [selectedRegion, selectedCurrency]);
+  
+  const fetchMarketData = async () => {
+    setIsLoading(true);
+    try {
+      // Fetch real shifts from Supabase
+      const { data: realShifts, error } = await supabase
+        .from('shifts')
+        .select('*')
+        .eq('is_active', true)
+        .eq('is_filled', false)
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      
+      // Normalize real shifts to MarketUpdate format
+      const realUpdates = realShifts ? realShifts.map(normalizeShiftData) : [];
+      
+      // Calculate how many demo shifts to show
+      const demoCount = Math.max(0, 8 - realUpdates.length);
+      
+      // Combine real and demo shifts, prioritizing real shifts
+      const combinedUpdates = [
+        ...realUpdates,
+        ...getCurrentDemoShifts().slice(0, demoCount)
+      ];
+      
+      setUpdates(combinedUpdates);
+      setLastUpdateTime(new Date());
+      setNewUpdatesCount(prev => prev + Math.floor(Math.random() * 3));
+    } catch (error) {
+      console.error("Error fetching market data:", error);
+      // Fallback to demo data if real data fetch fails
+      setUpdates(getCurrentDemoShifts());
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const refreshDemoData = () => {
+    // Rotate through demo data to simulate changes
+    const currentDemoShifts = getCurrentDemoShifts();
+    // Shuffle and update timestamps
+    const refreshedDemoShifts = [...currentDemoShifts]
+      .sort(() => 0.5 - Math.random())
+      .map(shift => ({
+        ...shift,
+        timestamp: Date.now(),
+        isNew: true
+      }));
+      
+    localStorage.setItem('demoShifts', JSON.stringify(refreshedDemoShifts));
+  };
+  
+  const getCurrentDemoShifts = () => {
+    const saved = localStorage.getItem('demoShifts');
+    const defaultDemoShifts = createDefaultDemoShifts();
+    return saved ? JSON.parse(saved) : defaultDemoShifts;
+  };
+  
+  const createDefaultDemoShifts = () => {
+    // If demo shifts aren't available, generate them
+    // This ensures we always have demo data, even on first load
+    return [
+      {
+        id: 'demo-1',
+        type: 'URGENT',
+        title: 'Senior Bartender Needed',
+        location: 'Grand Hotel & Resort',
+        region: 'North America',
+        rate: '$35/hr',
+        urgency_level: 'high',
+        highlight: true,
+        isNew: false,
+        isUpdating: false,
+        timestamp: Date.now() - 1200000 // 20 minutes ago
+      },
+      {
+        id: 'demo-2',
+        type: 'PREMIUM',
+        title: 'Event Host - Corporate Gala',
+        location: 'City Convention Center',
+        region: 'North America',
+        rate: '$30/hr',
+        urgency_level: 'medium',
+        highlight: true,
+        isNew: false,
+        isUpdating: false,
+        timestamp: Date.now() - 3600000 // 1 hour ago
+      },
+      {
+        id: 'demo-3',
+        type: 'SWAP',
+        title: 'Wait Staff - Friday Night Shift',
+        location: 'Oceanview Restaurant',
+        region: 'North America',
+        rate: '$25/hr',
+        urgency_level: 'medium',
+        highlight: false,
+        isNew: false,
+        isUpdating: false,
+        timestamp: Date.now() - 7200000 // 2 hours ago
+      },
+      {
+        id: 'demo-4',
+        type: 'REGULAR',
+        title: 'Kitchen Assistant',
+        location: 'Downtown Bistro',
+        region: 'Europe',
+        rate: '€22/hr',
+        urgency_level: 'low',
+        highlight: false,
+        isNew: false,
+        isUpdating: false,
+        timestamp: Date.now() - 14400000 // 4 hours ago
+      },
+      {
+        id: 'demo-5',
+        type: 'URGENT',
+        title: 'Concierge Needed Immediately',
+        location: 'Luxury Plaza Hotel',
+        region: 'Europe',
+        rate: '£28/hr',
+        urgency_level: 'high',
+        highlight: true,
+        isNew: true,
+        isUpdating: false,
+        timestamp: Date.now() - 900000 // 15 minutes ago
+      },
+      {
+        id: 'demo-6',
+        type: 'PREMIUM',
+        title: 'VIP Server - Private Event',
+        location: 'Celebrity Mansion',
+        region: 'Asia Pacific',
+        rate: '$40/hr',
+        urgency_level: 'medium',
+        highlight: true,
+        isNew: true,
+        isUpdating: false,
+        timestamp: Date.now() - 1800000 // 30 minutes ago
+      },
+      {
+        id: 'demo-7',
+        type: 'REGULAR',
+        title: 'Housekeeping Staff',
+        location: 'Beach Resort',
+        region: 'Asia Pacific',
+        rate: '$22/hr',
+        urgency_level: 'low',
+        highlight: false,
+        isNew: false,
+        isUpdating: false,
+        timestamp: Date.now() - 10800000 // 3 hours ago
+      },
+      {
+        id: 'demo-8',
+        type: 'SWAP',
+        title: 'Front Desk Agent - Weekend',
+        location: 'Business Hotel',
+        region: 'Middle East',
+        rate: '$26/hr',
+        urgency_level: 'medium',
+        highlight: false,
+        isNew: false,
+        isUpdating: false,
+        timestamp: Date.now() - 5400000 // 1.5 hours ago
+      }
+    ];
+  };
+  
+  const normalizeShiftData = (shift: any): MarketUpdate => {
+    // Map database shift object to MarketUpdate format
+    return {
+      id: shift.id,
+      type: shift.is_urgent ? 'URGENT' : (shift.is_premium ? 'PREMIUM' : (shift.is_swap ? 'SWAP' : 'REGULAR')),
+      title: shift.title,
+      location: shift.location,
+      region: shift.region,
+      rate: formatCurrency(shift.hourly_rate, selectedCurrency),
+      urgency_level: shift.urgency_level || 'medium',
+      highlight: shift.is_featured,
+      isNew: (Date.now() - new Date(shift.created_at).getTime()) < 1800000, // 30 minutes
+      isUpdating: false,
+      timestamp: new Date(shift.created_at).getTime()
+    };
+  };
+  
+  const formatCurrency = (amount: number, currency: string) => {
+    // Convert from USD to selected currency if needed
+    const convertedAmount = amount * (exchangeRates[currency] || 1);
+    
+    // Format rates based on currency
+    const currencySymbols: Record<string, string> = {
+      'USD': '$',
+      'EUR': '€',
+      'GBP': '£',
+      'AUD': 'A$',
+      'CAD': 'C$'
+    };
+    
+    return `${currencySymbols[currency] || ''}${convertedAmount.toFixed(2)}/hr`;
+  };
+  
+  return {
+    updates,
+    lastUpdateTime,
+    newUpdatesCount,
+    selectedCurrency,
+    setSelectedCurrency,
+    selectedRegion,
+    setSelectedRegion,
+    regions,
+    exchangeRates,
+    isLoading,
+    refreshData: fetchMarketData
+  };
+}

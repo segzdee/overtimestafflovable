@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 type DevModeContextType = {
@@ -11,8 +10,7 @@ type DevModeContextType = {
 const DevModeContext = createContext<DevModeContextType | undefined>(undefined);
 
 export const DevModeProvider = ({ children }: { children: ReactNode }) => {
-  // Check if we're in development environment
-  const isDev = import.meta.env.DEV;
+  const isDev = import.meta.env.DEV && !window.location.href.includes(import.meta.env.VITE_PUBLIC_URL || "www.overtimestaff.com");
   
   // Initialize from localStorage if available
   const [devMode, setDevMode] = useState(() => {
@@ -22,7 +20,7 @@ export const DevModeProvider = ({ children }: { children: ReactNode }) => {
   
   const [selectedRole, setSelectedRole] = useState<"admin" | "shift-worker" | "company" | "agency" | "aiagent" | null>(() => {
     const savedRole = localStorage.getItem("devModeRole");
-    return (savedRole as any) || null;
+    return savedRole ? (savedRole as "admin" | "shift-worker" | "company" | "agency" | "aiagent") : null;
   });
 
   // Save to localStorage when changed
