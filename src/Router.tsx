@@ -1,72 +1,171 @@
+// src/Router.tsx
+import { Suspense, lazy, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@/contexts/auth/AuthContext';
+import { Spinner } from '@/components/ui/spinner';
+import { AuthLayout } from '@/layouts/AuthLayout';
+import { DashboardLayout } from '@/layouts/DashboardLayout';
 
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "@/contexts/auth/AuthProvider";
-import Login from "@/pages/auth/Login";
-import Register from "@/pages/auth/Register";
-import Profile from "@/pages/Profile";
-import Home from "@/pages/index";
-import LiveMarket from "@/pages/LiveMarket";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import Dashboard from "@/pages/Dashboard";
-import AIAssistant from "@/pages/AIAssistant";
+// Lazy load pages to improve initial load performance
+const LoginPage = lazy(() => import('@/pages/auth/Login'));
+const RegisterPage = lazy(() => import('@/pages/auth/Register'));
+const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPassword'));
+const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPassword'));
 
-export default function Router() {
-  const { user } = useAuth();
+// Admin routes
+const AdminRouter = lazy(() => import('@/features/admin/AdminRouter').then(mod => ({ default: mod.AdminRouter })));
 
+// Agency routes
+const AgencyRouter = lazy(() => import('@/features/agency/AgencyRouter').then(mod => ({ default: mod.AgencyRouter })));
+
+// Company routes
+const CompanyRouter = lazy(() => import('@/features/company/CompanyRouter').then(mod => ({ default: mod.CompanyRouter })));
+
+// Shift worker routes
+const ShiftWorkerRouter = lazy(() => import('@/features/shift-worker/ShiftWorkerRouter').then(mod => ({ default: mod.ShiftWorkerRouter })));
+
+// NotFound page
+const NotFoundPage = lazy(() => import('@/pages/NotFound'));
+
+// ScrollToTop component to ensure page starts at the top when navigating
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
+// Protected route component
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requiredRole?: string | string[];
+}
+
+const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
+  const { user, profile, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth/login" replace />;
+  }
+
+  // Role-based access control
+  if (requiredRole && profile) {
+    const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+    
+    if (!roles.includes(profile.role)) {
+      // Redirect to appropriate dashboard based on role
+      if (profile.role === 'admin') {
+        return <Navigate to="/dashboard/admin" replace />;
+      } else if (profile.role === 'agency') {
+        return <Navigate to="/dashboard/agency" replace />;
+      } else if (profile.role === 'company') {
+        return <Navigate to="/dashboard/company" replace />;
+      } else if (profile.role === 'shift-worker') {
+        return <Navigate to="/dashboard/shift-worker" replace />;
+      }
+      
+      // Default fallback if role doesn't match any known role
+      return <Navigate to="/" replace />;
+    }
+  }
+
+  return <>{children}</>;
+};
+
+// Public route component (redirects to dashboard if already logged in)
+interface PublicRouteProps {
+  children: React.ReactNode;
+}
+
+const PublicRoute = ({ children }: PublicRouteProps) => {
+  const { user, profile, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (user && profile) {
+    // Redirect to appropriate dashboard based on role
+    if (profile.role === 'admin') {
+      return <Navigate to="/dashboard/admin" replace />;
+    } else if (profile.role === 'agency') {
+      return <Navigate to="/dashboard/agency" replace />;
+    } else if (profile.role === 'company') {
+      return <Navigate to="/dashboard/company" replace />;
+    } else if (profile.role === 'shift-worker') {
+      return <Navigate to="/dashboard/shift-worker" replace />;
+    }
+    
+    // Default fallback
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+export function Router() {
   return (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/" element={<Home />} />
-      <Route path="/market" element={<LiveMarket />} />
-      
-      {/* Auth routes */}
-      <Route path="/auth/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
-      <Route path="/auth/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
-      
-      {/* Protected routes */}
-      <Route path="/profile" element={
-        <ProtectedRoute allowedRoles={["admin", "shift-worker", "company", "agency", "aiagent"]}>
-          <Profile />
-        </ProtectedRoute>
-      } />
-
-      <Route path="/ai-assistant" element={
-        <ProtectedRoute allowedRoles={["admin", "shift-worker", "company", "agency", "aiagent"]}>
-          <AIAssistant />
-        </ProtectedRoute>
-      } />
-
-      {/* Dashboard routes based on role */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute allowedRoles={["admin", "shift-worker", "company", "agency", "aiagent"]}>
-            {user && user.role === "shift-worker" ? (
-              <Navigate to="/dashboard/shift-worker" />
-            ) : user && user.role === "company" ? (
-              <Navigate to="/dashboard/company" />
-            ) : user && user.role === "agency" ? (
-              <Navigate to="/dashboard/agency" />
-            ) : user && user.role === "admin" ? (
-              <Navigate to="/dashboard/admin" />
-            ) : user && user.role === "aiagent" ? (
-              <Navigate to="/dashboard/aiagent" />
-            ) : (
-              <Navigate to="/" />
-            )}
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route path="/dashboard/:role" element={
-        <ProtectedRoute allowedRoles={["admin", "shift-worker", "company", "agency", "aiagent"]}>
-          <Dashboard />
-        </ProtectedRoute>
-      } />
-
-      {/* These routes redirect to their equivalents in the auth folder for better organization */}
-      <Route path="/login" element={<Navigate to="/auth/login" replace />} />
-      <Route path="/register" element={<Navigate to="/auth/register" replace />} />
-    </Routes>
+    <BrowserRouter>
+      <ScrollToTop />
+      <Suspense fallback={<div className="flex h-screen w-full items-center justify-center"><Spinner size="lg" /></div>}>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Navigate to="/auth/login" replace />} />
+          
+          {/* Auth routes */}
+          <Route path="/auth" element={<AuthLayout />}>
+            <Route path="login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+            <Route path="register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+            <Route path="forgot-password" element={<PublicRoute><ForgotPasswordPage /></PublicRoute>} />
+            <Route path="reset-password" element={<PublicRoute><ResetPasswordPage /></PublicRoute>} />
+          </Route>
+          
+          {/* Protected dashboard routes */}
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route path="admin/*" element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminRouter />
+              </ProtectedRoute>
+            } />
+            <Route path="agency/*" element={
+              <ProtectedRoute requiredRole="agency">
+                <AgencyRouter />
+              </ProtectedRoute>
+            } />
+            <Route path="company/*" element={
+              <ProtectedRoute requiredRole="company">
+                <CompanyRouter />
+              </ProtectedRoute>
+            } />
+            <Route path="shift-worker/*" element={
+              <ProtectedRoute requiredRole="shift-worker">
+                <ShiftWorkerRouter />
+              </ProtectedRoute>
+            } />
+            <Route index element={<Navigate to="/dashboard/admin" replace />} />
+          </Route>
+          
+          {/* Error routes */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   );
 }
+
+export default Router;
