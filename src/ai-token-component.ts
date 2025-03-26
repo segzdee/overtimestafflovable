@@ -58,4 +58,4 @@ export default function AITokenManager() {
       setIsCreating(true);
       
       if (!user || !generateAiToken) {
-        throw
+        throw new Error("User or generateAiToken function is not available");
