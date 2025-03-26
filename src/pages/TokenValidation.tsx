@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Logo } from "@/components/ui/logo";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
@@ -25,7 +24,7 @@ export default function TokenValidation() {
         title: "Success",
         description: "AI token validated successfully."
       });
-      navigate("/dashboard");
+      navigate("/dashboard/aiagent");
     } catch (error) {
       toast({
         title: "Error",
@@ -77,7 +76,7 @@ export default function TokenValidation() {
               </p>
             </div>
 
-            <Button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
+            <Button type="submit" disabled={loading} className="w-full bg-green-600 hover:bg-green-700 text-white">
               {loading ? "Validating..." : "Access AI Agent"}
             </Button>
 

@@ -4,6 +4,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { routes } from '@/routes/routes.config';
 import { AuthProvider } from '@/contexts/auth';
 import { Toaster } from '@/components/ui/toaster';
+import { DevModeProvider } from '@/contexts/dev/DevModeContext';
+import { DevModeToggle } from '@/components/DevModeToggle';
 
 // Create router from config
 const AppRouter = () => {
@@ -11,8 +13,11 @@ const AppRouter = () => {
   
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
-      <Toaster />
+      <DevModeProvider>
+        <RouterProvider router={router} />
+        <DevModeToggle />
+        <Toaster />
+      </DevModeProvider>
     </AuthProvider>
   );
 };
