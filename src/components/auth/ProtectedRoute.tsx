@@ -1,10 +1,10 @@
 
-import { useEffect } from 'react';
+import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth';
 
 interface ProtectedRouteProps {
-  element: React.ReactNode;
+  element: ReactNode;
   allowedRoles?: string[];
 }
 

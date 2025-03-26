@@ -1,4 +1,5 @@
 
+// Demo shift data for testing and UI development
 export const demoShifts = [
   {
     id: 'demo-1',
@@ -103,31 +104,7 @@ export const demoShifts = [
     isNew: false,
     isUpdating: false,
     timestamp: Date.now() - 5400000 // 1.5 hours ago
-  },
-  {
-    id: 'demo-9',
-    type: 'URGENT',
-    title: 'Chef de Partie - Emergency Cover',
-    location: 'Five Star Restaurant',
-    region: 'Europe',
-    rate: '€32/hr',
-    urgency_level: 'high',
-    highlight: true,
-    isNew: true,
-    isUpdating: false,
-    timestamp: Date.now() - 600000 // 10 minutes ago
-  },
-  {
-    id: 'demo-10',
-    type: 'PREMIUM',
-    title: 'Event Security - VIP Conference',
-    location: 'International Convention Center',
-    region: 'North America',
-    rate: '$38/hr',
-    urgency_level: 'medium',
-    highlight: true,
-    isNew: true,
-    isUpdating: false,
-    timestamp: Date.now() - 2400000 // 40 minutes ago
   }
 ];
+
+export default demoShifts;

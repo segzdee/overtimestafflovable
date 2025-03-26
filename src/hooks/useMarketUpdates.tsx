@@ -1,105 +1,95 @@
 
 import { useState, useEffect } from 'react';
-import { MarketUpdate, ExchangeRates } from '../types/marketUpdate';
-import { formatRate, DEFAULT_EXCHANGE_RATES } from '../utils/currencyUtils';
-import { demoUpdates } from '../data/demoMarketUpdates';
+import { demoShifts } from '@/components/layout/demo-shifts-data';
 
-export function useMarketUpdates() {
-  const [updates, setUpdates] = useState<MarketUpdate[]>(demoUpdates);
-  const [lastUpdateTime, setLastUpdateTime] = useState<Date>(new Date());
-  const [newUpdatesCount, setNewUpdatesCount] = useState(0);
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('EUR');
-  const [selectedRegion, setSelectedRegion] = useState<string>('All');
+export type MarketUpdate = {
+  id: string;
+  type: 'URGENT' | 'PREMIUM' | 'SWAP' | 'REGULAR';
+  title: string;
+  location: string;
+  region: string;
+  rate: string;
+  urgency_level: 'high' | 'medium' | 'low';
+  highlight: boolean;
+  isNew: boolean;
+  isUpdating: boolean;
+  timestamp: number;
+};
+
+export function useMarketUpdates(initialRegion = 'Global', initialCurrency = 'USD', refreshInterval = 60000) {
+  const [updates, setUpdates] = useState<MarketUpdate[]>([]);
+  const [lastUpdateTime, setLastUpdateTime] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
-  const [exchangeRates] = useState<ExchangeRates>(DEFAULT_EXCHANGE_RATES);
-
-  // Get unique regions for filtering
-  const regions = ['All', ...Array.from(new Set(demoUpdates.map(update => {
-    // Extract country from region
-    const regionParts = update.region.split(',');
-    if (regionParts.length > 1) {
-      return regionParts[1].trim(); // Return country name
-    }
-    // For entries without country in region field, use the full region
-    return update.region;
-  })))];
-
-  // Update all rates when currency changes
+  const [newUpdatesCount, setNewUpdatesCount] = useState(0);
+  const [selectedRegion, setSelectedRegion] = useState(initialRegion);
+  const [selectedCurrency, setSelectedCurrency] = useState(initialCurrency);
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({
+    'USD': 1,
+    'EUR': 0.85,
+    'GBP': 0.75,
+    'AUD': 1.45,
+    'CAD': 1.30
+  });
+  const [regions, setRegions] = useState(['Global', 'North America', 'Europe', 'Asia Pacific', 'Middle East', 'Africa']);
+  
+  // Load initial data
   useEffect(() => {
-    setUpdates(prevUpdates =>
-      prevUpdates.map(update => ({
-        ...update,
-        rate: formatRate(update.original_rate, selectedCurrency, exchangeRates)
-      }))
-    );
-  }, [selectedCurrency, exchangeRates]);
-
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        setIsLoading(true);
-        
-        // Filter updates based on selected region
-        let filteredUpdates = demoUpdates;
-        if (selectedRegion !== 'All') {
-          filteredUpdates = demoUpdates.filter(update => 
-            update.region.includes(selectedRegion)
-          );
-        }
-        
-        const formattedUpdates = filteredUpdates.map(update => ({
-          ...update,
-          rate: formatRate(update.original_rate, selectedCurrency, exchangeRates),
-          isNew: false
-        }));
-        
-        setUpdates(formattedUpdates);
-        setLastUpdateTime(new Date());
-        setNewUpdatesCount(formattedUpdates.length);
-      } catch (error) {
-        console.error('Error initializing market updates:', error);
-      } finally {
-        setIsLoading(false);
-      }
+    fetchMarketData();
+    
+    // Set up refresh interval
+    const intervalId = setInterval(() => {
+      fetchMarketData();
+    }, refreshInterval);
+    
+    return () => {
+      clearInterval(intervalId);
     };
-
-    const simulateNewUpdate = () => {
-      // Only simulate updates for the selected region
-      const eligibleUpdates = selectedRegion === 'All' 
-        ? demoUpdates 
-        : demoUpdates.filter(update => update.region.includes(selectedRegion));
+  }, [selectedRegion, selectedCurrency]);
+  
+  const fetchMarketData = async () => {
+    setIsLoading(true);
+    try {
+      // In a real app, we'd fetch from an API
+      // For now, we'll use demo data
       
-      if (eligibleUpdates.length === 0) return;
+      // Filter by region if not global
+      const filteredUpdates = selectedRegion === 'Global' 
+        ? [...demoShifts] 
+        : demoShifts.filter(shift => shift.region === selectedRegion);
       
-      const randomIndex = Math.floor(Math.random() * eligibleUpdates.length);
-      const newUpdate = {
-        ...eligibleUpdates[randomIndex],
-        id: `new-${Date.now()}`,
-        rate: formatRate(eligibleUpdates[randomIndex].original_rate, selectedCurrency, exchangeRates),
-        isNew: true
-      };
+      // Update rates based on selected currency
+      const updatedShifts = filteredUpdates.map(shift => ({
+        ...shift,
+        rate: formatCurrency(parseFloat(shift.rate.replace(/[^0-9.]/g, '')), selectedCurrency)
+      }));
       
-      setUpdates(prev => [newUpdate, ...prev.slice(0, -1)]);
-      setNewUpdatesCount(prev => prev + 1);
+      setUpdates(updatedShifts);
       setLastUpdateTime(new Date());
-      
-      setTimeout(() => {
-        setUpdates(prevUpdates => 
-          prevUpdates.map(update => 
-            update.id === newUpdate.id ? { ...update, isNew: false } : update
-          )
-        );
-      }, 300);
+      setNewUpdatesCount(prev => prev + Math.floor(Math.random() * 3));
+    } catch (error) {
+      console.error("Error fetching market data:", error);
+      setUpdates([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const formatCurrency = (amount: number, currency: string) => {
+    // Convert from USD to selected currency if needed
+    const convertedAmount = amount * (exchangeRates[currency] || 1);
+    
+    // Format rates based on currency
+    const currencySymbols: Record<string, string> = {
+      'USD': '$',
+      'EUR': '€',
+      'GBP': '£',
+      'AUD': 'A$',
+      'CAD': 'C$'
     };
-
-    initializeData();
     
-    // Simulate new updates every 30 seconds
-    const interval = setInterval(simulateNewUpdate, 30000);
-    
-    return () => clearInterval(interval);
-  }, [selectedCurrency, exchangeRates, selectedRegion]);
-
+    return `${currencySymbols[currency] || ''}${convertedAmount.toFixed(2)}/hr`;
+  };
+  
   return {
     updates,
     lastUpdateTime,
@@ -110,6 +100,7 @@ export function useMarketUpdates() {
     setSelectedRegion,
     regions,
     exchangeRates,
-    isLoading
+    isLoading,
+    refreshData: fetchMarketData
   };
 }

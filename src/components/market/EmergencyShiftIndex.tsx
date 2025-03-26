@@ -1,4 +1,5 @@
 
+import React from "react";
 import { MapPin, AlertCircle, ArrowLeftRight } from "lucide-react";
 import { useMarketUpdates } from "@/hooks/useMarketUpdates";
 import { toast } from "@/components/ui/use-toast";
@@ -7,7 +8,6 @@ export function EmergencyShiftIndex() {
   const {
     updates,
     lastUpdateTime,
-    newUpdatesCount,
     selectedCurrency,
     setSelectedCurrency,
     selectedRegion,
@@ -33,44 +33,29 @@ export function EmergencyShiftIndex() {
   const emergencyUpdates = [...urgentUpdates, ...swapUpdates];
   
   if (isLoading) {
-    return <div className="overflow-hidden flex-1 min-h-0 p-4">
+    return (
+      <div className="overflow-hidden flex-1 min-h-0 p-4">
         <div className="animate-pulse space-y-4">
           <div className="h-4 bg-gray-700 rounded w-1/4"></div>
           <div className="grid grid-cols-1 gap-3">
-            {[...Array(2)].map((_, i) => <div key={i} className="p-4 bg-gray-700 rounded-lg">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="p-4 bg-gray-700 rounded-lg">
                 <div className="h-4 bg-gray-600 rounded w-3/4 mb-2"></div>
                 <div className="h-4 bg-gray-600 rounded w-1/2"></div>
-              </div>)}
+              </div>
+            ))}
           </div>
         </div>
-      </div>;
+      </div>
+    );
   }
   
-  return <div className="text-white overflow-hidden flex-1 h-full">
+  return (
+    <div className="text-white overflow-hidden flex-1 h-full">
       <div className="h-full flex flex-col p-4 px-[10px] py-[10px]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <h3 className="text-xs font-semibold text-emerald-400">EMERGENCY & SHIFT SWAP INDEX</h3>
-            <span className="flex items-center gap-1 bg-red-500/20 text-red-400 py-0.5 rounded-full text-center text-xs font-medium px-2">
-              <AlertCircle className="w-3 h-3" />
-              {emergencyUpdates.length} Active
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <select 
-              value={selectedRegion} 
-              onChange={e => setSelectedRegion(e.target.value)} 
-              className="text-white text-xs bg-zinc-800 border border-zinc-600 px-2 rounded py-1 focus:ring-2 ring-emerald-500/50 outline-none"
-            >
-              {regions.map(region => <option key={region} value={region}>{region}</option>)}
-            </select>
-            <select 
-              value={selectedCurrency} 
-              onChange={e => setSelectedCurrency(e.target.value)} 
-              className="text-white text-xs bg-zinc-800 border border-zinc-600 px-2 rounded py-1 focus:ring-2 ring-emerald-500/50 outline-none"
-            >
-              {Object.keys(exchangeRates).map(currency => <option key={currency} value={currency}>{currency}</option>)}
-            </select>
             <span className="text-xs text-zinc-400">
               {lastUpdateTime.toLocaleTimeString()} UTC
             </span>
@@ -116,5 +101,6 @@ export function EmergencyShiftIndex() {
           <span>{emergencyUpdates.length} active emergencies</span>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 }
