@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Bot } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +11,7 @@ import { CodeContextTab } from "./CodeContextTab";
 import { ConsoleTab } from "./ConsoleTab";
 import { AiSuggestions } from "./AiSuggestions";
 import { AiResponse } from "./AiResponse";
+import { ApiKeySetup } from "./ApiKeySetup";
 import { quickPrompts } from "./quickPrompts";
 
 interface ThropicPanelProps {
@@ -31,8 +31,15 @@ export const ThropicPanel: React.FC<ThropicPanelProps> = ({ devMode }) => {
   const [availableFiles, setAvailableFiles] = useState<{name: string, path: string}[]>([]);
   const [fileContent, setFileContent] = useState("");
   const [autoApply, setAutoApply] = useState(false);
+  const [isApiKeyConfigured, setIsApiKeyConfigured] = useState(false);
   
   const { toast } = useToast();
+
+  // Check if API key is configured
+  useEffect(() => {
+    const apiKey = localStorage.getItem("ANTHROPIC_API_KEY") || import.meta.env.VITE_ANTHROPIC_API_KEY;
+    setIsApiKeyConfigured(!!apiKey);
+  }, []);
 
   // Capture console outputs for debugging
   useEffect(() => {
@@ -172,23 +179,101 @@ export const ThropicPanel: React.FC<ThropicPanelProps> = ({ devMode }) => {
 
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('thropic-assistant', {
-        body: { 
-          prompt, 
-          context: "development",
-          code: editingFile ? fileContent : codeSnippet,
-          filePath: editingFile?.path,
-          files: fileContext ? [{ name: "context.tsx", content: fileContext }] : undefined,
-          mode: "debug-assist"
-        }
+      // Get Anthropic API key from environment variable or local storage
+      const anthropicApiKey = import.meta.env.VITE_ANTHROPIC_API_KEY || localStorage.getItem('ANTHROPIC_API_KEY');
+      
+      if (!anthropicApiKey) {
+        throw new Error("Anthropic API key is not configured");
+      }
+      
+      // Call Anthropic API directly instead of using Supabase function
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': anthropicApiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: "claude-3-opus-20240229",
+          max_tokens: 4000,
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: `You are a developer assistant called Thropic. Help with the following request related to the file ${editingFile?.path || 'unknown'}:
+                  
+                  ${prompt}
+                  
+                  ${editingFile ? `Here's the current file content:
+                  
+                  \`\`\`
+                  ${fileContent}
+                  \`\`\`
+                  ` : ''}
+                  
+                  ${codeSnippet ? `Additional code context:
+                  
+                  \`\`\`
+                  ${codeSnippet}
+                  \`\`\`
+                  ` : ''}
+                  
+                  ${fileContext ? `File context:
+                  
+                  \`\`\`
+                  ${fileContext}
+                  \`\`\`
+                  ` : ''}
+                  
+                  If you identify code improvements, return them in this format:
+                  1. Provide an explanation of each issue/improvement
+                  2. For each one, provide the original code snippet and your suggested replacement
+                  
+                  SUGGESTIONS: [
+                    {
+                      "type": "fix|refactor|optimization",
+                      "description": "Description of the issue and fix",
+                      "original": "original code to replace",
+                      "suggested": "suggested replacement code"
+                    },
+                    // More suggestions
+                  ]`
+                }
+              ]
+            }
+          ]
+        })
       });
-
-      if (error) throw error;
       
-      setResponse(data.response);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`API error: ${errorData.error?.message || response.statusText}`);
+      }
       
-      if (data.suggestions && Array.isArray(data.suggestions)) {
-        const formattedSuggestions = data.suggestions.map((suggestion: any, index: number) => ({
+      const data = await response.json();
+      const aiResponse = data.content[0].text;
+      
+      // Extract suggestions if present
+      const suggestionsMatch = aiResponse.match(/SUGGESTIONS:\s*(\[[\s\S]*\])/);
+      let extractedSuggestions = [];
+      
+      if (suggestionsMatch && suggestionsMatch[1]) {
+        try {
+          // Try to parse the JSON suggestions block
+          const suggestionsJson = suggestionsMatch[1].replace(/(\w+):/g, '"$1":').replace(/'/g, '"');
+          extractedSuggestions = JSON.parse(suggestionsJson);
+        } catch (e) {
+          console.error("Failed to parse suggestions:", e);
+        }
+      }
+      
+      setResponse(aiResponse);
+      
+      if (extractedSuggestions.length > 0) {
+        const formattedSuggestions = extractedSuggestions.map((suggestion: any, index: number) => ({
           id: `suggestion-${Date.now()}-${index}`,
           type: suggestion.type || 'fix',
           description: suggestion.description,
@@ -224,7 +309,7 @@ export const ThropicPanel: React.FC<ThropicPanelProps> = ({ devMode }) => {
       console.error("Error calling Thropic API:", error);
       toast({
         title: "Error",
-        description: "Failed to get response from Thropic API",
+        description: `Failed to get response from Thropic AI: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
       });
     } finally {
@@ -279,6 +364,20 @@ export const ThropicPanel: React.FC<ThropicPanelProps> = ({ devMode }) => {
       });
     }
   };
+
+  // If API key not configured, show setup screen
+  if (!isApiKeyConfigured) {
+    return (
+      <div className="space-y-3 border-t pt-3">
+        <h4 className="text-sm font-medium flex items-center gap-2">
+          <Bot size={16} className="text-indigo-600" />
+          Thropic AI Developer Assistant
+        </h4>
+        
+        <ApiKeySetup onApiKeySet={() => setIsApiKeyConfigured(true)} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3 border-t pt-3">

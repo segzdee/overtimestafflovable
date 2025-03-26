@@ -1,0 +1,58 @@
+import React from "react";
+import { Bot } from "lucide-react";
+
+interface AiResponseProps {
+  response: string;
+}
+
+export const AiResponse: React.FC<AiResponseProps> = ({ response }) => {
+  if (!response) return null;
+  
+  // Strip out the SUGGESTIONS block if present
+  const cleanedResponse = response.replace(/SUGGESTIONS:\s*(\[[\s\S]*\])/g, '');
+  
+  // Function to format markdown code blocks
+  const formatMarkdown = (text: string) => {
+    // Replace markdown code blocks with styled divs
+    const formattedText = text.split('```').map((segment, index) => {
+      if (index % 2 === 0) {
+        // Regular text - process for basic markdown
+        return segment
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Bold
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')              // Italic
+          .replace(/`(.*?)`/g, '<code>$1</code>')            // Inline code
+          .split('\n').join('<br />');                       // Line breaks
+      } else {
+        // Code block - determine language if specified
+        const lines = segment.split('\n');
+        const language = lines[0] || 'plaintext';
+        const code = lines.slice(1).join('\n');
+        
+        return `<div class="bg-gray-100 dark:bg-gray-800 p-3 rounded my-2 overflow-x-auto">
+          <div class="text-xs text-gray-500 mb-1">${language}</div>
+          <pre class="text-xs font-mono whitespace-pre">${code}</pre>
+        </div>`;
+      }
+    }).join('');
+    
+    return formattedText;
+  };
+
+  return (
+    <div className="mt-4 border-t pt-4">
+      <div className="flex items-start gap-3">
+        <div className="bg-indigo-100 dark:bg-indigo-900/30 p-2 rounded-full mt-1">
+          <Bot size={18} className="text-indigo-600 dark:text-indigo-400" />
+        </div>
+        
+        <div className="flex-1">
+          <h4 className="text-sm font-medium mb-2">AI Response</h4>
+          <div 
+            className="prose prose-sm dark:prose-invert max-w-none"
+            dangerouslySetInnerHTML={{ __html: formatMarkdown(cleanedResponse) }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};

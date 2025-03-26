@@ -1,0 +1,60 @@
+import React from "react";
+import { 
+  Bug, 
+  Zap, 
+  Code, 
+  Lightbulb, 
+  PanelRight, 
+  Search, 
+  FileCode,
+  Waves
+} from "lucide-react";
+
+export interface QuickPrompt {
+  name: string;
+  prompt: string;
+  icon: React.ReactNode;
+}
+
+export const quickPrompts: QuickPrompt[] = [
+  {
+    name: "Debug",
+    prompt: "Debug this code and identify any issues or potential bugs:",
+    icon: <Bug size={14} />
+  },
+  {
+    name: "Optimize",
+    prompt: "Optimize this code for better performance and readability:",
+    icon: <Zap size={14} />
+  },
+  {
+    name: "Implement",
+    prompt: "Implement a feature that will:",
+    icon: <Code size={14} />
+  },
+  {
+    name: "Explain",
+    prompt: "Explain how this code works in detail:",
+    icon: <Lightbulb size={14} />
+  },
+  {
+    name: "Component",
+    prompt: "Create a React component that:",
+    icon: <PanelRight size={14} />
+  },
+  {
+    name: "Find",
+    prompt: "Find where the following functionality is implemented in this code:",
+    icon: <Search size={14} />
+  },
+  {
+    name: "Refactor",
+    prompt: "Refactor this code to follow best practices:",
+    icon: <FileCode size={14} />
+  },
+  {
+    name: "Convert",
+    prompt: "Convert this code to TypeScript with proper types:",
+    icon: <Waves size={14} />
+  }
+];

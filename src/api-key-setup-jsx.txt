@@ -1,0 +1,99 @@
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+
+interface ApiKeySetupProps {
+  onApiKeySet: () => void;
+}
+
+export const ApiKeySetup: React.FC<ApiKeySetupProps> = ({ onApiKeySet }) => {
+  const [apiKey, setApiKey] = useState("");
+  const [hasStoredKey, setHasStoredKey] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Check if API key is already stored
+    const storedKey = localStorage.getItem("ANTHROPIC_API_KEY");
+    setHasStoredKey(!!storedKey);
+    if (storedKey) {
+      setApiKey(storedKey);
+    }
+  }, []);
+
+  const handleSaveApiKey = () => {
+    if (!apiKey.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid API key",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    localStorage.setItem("ANTHROPIC_API_KEY", apiKey.trim());
+    setHasStoredKey(true);
+    
+    toast({
+      title: "Success",
+      description: "API key saved successfully",
+    });
+    
+    onApiKeySet();
+  };
+
+  const handleClearApiKey = () => {
+    localStorage.removeItem("ANTHROPIC_API_KEY");
+    setApiKey("");
+    setHasStoredKey(false);
+    
+    toast({
+      title: "API Key Removed",
+      description: "Your API key has been removed from local storage",
+    });
+  };
+
+  return (
+    <div className="space-y-4 p-4 border rounded-md">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium">Anthropic API Configuration</h3>
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="api-key">Anthropic API Key</Label>
+        <div className="flex space-x-2">
+          <Input 
+            id="api-key"
+            type="password"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            placeholder="sk-ant-api03-..."
+            className="flex-1"
+          />
+          <Button onClick={handleSaveApiKey}>
+            {hasStoredKey ? "Update" : "Save"}
+          </Button>
+        </div>
+        
+        {hasStoredKey && (
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-sm text-green-600">✓ API key is configured</p>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleClearApiKey}
+            >
+              Clear API Key
+            </Button>
+          </div>
+        )}
+        
+        <p className="text-xs text-gray-500 mt-2">
+          Your API key is stored only in your browser's local storage and is never sent to our servers.
+          Get your API key from <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Anthropic's console</a>.
+        </p>
+      </div>
+    </div>
+  );
+};

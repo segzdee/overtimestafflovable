@@ -1,0 +1,49 @@
+import React from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+
+interface CodeContextTabProps {
+  codeSnippet: string;
+  setCodeSnippet: (value: string) => void;
+  fileContext: string;
+  setFileContext: (value: string) => void;
+}
+
+export const CodeContextTab: React.FC<CodeContextTabProps> = ({
+  codeSnippet,
+  setCodeSnippet,
+  fileContext,
+  setFileContext
+}) => {
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="code-snippet" className="text-sm">Additional Code Snippet</Label>
+        <Textarea
+          id="code-snippet"
+          placeholder="Paste relevant code that you'd like AI to analyze..."
+          value={codeSnippet}
+          onChange={(e) => setCodeSnippet(e.target.value)}
+          className="font-mono text-sm min-h-[100px]"
+        />
+        <p className="text-xs text-gray-500">
+          Add any code snippets you want the AI to analyze or reference when generating a response.
+        </p>
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="file-context" className="text-sm">Related File Context</Label>
+        <Textarea
+          id="file-context"
+          placeholder="Paste related file content for context..."
+          value={fileContext}
+          onChange={(e) => setFileContext(e.target.value)}
+          className="font-mono text-sm min-h-[100px]"
+        />
+        <p className="text-xs text-gray-500">
+          Add content from related files to provide more context for the AI assistant.
+        </p>
+      </div>
+    </div>
+  );
+};

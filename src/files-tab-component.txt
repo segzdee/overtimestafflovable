@@ -1,0 +1,126 @@
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { FileData } from "./types";
+import { RefreshCw, Debug, Zap, Save } from "lucide-react";
+
+interface FilesTabProps {
+  availableFiles: { name: string; path: string }[];
+  fetchAvailableFiles: () => void;
+  fetchFileContent: (path: string) => void;
+  editingFile: FileData | null;
+  fileContent: string;
+  setFileContent: (content: string) => void;
+  handleDebugCurrentCode: () => void;
+  handleOptimizeCode: () => void;
+  saveFileChanges: () => void;
+  autoApply: boolean;
+  setAutoApply: (value: boolean) => void;
+}
+
+export const FilesTab: React.FC<FilesTabProps> = ({
+  availableFiles,
+  fetchAvailableFiles,
+  fetchFileContent,
+  editingFile,
+  fileContent,
+  setFileContent,
+  handleDebugCurrentCode,
+  handleOptimizeCode,
+  saveFileChanges,
+  autoApply,
+  setAutoApply
+}) => {
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h4 className="text-sm font-medium">Project Files</h4>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={fetchAvailableFiles}
+          className="flex items-center gap-1"
+        >
+          <RefreshCw size={14} />
+          Refresh
+        </Button>
+      </div>
+      
+      <div className="max-h-[120px] overflow-y-auto border rounded p-2">
+        {availableFiles.length > 0 ? (
+          <div className="space-y-1">
+            {availableFiles.map((file) => (
+              <Button
+                key={file.path}
+                variant="ghost"
+                size="sm"
+                className={`w-full justify-start text-xs truncate ${editingFile?.path === file.path ? 'bg-gray-100 dark:bg-gray-800' : ''}`}
+                onClick={() => fetchFileContent(file.path)}
+              >
+                {file.name}
+              </Button>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-gray-500 p-2">No files available. Click refresh to load files.</p>
+        )}
+      </div>
+      
+      {editingFile && (
+        <>
+          <div className="flex justify-between items-center">
+            <h4 className="text-sm font-medium">
+              Editing: <span className="text-indigo-600 dark:text-indigo-400">{editingFile.name}</span>
+            </h4>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDebugCurrentCode}
+                className="flex items-center gap-1"
+              >
+                <Debug size={14} />
+                Debug
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleOptimizeCode}
+                className="flex items-center gap-1"
+              >
+                <Zap size={14} />
+                Optimize
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={saveFileChanges}
+                className="flex items-center gap-1"
+              >
+                <Save size={14} />
+                Save
+              </Button>
+            </div>
+          </div>
+          
+          <Textarea
+            value={fileContent}
+            onChange={(e) => setFileContent(e.target.value)}
+            className="font-mono text-sm min-h-[200px]"
+          />
+          
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="auto-apply"
+              checked={autoApply}
+              onCheckedChange={setAutoApply}
+            />
+            <Label htmlFor="auto-apply" className="text-sm">Auto-apply AI suggestions</Label>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
