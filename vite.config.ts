@@ -1,5 +1,5 @@
 
-import { defineConfig, ConfigEnv } from "vite";
+import { defineConfig, ConfigEnv, Plugin, PluginOption } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
@@ -21,7 +21,7 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
         // Using dynamic import for ESM module compatibility
         return {
           name: 'lovable-component-tagger',
-          configResolved: async (config) => {
+          configResolved: async (config: any) => {
             try {
               const { componentTagger } = await import('lovable-tagger');
               return componentTagger();
@@ -30,7 +30,7 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
               return null;
             }
           }
-        };
+        } as PluginOption;
       } catch (e) {
         console.warn('Lovable tagger setup failed:', e);
         return null;
