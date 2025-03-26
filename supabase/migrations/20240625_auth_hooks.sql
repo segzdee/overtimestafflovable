@@ -1,4 +1,3 @@
-
 -- Create table for tracking registration attempts
 CREATE TABLE IF NOT EXISTS public.registration_attempts (
   id SERIAL PRIMARY KEY,
@@ -55,7 +54,7 @@ BEGIN
   )
   ON CONFLICT (error_type, error_message) 
   DO UPDATE SET
-    count = error_stats.count + 1,
+    count = public.error_stats.count + 1, -- Added table alias for clarity
     last_occurrence = p_timestamp;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

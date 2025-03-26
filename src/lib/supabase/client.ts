@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 
 // Environment variables for Supabase
@@ -145,6 +144,7 @@ export const checkSupabaseConnection = async (
       // Race the promises
       const isConnected = await Promise.race([healthCheckPromise, timeoutPromise]);
       if (isConnected) {
+        console.log(`Supabase connection successful on attempt ${attempt + 1}`);
         if (attempt > 0) {
           console.log(`Supabase connection restored after ${attempt + 1} attempts`);
         }

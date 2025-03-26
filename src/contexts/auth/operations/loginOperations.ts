@@ -1,4 +1,3 @@
-
 import { supabase } from "@/lib/supabase/client";
 import { executeWithConnectionRetry } from "@/lib/robust-connection-handler";
 import { NavigateFunction } from "react-router-dom";
@@ -49,17 +48,16 @@ export const login = async (email: string, password: string, navigate?: Navigate
 };
 
 export const logout = async () => {
-  try {
-    const response = await supabase.auth.signOut();
-    
-    if (response.error) {
-      throw response.error;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const response = await supabase.auth.signOut();
+      if (response.error) throw response.error;
+      return true;
+    } catch (error: any) {
+      console.error(`Logout error (attempt ${attempt + 1}):`, error);
+      if (attempt === 2) throw error;
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retrying
     }
-    
-    return true;
-  } catch (error: any) {
-    console.error("Logout error:", error);
-    throw error;
   }
 };
 

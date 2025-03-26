@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Create a storage bucket for avatars if it doesn't exist
@@ -15,19 +14,26 @@ export const setupStorage = async () => {
     const avatarBucketExists = existingBuckets.some(bucket => bucket.name === 'avatars');
     
     if (!avatarBucketExists) {
-      // Create the avatars bucket
-      const { error: createError } = await supabase.storage
-        .createBucket('avatars', {
+      // Retry mechanism for bucket creation
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const { error: createError } = await supabase.storage.createBucket('avatars', {
           public: true, // Allow public access to files
-          fileSizeLimit: 5 * 1024 * 1024, // 5MB size limit
         });
-      
-      if (createError) {
-        console.error('Error creating avatars bucket:', createError);
-        return;
+
+        if (!createError) {
+          console.log('Avatars bucket created successfully');
+          break;
+        }
+
+        console.error(`Error creating avatars bucket (attempt ${attempt + 1}):`, createError);
+
+        if (attempt === 2) {
+          console.error('Failed to create avatars bucket after 3 attempts');
+          return;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retrying
       }
-      
-      console.log('Avatars bucket created successfully');
     }
   } catch (error) {
     console.error('Error setting up storage:', error);

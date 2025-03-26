@@ -1,0 +1,222 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase/client';
+
+type OnlineStatus = 'online' | 'offline' | 'reconnecting';
+
+// Ping URL to check actual connection (not just navigator.onLine)
+const PING_URL = 'https://www.google.com/favicon.ico';
+const PING_INTERVAL = 30000; // 30 seconds
+
+/**
+ * Enhanced online/offline detection that goes beyond navigator.onLine
+ * by actually testing connectivity to servers
+ */
+export function useOnlineStatus() {
+  const [status, setStatus] = useState<OnlineStatus>(navigator.onLine ? 'online' : 'offline');
+  const [lastPingSuccess, setLastPingSuccess] = useState<Date | null>(null);
+  const [reconnectionAttempts, setReconnectionAttempts] = useState(0);
+
+  // Check if we can actually reach the internet (not just network interface up)
+  const checkActualConnection = async () => {
+    try {
+      if (!navigator.onLine) {
+        setStatus('offline');
+        return false;
+      }
+
+      // Try primary service
+      const supabaseResp = await checkSupabaseConnection();
+      
+      if (supabaseResp) {
+        setStatus('online');
+        setLastPingSuccess(new Date());
+        setReconnectionAttempts(0);
+        return true;
+      }
+      
+      // Fallback to a simple ping if Supabase is unreachable (could be service-specific issue)
+      const pingResp = await fetch(`${PING_URL}?_=${Date.now()}`, { 
+        method: 'HEAD',
+        mode: 'no-cors',
+        cache: 'no-store',
+        // Short timeout
+        signal: AbortSignal.timeout(3000)
+      });
+      
+      const isConnected = pingResp.type === 'opaque' || pingResp.ok;
+      
+      if (isConnected) {
+        setStatus('online');
+        setLastPingSuccess(new Date());
+        setReconnectionAttempts(0);
+        return true;
+      } else {
+        setStatus('offline');
+        return false;
+      }
+    } catch (error) {
+      console.warn('Connection check failed:', error);
+      
+      // If we were previously online but now fail, set to reconnecting state
+      if (status === 'online') {
+        setStatus('reconnecting');
+        setReconnectionAttempts(prev => prev + 1);
+      } else if (reconnectionAttempts > 3) {
+        // After 3 failed attempts, consider truly offline
+        setStatus('offline');
+      }
+      
+      return false;
+    }
+  };
+
+  // Check Supabase connection more thoroughly
+  const checkSupabaseConnection = async (): Promise<boolean> => {
+    try {
+      // Try a simple database query that should always work
+      const { count } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .limit(1);
+        
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const triggerReconnect = () => {
+    if (status !== 'online') {
+      setStatus('reconnecting');
+      checkActualConnection();
+    }
+  };
+
+  useEffect(() => {
+    // Initial check
+    checkActualConnection();
+    
+    // Set up interval for periodic checks
+    const intervalId = setInterval(checkActualConnection, PING_INTERVAL);
+    
+    // Listen for navigator online/offline events
+    const handleOnline = () => {
+      checkActualConnection();
+    };
+    
+    const handleOffline = () => {
+      setStatus('offline');
+    };
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    // Clean up on unmount
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return {
+    status,
+    isOnline: status === 'online',
+    isReconnecting: status === 'reconnecting',
+    isOffline: status === 'offline',
+    lastPingSuccess,
+    reconnectionAttempts,
+    checkConnection: checkActualConnection,
+    triggerReconnect
+  };
+}
+
+// Simpler export for direct utility functions
+export const checkOnlineStatus = async (): Promise<boolean> => {
+  try {
+    if (!navigator.onLine) return false;
+    
+    const response = await fetch(`${PING_URL}?_=${Date.now()}`, { 
+      method: 'HEAD',
+      mode: 'no-cors',
+      cache: 'no-store',
+      signal: AbortSignal.timeout(5000)
+    });
+    
+    return response.type === 'opaque' || response.ok;
+  } catch (error) {
+    return false;
+  }
+};
+
+// Global online status event dispatcher for components that need to react to status changes
+type OnlineStatusListener = (status: OnlineStatus) => void;
+const listeners: Set<OnlineStatusListener> = new Set();
+let currentStatus: OnlineStatus = navigator.onLine ? 'online' : 'offline';
+
+// Initialize global online status monitoring
+let isMonitoringStarted = false;
+
+export function startOnlineStatusMonitoring() {
+  if (isMonitoringStarted) return;
+  
+  const checkAndNotify = async () => {
+    const isOnline = await checkOnlineStatus();
+    const newStatus = isOnline ? 'online' : 'offline';
+    
+    if (newStatus !== currentStatus) {
+      currentStatus = newStatus;
+      notifyListeners(currentStatus);
+    }
+  };
+  
+  // Set up listeners for online/offline events
+  window.addEventListener('online', async () => {
+    // Double-check that we're actually online
+    const actuallyOnline = await checkOnlineStatus();
+    if (actuallyOnline) {
+      currentStatus = 'online';
+      notifyListeners(currentStatus);
+    }
+  });
+  
+  window.addEventListener('offline', () => {
+    currentStatus = 'offline';
+    notifyListeners(currentStatus);
+  });
+  
+  // Periodically check connection
+  setInterval(checkAndNotify, PING_INTERVAL);
+  
+  // Run initial check
+  checkAndNotify();
+  
+  isMonitoringStarted = true;
+}
+
+function notifyListeners(status: OnlineStatus) {
+  listeners.forEach(listener => {
+    try {
+      listener(status);
+    } catch (error) {
+      console.error('Error in online status listener:', error);
+    }
+  });
+}
+
+export function addOnlineStatusListener(listener: OnlineStatusListener) {
+  listeners.add(listener);
+  
+  // Start monitoring if this is the first listener
+  if (listeners.size === 1) {
+    startOnlineStatusMonitoring();
+  }
+  
+  // Immediately call with current status
+  listener(currentStatus);
+  
+  // Return function to remove the listener
+  return () => {
+    listeners.delete(listener);
+  };
+}

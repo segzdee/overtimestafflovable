@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.21.0";
 
@@ -48,6 +47,16 @@ serve(async (req) => {
         { 
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 404
+        }
+      );
+    }
+
+    if (!shiftData.required_skills || shiftData.required_skills.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "Shift does not have required skills defined" }),
+        { 
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400
         }
       );
     }

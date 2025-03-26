@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.21.0";
 
@@ -15,6 +14,16 @@ serve(async (req) => {
 
   try {
     const { shift_id, worker_id, status, photo_url, notes } = await req.json();
+
+    if (!shift_id || !worker_id || !status) {
+      return new Response(
+        JSON.stringify({ error: "Missing required fields: shift_id, worker_id, or status" }),
+        { 
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400
+        }
+      );
+    }
 
     // Create Supabase client
     const supabaseClient = createClient(

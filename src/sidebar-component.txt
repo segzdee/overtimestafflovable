@@ -1,0 +1,315 @@
+// src/components/Sidebar.tsx
+import { useState, useEffect } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { 
+  BarChart, 
+  Users, 
+  Building, 
+  Briefcase, 
+  Calendar, 
+  ClipboardList,
+  FileText,
+  Settings,
+  Bell,
+  MessageSquare,
+  CreditCard,
+  Clock,
+  User,
+  X,
+  DollarSign
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAuth } from "@/contexts/auth/AuthContext";
+
+interface NavItem {
+  title: string;
+  href: string;
+  icon: React.ReactNode;
+  role: string[];
+}
+
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+  userRole?: string;
+}
+
+export function Sidebar({ isOpen, onClose, userRole = "admin" }: SidebarProps) {
+  const location = useLocation();
+  const { signOut } = useAuth();
+  
+  // Define navigation items with role-based access
+  const navItems: NavItem[] = [
+    // Admin routes
+    { 
+      title: "Dashboard", 
+      href: "/dashboard/admin", 
+      icon: <BarChart className="h-5 w-5" />, 
+      role: ["admin"] 
+    },
+    { 
+      title: "User Management", 
+      href: "/dashboard/admin/users", 
+      icon: <Users className="h-5 w-5" />, 
+      role: ["admin"] 
+    },
+    { 
+      title: "Organizations", 
+      href: "/dashboard/admin/organizations", 
+      icon: <Building className="h-5 w-5" />, 
+      role: ["admin"] 
+    },
+    { 
+      title: "Reports", 
+      href: "/dashboard/admin/reports", 
+      icon: <FileText className="h-5 w-5" />, 
+      role: ["admin"] 
+    },
+    { 
+      title: "System Alerts", 
+      href: "/dashboard/admin/alerts", 
+      icon: <Bell className="h-5 w-5" />, 
+      role: ["admin"] 
+    },
+    { 
+      title: "Settings", 
+      href: "/dashboard/admin/settings", 
+      icon: <Settings className="h-5 w-5" />, 
+      role: ["admin"] 
+    },
+    
+    // Agency routes
+    { 
+      title: "Dashboard", 
+      href: "/dashboard/agency", 
+      icon: <BarChart className="h-5 w-5" />, 
+      role: ["agency"] 
+    },
+    { 
+      title: "Worker Roster", 
+      href: "/dashboard/agency/workers", 
+      icon: <Users className="h-5 w-5" />, 
+      role: ["agency"] 
+    },
+    { 
+      title: "Clients", 
+      href: "/dashboard/agency/clients", 
+      icon: <Building className="h-5 w-5" />, 
+      role: ["agency"] 
+    },
+    { 
+      title: "Shift Management", 
+      href: "/dashboard/agency/shifts", 
+      icon: <Calendar className="h-5 w-5" />, 
+      role: ["agency"] 
+    },
+    { 
+      title: "Finance", 
+      href: "/dashboard/agency/finance", 
+      icon: <DollarSign className="h-5 w-5" />, 
+      role: ["agency"] 
+    },
+    { 
+      title: "Announcements", 
+      href: "/dashboard/agency/announcements", 
+      icon: <Bell className="h-5 w-5" />, 
+      role: ["agency"] 
+    },
+    { 
+      title: "Settings", 
+      href: "/dashboard/agency/settings", 
+      icon: <Settings className="h-5 w-5" />, 
+      role: ["agency"] 
+    },
+    
+    // Company routes
+    { 
+      title: "Dashboard", 
+      href: "/dashboard/company", 
+      icon: <BarChart className="h-5 w-5" />, 
+      role: ["company"] 
+    },
+    { 
+      title: "Shift Management", 
+      href: "/dashboard/company/shifts", 
+      icon: <Calendar className="h-5 w-5" />, 
+      role: ["company"] 
+    },
+    { 
+      title: "Staff Requests", 
+      href: "/dashboard/company/staff-requests", 
+      icon: <ClipboardList className="h-5 w-5" />, 
+      role: ["company"] 
+    },
+    { 
+      title: "Agency Partners", 
+      href: "/dashboard/company/agencies", 
+      icon: <Briefcase className="h-5 w-5" />, 
+      role: ["company"] 
+    },
+    { 
+      title: "Staff Pool", 
+      href: "/dashboard/company/staff-pool", 
+      icon: <Users className="h-5 w-5" />, 
+      role: ["company"] 
+    },
+    { 
+      title: "Invoices", 
+      href: "/dashboard/company/invoices", 
+      icon: <CreditCard className="h-5 w-5" />, 
+      role: ["company"] 
+    },
+    { 
+      title: "Reports", 
+      href: "/dashboard/company/reports", 
+      icon: <FileText className="h-5 w-5" />, 
+      role: ["company"] 
+    },
+    { 
+      title: "Messages", 
+      href: "/dashboard/company/messages", 
+      icon: <MessageSquare className="h-5 w-5" />, 
+      role: ["company"] 
+    },
+    { 
+      title: "Settings", 
+      href: "/dashboard/company/settings", 
+      icon: <Settings className="h-5 w-5" />, 
+      role: ["company"] 
+    },
+    
+    // Shift Worker routes
+    { 
+      title: "Dashboard", 
+      href: "/dashboard/shift-worker", 
+      icon: <BarChart className="h-5 w-5" />, 
+      role: ["shift-worker"] 
+    },
+    { 
+      title: "My Shifts", 
+      href: "/dashboard/shift-worker/shifts", 
+      icon: <Calendar className="h-5 w-5" />, 
+      role: ["shift-worker"] 
+    },
+    { 
+      title: "Earnings", 
+      href: "/dashboard/shift-worker/earnings", 
+      icon: <DollarSign className="h-5 w-5" />, 
+      role: ["shift-worker"] 
+    },
+    { 
+      title: "Profile", 
+      href: "/dashboard/shift-worker/profile", 
+      icon: <User className="h-5 w-5" />, 
+      role: ["shift-worker"] 
+    },
+    { 
+      title: "Companies", 
+      href: "/dashboard/shift-worker/companies", 
+      icon: <Building className="h-5 w-5" />, 
+      role: ["shift-worker"] 
+    },
+    { 
+      title: "Teams", 
+      href: "/dashboard/shift-worker/teams", 
+      icon: <Users className="h-5 w-5" />, 
+      role: ["shift-worker"] 
+    },
+    { 
+      title: "Messages", 
+      href: "/dashboard/shift-worker/messages", 
+      icon: <MessageSquare className="h-5 w-5" />, 
+      role: ["shift-worker"] 
+    },
+    { 
+      title: "Settings", 
+      href: "/dashboard/shift-worker/settings", 
+      icon: <Settings className="h-5 w-5" />, 
+      role: ["shift-worker"] 
+    },
+  ];
+  
+  // Filter nav items by user role
+  const filteredNavItems = navItems.filter(item => 
+    item.role.includes(userRole)
+  );
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
+  return (
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={onClose}
+        />
+      )}
+      
+      {/* Sidebar container */}
+      <div
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-900 shadow-lg transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 flex flex-col",
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        {/* Sidebar header */}
+        <div className="h-16 flex items-center justify-between px-4 border-b">
+          <h2 className="text-lg font-bold text-primary">OvertimeStaff</h2>
+          <Button variant="ghost" size="icon" onClick={onClose} className="md:hidden">
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+        
+        {/* Navigation */}
+        <ScrollArea className="flex-1 py-4">
+          <nav className="space-y-1 px-2">
+            {filteredNavItems.map((item) => (
+              <NavLink
+                key={item.href}
+                to={item.href}
+                end={item.href.endsWith('/admin') || item.href.endsWith('/agency') || item.href.endsWith('/company') || item.href.endsWith('/shift-worker')}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center px-3 py-2 text-sm font-medium rounded-md group transition-colors",
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                  )
+                }
+              >
+                <div className="mr-3">{item.icon}</div>
+                {item.title}
+              </NavLink>
+            ))}
+          </nav>
+        </ScrollArea>
+        
+        {/* Sidebar footer */}
+        <div className="p-4 border-t">
+          <Button 
+            variant="outline" 
+            className="w-full justify-start"
+            onClick={handleSignOut}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mr-3 h-4 w-4"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Sign out
+          </Button>
+        </div>

@@ -1,0 +1,61 @@
+// src/components/ui/stats-card.tsx
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { TrendingUp, TrendingDown } from "lucide-react";
+
+interface TrendInfo {
+  value: string;
+  positive: boolean;
+}
+
+interface StatsCardProps {
+  title: string;
+  value: string;
+  icon?: React.ReactNode;
+  trend?: TrendInfo;
+  description?: string;
+  className?: string;
+}
+
+export function StatsCard({
+  title,
+  value,
+  icon,
+  trend,
+  description,
+  className,
+}: StatsCardProps) {
+  return (
+    <Card className={cn("hover:shadow-md transition-shadow", className)}>
+      <CardContent className="p-6">
+        <div className="flex items-start justify-between space-y-0">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">{title}</p>
+            <div className="flex items-baseline space-x-2">
+              <h2 className="text-3xl font-bold">{value}</h2>
+              {trend && (
+                <div
+                  className={cn(
+                    "flex items-center text-xs font-medium",
+                    trend.positive
+                      ? "text-green-600"
+                      : "text-destructive"
+                  )}
+                >
+                  {trend.positive ? (
+                    <TrendingUp className="mr-1 h-3 w-3" />
+                  ) : (
+                    <TrendingDown className="mr-1 h-3 w-3" />
+                  )}
+                  {trend.value}
+                </div>
+              )}
+            </div>
+            {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
+          </div>
+          {icon && <div className="text-muted-foreground">{icon}</div>}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

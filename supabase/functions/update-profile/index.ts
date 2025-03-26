@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 
@@ -28,6 +27,11 @@ serve(async (req) => {
     const { profile } = await req.json()
     if (!profile) {
       throw new Error('No profile data provided')
+    }
+
+    // Validate profile fields
+    if (!profile.name || !profile.email) {
+      throw new Error('Profile must include name and email');
     }
 
     // Get the user's ID

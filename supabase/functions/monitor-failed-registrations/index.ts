@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
@@ -53,10 +52,15 @@ serve(async (req) => {
         console.warn(`Potential security issue: ${recentAttempts.length} failed registration attempts from IP ${eventData.ip_address} in the last 24 hours`);
         
         // Create a security alert for admins
+        const adminId = await getAdminUserId(supabase);
+        if (!adminId) {
+          console.error('No admin user found to notify about security alert');
+          return;
+        }
         await supabase
           .from('notifications')
           .insert({
-            profile_id: await getAdminUserId(supabase),
+            profile_id: adminId,
             type: 'security',
             title: 'Security Alert: Multiple Failed Registrations',
             message: `Multiple failed registration attempts (${recentAttempts.length}) detected from IP ${eventData.ip_address} in the last 24 hours.`,

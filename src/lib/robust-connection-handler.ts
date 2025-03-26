@@ -1,4 +1,3 @@
-
 import { checkSupabaseConnection } from "./supabase/client";
 
 interface RetryOptions {
@@ -120,7 +119,8 @@ export async function checkConnection(): Promise<boolean> {
     return await checkSupabaseConnection();
   } catch (error) {
     console.error('Error checking connection:', error);
-    return false;
+    // Fallback to navigator.onLine if Supabase is unreachable
+    return navigator.onLine;
   }
 }
 

@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
@@ -87,18 +86,20 @@ async function processFailedLogin(supabase, eventData: AuthDiagnosticEvent) {
       .eq('user_id', eventData.user_id)
       .single();
     
-    // Check if we should send login notification
-    if (preferences && preferences.login_notifications) {
-      // Create notification for failed login
-      await supabase
-        .from('notifications')
-        .insert({
-          profile_id: eventData.user_id,
-          type: 'security',
-          title: 'Failed Login Attempt',
-          message: `A login attempt from an unrecognized device was detected at ${new Date(eventData.created_at).toLocaleString()}.`,
-        });
+    if (!preferences || !preferences.login_notifications) {
+      console.warn('Login notifications are disabled or preferences are missing for user:', eventData.user_id);
+      return;
     }
+    
+    // Create notification for failed login
+    await supabase
+      .from('notifications')
+      .insert({
+        profile_id: eventData.user_id,
+        type: 'security',
+        title: 'Failed Login Attempt',
+        message: `A login attempt from an unrecognized device was detected at ${new Date(eventData.created_at).toLocaleString()}.`,
+      });
     
     // Record the failed login in user's profile
     await supabase.rpc(

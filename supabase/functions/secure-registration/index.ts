@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
@@ -63,6 +62,17 @@ serve(async (req) => {
       }
     });
     
+    // Log the registration attempt
+    await supabase
+      .from('registration_attempts')
+      .insert({
+        email: registrationData.email,
+        ip_address: ipAddress,
+        user_agent: userAgent,
+        success: !authError,
+        error_message: authError?.message || null
+      });
+
     if (authError) {
       // Log the registration attempt
       // Here you'd log to a table like 'registration_attempts'

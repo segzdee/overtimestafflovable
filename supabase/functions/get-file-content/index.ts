@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 // Define CORS headers for browser access
@@ -46,6 +45,16 @@ serve(async (req) => {
         JSON.stringify({ error: "File path is required" }),
         { 
           status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    if (!mockFileContents[path]) {
+      return new Response(
+        JSON.stringify({ error: `File not found: ${path}` }),
+        { 
+          status: 404, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       );

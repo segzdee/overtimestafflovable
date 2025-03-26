@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { useDevMode } from "@/contexts/dev/DevModeContext";
 import { Button } from "@/components/ui/button";
@@ -120,6 +119,7 @@ export const DevModeToggle = () => {
   }, []);
 
   const fetchAvailableFiles = async () => {
+    setIsLoading(true); // Show loading indicator
     try {
       // This would connect to your development server to get file structure
       // Mocking response for now
@@ -134,9 +134,11 @@ export const DevModeToggle = () => {
       console.error("Error fetching files:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch project files",
+        description: "Failed to fetch project files. Please check your connection.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false); // Hide loading indicator
     }
   };
 
