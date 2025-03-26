@@ -13,7 +13,7 @@ export default function TopNav({ mobileMenuOpen, setMobileMenuOpen }: TopNavProp
   return (
     <header className="sticky top-0 z-50 flex justify-between items-center px-4 sm:px-6 h-14 sm:h-16 bg-white/80 backdrop-blur-sm border-b">
       <Link to="/" className="flex items-center">
-        <span className="font-bold text-xl">OVERTIME<span className="text-purple-600">STAFF</span></span>
+        <span className="font-bold text-xl">OVERTIME<span className="text-green-600">STAFF</span></span>
       </Link>
       
       {setMobileMenuOpen && (
@@ -38,7 +38,7 @@ export default function TopNav({ mobileMenuOpen, setMobileMenuOpen }: TopNavProp
           <Button variant="outline" className="mr-2">Sign in</Button>
         </Link>
         <Link to="/register">
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white">Sign up</Button>
+          <Button className="bg-green-600 hover:bg-green-700 text-white">Sign up</Button>
         </Link>
       </nav>
     </header>
