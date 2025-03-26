@@ -1,45 +1,16 @@
 
-import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { ShieldAlert, ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Forbidden = () => {
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    console.error("403 Error: User attempted to access forbidden resource");
-  }, []);
-
+export default function Forbidden() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-6 text-center bg-white rounded-lg shadow-md">
-        <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full bg-red-50">
-          <ShieldAlert className="w-8 h-8 text-red-500" />
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900">Access Denied</h1>
-        <p className="text-gray-600">
-          You don't have permission to access this page. Please contact your administrator if you believe this is a mistake.
-        </p>
-        <div className="flex flex-col space-y-3">
-          <Button 
-            onClick={() => navigate(-1)} 
-            variant="outline" 
-            className="w-full"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Go Back
-          </Button>
-          <Button 
-            onClick={() => navigate("/")} 
-            className="w-full"
-          >
-            Return to Home
-          </Button>
-        </div>
-      </div>
+    <div className="container mx-auto p-6 text-center">
+      <h1 className="text-4xl font-bold mb-4">403</h1>
+      <h2 className="text-2xl mb-6">Forbidden</h2>
+      <p className="mb-6">You don't have permission to access this resource.</p>
+      <Link to="/" className="text-blue-500 hover:underline">
+        Return to Home
+      </Link>
     </div>
   );
-};
-
-export default Forbidden;
+}

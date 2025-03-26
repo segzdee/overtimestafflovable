@@ -1,49 +1,16 @@
 
-import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { ServerCrash, RefreshCw } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-const ServerError = () => {
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    console.error("500 Error: Server error encountered");
-  }, []);
-
-  const handleRefresh = () => {
-    window.location.reload();
-  };
-
+export default function ServerError() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-6 text-center bg-white rounded-lg shadow-md">
-        <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full bg-orange-50">
-          <ServerCrash className="w-8 h-8 text-orange-500" />
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900">Server Error</h1>
-        <p className="text-gray-600">
-          We're experiencing some technical difficulties. Our team has been notified and is working to fix the issue.
-        </p>
-        <div className="flex flex-col space-y-3">
-          <Button 
-            onClick={handleRefresh} 
-            variant="outline" 
-            className="w-full"
-          >
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh Page
-          </Button>
-          <Button 
-            onClick={() => navigate("/")} 
-            className="w-full"
-          >
-            Return to Home
-          </Button>
-        </div>
-      </div>
+    <div className="container mx-auto p-6 text-center">
+      <h1 className="text-4xl font-bold mb-4">500</h1>
+      <h2 className="text-2xl mb-6">Server Error</h2>
+      <p className="mb-6">Something went wrong on our end. Please try again later.</p>
+      <Link to="/" className="text-blue-500 hover:underline">
+        Return to Home
+      </Link>
     </div>
   );
-};
-
-export default ServerError;
+}

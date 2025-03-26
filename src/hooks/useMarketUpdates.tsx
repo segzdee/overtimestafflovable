@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { demoShifts } from '@/components/layout/demo-shifts-data';
 
 export type MarketUpdate = {
   id: string;
@@ -51,6 +50,60 @@ export function useMarketUpdates(initialRegion = 'Global', initialCurrency = 'US
     try {
       // In a real app, we'd fetch from an API
       // For now, we'll use demo data
+      const demoShifts: MarketUpdate[] = [
+        {
+          id: 'demo-1',
+          type: 'URGENT',
+          title: 'Senior Bartender Needed',
+          location: 'Grand Hotel & Resort',
+          region: 'North America',
+          rate: '$35/hr',
+          urgency_level: 'high',
+          highlight: true,
+          isNew: false,
+          isUpdating: false,
+          timestamp: Date.now() - 1200000 // 20 minutes ago
+        },
+        {
+          id: 'demo-2',
+          type: 'PREMIUM',
+          title: 'Event Host - Corporate Gala',
+          location: 'City Convention Center',
+          region: 'North America',
+          rate: '$30/hr',
+          urgency_level: 'medium',
+          highlight: true,
+          isNew: false,
+          isUpdating: false,
+          timestamp: Date.now() - 3600000 // 1 hour ago
+        },
+        {
+          id: 'demo-3',
+          type: 'SWAP',
+          title: 'Wait Staff - Friday Night Shift',
+          location: 'Oceanview Restaurant',
+          region: 'North America',
+          rate: '$25/hr',
+          urgency_level: 'medium',
+          highlight: false,
+          isNew: false,
+          isUpdating: false,
+          timestamp: Date.now() - 7200000 // 2 hours ago
+        },
+        {
+          id: 'demo-4',
+          type: 'REGULAR',
+          title: 'Kitchen Assistant',
+          location: 'Downtown Bistro',
+          region: 'Europe',
+          rate: '€22/hr',
+          urgency_level: 'low',
+          highlight: false,
+          isNew: false,
+          isUpdating: false,
+          timestamp: Date.now() - 14400000 // 4 hours ago
+        }
+      ];
       
       // Filter by region if not global
       const filteredUpdates = selectedRegion === 'Global' 
