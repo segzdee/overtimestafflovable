@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => ({
         // Using dynamic import for ESM module compatibility
         return {
           name: 'lovable-component-tagger',
-          async configResolved() {
+          configResolved: async () => {
             try {
               const { componentTagger } = await import('lovable-tagger');
               return componentTagger();
