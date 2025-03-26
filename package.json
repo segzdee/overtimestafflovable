@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "build": "tsc"
-  },
+      "dev": "vite",
+  "build:dev": "vite build --mode development"
+}
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
