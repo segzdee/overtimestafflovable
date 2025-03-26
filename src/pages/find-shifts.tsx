@@ -14,10 +14,10 @@ export default function FindShifts() {
     navigate('/register', {
       state: {
         role: 'shift-worker',
-        email,
-        name,
-        phone
-      }
+        email: email.trim(),
+        name: name.trim(),
+        phone: phone.trim(),
+      },
     });
   };
   return <div className="min-h-screen flex flex-col">

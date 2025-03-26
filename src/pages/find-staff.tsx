@@ -14,10 +14,10 @@ export default function FindStaff() {
     navigate('/register', {
       state: {
         role: 'company',
-        email,
-        name: companyName,
-        phone
-      }
+        email: email.trim(),
+        name: companyName.trim(),
+        phone: phone.trim(),
+      },
     });
   };
   return <div className="min-h-screen flex flex-col">

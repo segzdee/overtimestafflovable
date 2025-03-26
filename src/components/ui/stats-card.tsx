@@ -1,5 +1,4 @@
-
-i// src/components/ui/stats-card.tsx
+import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { TrendingUp, TrendingDown } from "lucide-react";
