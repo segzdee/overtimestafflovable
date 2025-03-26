@@ -5,7 +5,7 @@ import { routes } from '@/routes/routes.config';
 import { AuthProvider } from '@/contexts/auth';
 import { Toaster } from '@/components/ui/toaster';
 import { DevModeProvider } from '@/contexts/dev/DevModeContext';
-import { DevModeToggle } from '@/components/DevModeToggle';
+import { DevModeToggle } from '@/components/dev';
 
 // Create router from config
 const AppRouter = () => {
