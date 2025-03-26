@@ -1,8 +1,5 @@
-// src/data/demoShifts.ts
-import { MarketUpdate } from '@/services/marketData.service';
 
-// Demo data for the market updates
-export const demoShifts: MarketUpdate[] = [
+export const demoShifts = [
   {
     id: 'demo-1',
     type: 'URGENT',
@@ -12,112 +9,6 @@ export const demoShifts: MarketUpdate[] = [
     rate: '$35/hr',
     urgency_level: 'high',
     highlight: true,
-    isNew: false,
-    isUpdating: false,
-    timestamp: Date.now() - 9000000 // 2.5 hours ago
-  },
-  {
-    id: 'demo-12',
-    type: 'SWAP',
-    title: 'Banquet Server - Wedding',
-    location: 'Garden Palace',
-    region: 'Asia Pacific',
-    rate: '$28/hr',
-    urgency_level: 'medium',
-    highlight: false,
-    isNew: false,
-    isUpdating: false,
-    timestamp: Date.now() - 4500000 // 75 minutes ago
-  },
-  {
-    id: 'demo-13',
-    type: 'URGENT',
-    title: 'Barista Needed ASAP',
-    location: 'Airport Lounge',
-    region: 'Middle East',
-    rate: '$25/hr',
-    urgency_level: 'high',
-    highlight: true,
-    isNew: true,
-    isUpdating: false,
-    timestamp: Date.now() - 1500000 // 25 minutes ago
-  },
-  {
-    id: 'demo-14',
-    type: 'REGULAR',
-    title: 'Room Service Attendant',
-    location: 'Boutique Hotel',
-    region: 'Europe',
-    rate: '€20/hr',
-    urgency_level: 'low',
-    highlight: false,
-    isNew: false,
-    isUpdating: false,
-    timestamp: Date.now() - 18000000 // 5 hours ago
-  },
-  {
-    id: 'demo-15',
-    type: 'PREMIUM',
-    title: 'Casino Dealer - Poker',
-    location: 'Grand Casino',
-    region: 'North America',
-    rate: '$32/hr',
-    urgency_level: 'medium',
-    highlight: true,
-    isNew: false,
-    isUpdating: false,
-    timestamp: Date.now() - 8100000 // 2.25 hours ago
-  }
-];.now() - 10800000 // 3 hours ago
-  },
-  {
-    id: 'demo-8',
-    type: 'SWAP',
-    title: 'Front Desk Agent - Weekend',
-    location: 'Business Hotel',
-    region: 'Middle East',
-    rate: '$26/hr',
-    urgency_level: 'medium',
-    highlight: false,
-    isNew: false,
-    isUpdating: false,
-    timestamp: Date.now() - 5400000 // 1.5 hours ago
-  },
-  {
-    id: 'demo-9',
-    type: 'URGENT',
-    title: 'Head Chef Substitute',
-    location: 'Michelin Star Restaurant',
-    region: 'Europe',
-    rate: '€45/hr',
-    urgency_level: 'high',
-    highlight: true,
-    isNew: true,
-    isUpdating: false,
-    timestamp: Date.now() - 600000 // 10 minutes ago
-  },
-  {
-    id: 'demo-10',
-    type: 'PREMIUM',
-    title: 'Sommelier for Wine Tasting',
-    location: 'Luxury Vineyard Resort',
-    region: 'Europe',
-    rate: '€38/hr',
-    urgency_level: 'medium',
-    highlight: true,
-    isNew: false,
-    isUpdating: false,
-    timestamp: Date.now() - 2700000 // 45 minutes ago
-  },
-  {
-    id: 'demo-11',
-    type: 'REGULAR',
-    title: 'Restaurant Server',
-    location: 'Seafood Grill',
-    region: 'North America',
-    rate: '$24/hr',
-    urgency_level: 'low',
-    highlight: false,
     isNew: false,
     isUpdating: false,
     timestamp: Date.now() - 1200000 // 20 minutes ago
@@ -198,4 +89,45 @@ export const demoShifts: MarketUpdate[] = [
     highlight: false,
     isNew: false,
     isUpdating: false,
-    timestamp: Date
+    timestamp: Date.now() - 10800000 // 3 hours ago
+  },
+  {
+    id: 'demo-8',
+    type: 'SWAP',
+    title: 'Front Desk Agent - Weekend',
+    location: 'Business Hotel',
+    region: 'Middle East',
+    rate: '$26/hr',
+    urgency_level: 'medium',
+    highlight: false,
+    isNew: false,
+    isUpdating: false,
+    timestamp: Date.now() - 5400000 // 1.5 hours ago
+  },
+  {
+    id: 'demo-9',
+    type: 'URGENT',
+    title: 'Chef de Partie - Emergency Cover',
+    location: 'Five Star Restaurant',
+    region: 'Europe',
+    rate: '€32/hr',
+    urgency_level: 'high',
+    highlight: true,
+    isNew: true,
+    isUpdating: false,
+    timestamp: Date.now() - 600000 // 10 minutes ago
+  },
+  {
+    id: 'demo-10',
+    type: 'PREMIUM',
+    title: 'Event Security - VIP Conference',
+    location: 'International Convention Center',
+    region: 'North America',
+    rate: '$38/hr',
+    urgency_level: 'medium',
+    highlight: true,
+    isNew: true,
+    isUpdating: false,
+    timestamp: Date.now() - 2400000 // 40 minutes ago
+  }
+];
