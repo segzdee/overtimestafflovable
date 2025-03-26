@@ -1,4 +1,3 @@
-
 import React, { Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { routes } from '@/routes/routes.config';
@@ -9,19 +8,19 @@ import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 const router = createBrowserRouter(routes);
 
-function App() {
+const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <MarketProvider>
-        <ErrorBoundary fallback={<div>Something went wrong. Please try again later.</div>}>
+    <ErrorBoundary>
+      <AuthProvider>
+        <MarketProvider>
           <Suspense fallback={<div>Loading...</div>}>
             <RouterProvider router={router} />
           </Suspense>
-        </ErrorBoundary>
-        <Toaster />
-      </MarketProvider>
-    </AuthProvider>
+          <Toaster />
+        </MarketProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
-}
+};
 
 export default App;
