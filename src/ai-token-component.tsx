@@ -1,289 +1,202 @@
-
 import React, { useState } from 'react';
-import { useAuth } from '@/contexts/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Key, Plus, Trash2, Check, X, Copy, Clock } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/auth/AuthContext';
+import { Trash2, Plus, Copy, Check } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { AiToken } from '@/contexts/auth/AuthContext';
 
-export default function AITokenManager() {
-  const { user, aiTokens = [], generateAiToken, revokeAiToken } = useAuth();
+const AiTokenComponent: React.FC = () => {
+  const [newTokenDescription, setNewTokenDescription] = useState('');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [copiedTokenId, setCopiedTokenId] = useState<string | null>(null);
   const { toast } = useToast();
-  const [tokenName, setTokenName] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
-  const [isRevoking, setIsRevoking] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [tokenToRevoke, setTokenToRevoke] = useState('');
-  const [newTokenData, setNewTokenData] = useState<{ token: string } | null>(null);
+  const { aiTokens, generateAiToken, revokeAiToken } = useAuth();
 
-  const handleCreateToken = async () => {
-    if (!tokenName.trim()) {
+  const handleGenerateToken = async () => {
+    if (!newTokenDescription.trim()) {
       toast({
-        variant: "destructive",
-        title: "Token name required",
-        description: "Please enter a name for your token"
+        title: 'Description required',
+        description: 'Please provide a description for your token',
+        variant: 'destructive',
       });
       return;
     }
 
     try {
-      setIsCreating(true);
-      
-      if (!user || !generateAiToken) {
-        throw new Error("User or generateAiToken function is not available");
-      }
-      
-      const result = await generateAiToken(tokenName, user.id);
-      setNewTokenData(result);
-      setTokenName('');
-      
+      await generateAiToken(newTokenDescription);
+      setNewTokenDescription('');
+      setIsDialogOpen(false);
       toast({
-        title: "Token created",
-        description: "Your AI token has been created successfully"
+        title: 'Token generated',
+        description: 'Your new AI token has been created successfully',
       });
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Failed to create token",
-        description: error instanceof Error ? error.message : "An unknown error occurred"
+        title: 'Error',
+        description: 'Failed to generate token. Please try again.',
+        variant: 'destructive',
       });
-    } finally {
-      setIsCreating(false);
     }
   };
 
   const handleRevokeToken = async (tokenId: string) => {
     try {
-      setIsRevoking(true);
-      setTokenToRevoke(tokenId);
-      
-      if (!revokeAiToken) {
-        throw new Error("revokeAiToken function is not available");
-      }
-      
       await revokeAiToken(tokenId);
-      
       toast({
-        title: "Token revoked",
-        description: "The AI token has been successfully revoked"
+        title: 'Token revoked',
+        description: 'The token has been successfully revoked',
       });
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Failed to revoke token",
-        description: error instanceof Error ? error.message : "An unknown error occurred"
+        title: 'Error',
+        description: 'Failed to revoke token. Please try again.',
+        variant: 'destructive',
       });
-    } finally {
-      setIsRevoking(false);
-      setTokenToRevoke('');
-      setDialogOpen(false);
     }
   };
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = (text: string, tokenId: string) => {
     navigator.clipboard.writeText(text).then(() => {
+      setCopiedTokenId(tokenId);
+      setTimeout(() => setCopiedTokenId(null), 2000);
       toast({
-        title: "Copied!",
-        description: "Token copied to clipboard"
+        title: 'Copied to clipboard',
+        description: 'Token has been copied to your clipboard',
       });
     });
   };
 
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(new Date(date));
+  };
+
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Key className="h-5 w-5" />
-          API Tokens
-        </CardTitle>
-        <CardDescription>
-          Manage your AI API tokens for programmatic access
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-            <Input
-              value={tokenName}
-              onChange={(e) => setTokenName(e.target.value)}
-              placeholder="Token name (e.g., Billing Bot)"
-              className="flex-grow"
-              disabled={isCreating}
-            />
-            <Button 
-              onClick={handleCreateToken} 
-              disabled={isCreating || !tokenName.trim()}
-              className="whitespace-nowrap"
-            >
-              {isCreating ? (
-                <>
-                  <span className="animate-spin mr-2">⋯</span>
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Token
-                </>
-              )}
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">AI Access Tokens</h2>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="flex items-center gap-2">
+              <Plus size={16} />
+              Generate New Token
             </Button>
-          </div>
-
-          {aiTokens.length === 0 ? (
-            <div className="text-center p-6 border border-dashed rounded-lg">
-              <Key className="h-10 w-10 mx-auto opacity-20 mb-2" />
-              <p className="text-sm text-muted-foreground">
-                No tokens created yet. Create a token to get started.
-              </p>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Generate New AI Token</DialogTitle>
+              <DialogDescription>
+                Create a new token for API access to your AI services.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <Label htmlFor="token-description" className="mb-2 block">
+                Token Description
+              </Label>
+              <Input
+                id="token-description"
+                placeholder="e.g., Production API, Development Testing"
+                value={newTokenDescription}
+                onChange={(e) => setNewTokenDescription(e.target.value)}
+              />
             </div>
-          ) : (
-            <div className="border rounded-lg divide-y">
-              {aiTokens.map((token) => (
-                <div 
-                  key={token.id} 
-                  className="p-4 flex items-center justify-between flex-wrap gap-3"
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{token.name}</span>
-                      <Badge variant={token.isActive ? "default" : "destructive"}>
-                        {token.isActive ? "Active" : "Revoked"}
-                      </Badge>
-                    </div>
-                    <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      Created {formatDistanceToNow(new Date(token.createdAt))} ago
-                    </div>
-                  </div>
-                  
-                  {token.isActive && (
-                    <AlertDialog open={dialogOpen && tokenToRevoke === token.id} onOpenChange={(open) => {
-                      setDialogOpen(open);
-                      if (!open) setTokenToRevoke('');
-                    }}>
-                      <AlertDialogTrigger asChild>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => {
-                            setDialogOpen(true);
-                            setTokenToRevoke(token.id);
-                          }}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Revoke
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Revoke API Token</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to revoke this token? This action cannot be undone,
-                            and any applications using this token will lose access.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel disabled={isRevoking}>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleRevokeToken(token.id);
-                            }}
-                            disabled={isRevoking}
-                            className="bg-destructive hover:bg-destructive/90"
-                          >
-                            {isRevoking && tokenToRevoke === token.id ? (
-                              <>
-                                <span className="animate-spin mr-2">⋯</span>
-                                Revoking...
-                              </>
-                            ) : (
-                              <>
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Revoke Token
-                              </>
-                            )}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleGenerateToken}>Generate Token</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {aiTokens && aiTokens.length > 0 ? (
+        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+          {aiTokens.map((token) => (
+            <Card key={token.id}>
+              <CardHeader>
+                <CardTitle className="flex justify-between items-center">
+                  <div className="truncate">{token.description}</div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 h-auto"
+                    onClick={() => handleRevokeToken(token.id)}
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </CardTitle>
+                <CardDescription>
+                  Created: {formatDate(token.created)}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md flex justify-between items-center">
+                  <code className="text-sm font-mono truncate max-w-[80%]">
+                    {token.token}
+                  </code>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-2 h-auto"
+                    onClick={() => copyToClipboard(token.token, token.id)}
+                  >
+                    {copiedTokenId === token.id ? (
+                      <Check size={16} className="text-green-500" />
+                    ) : (
+                      <Copy size={16} />
+                    )}
+                  </Button>
                 </div>
-              ))}
-            </div>
-          )}
+              </CardContent>
+              <CardFooter>
+                <p className="text-sm text-gray-500">
+                  Expires: {formatDate(token.expires)}
+                </p>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
-      </CardContent>
+      ) : (
+        <Card>
+          <CardContent className="py-10">
+            <div className="text-center space-y-3">
+              <p className="text-gray-500">No tokens have been generated yet.</p>
+              <Button
+                variant="outline"
+                onClick={() => setIsDialogOpen(true)}
+                className="mx-auto"
+              >
+                Generate Your First Token
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Dialog to show the newly created token */}
-      <Dialog 
-        open={!!newTokenData} 
-        onOpenChange={(open) => !open && setNewTokenData(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Token Created Successfully</DialogTitle>
-            <DialogDescription>
-              Copy this token now. You won't be able to see it again.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="bg-muted p-4 rounded-lg font-mono text-xs break-all">
-            {newTokenData?.token}
-          </div>
-          <DialogFooter>
-            <Button 
-              onClick={() => {
-                if (newTokenData?.token) {
-                  copyToClipboard(newTokenData.token);
-                }
-              }}
-              className="gap-2"
-            >
-              <Copy className="h-4 w-4" />
-              Copy to Clipboard
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setNewTokenData(null)}
-              className="gap-2"
-            >
-              <Check className="h-4 w-4" />
-              Done
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </Card>
+      <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-md border border-blue-200 dark:border-blue-800">
+        <h3 className="font-medium mb-2">How to use your token</h3>
+        <p className="text-sm mb-3">
+          Include your token in the Authorization header of your API requests:
+        </p>
+        <pre className="bg-gray-800 text-gray-200 p-3 rounded-md text-sm overflow-x-auto">
+          <code>
+            {`curl -X POST https://api.overtimestaff.com/v1/ai-assistant \\
+  -H "Authorization: Bearer YOUR_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{"query": "What shifts are available?"}'`}
+          </code>
+        </pre>
+      </div>
+    </div>
   );
-}
+};
+
+export default AiTokenComponent;
