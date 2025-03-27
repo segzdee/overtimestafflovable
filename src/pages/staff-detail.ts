@@ -1,3 +1,4 @@
+
 import { mockStaffData } from '../data/mockStaffData';
 
 /**
@@ -5,6 +6,6 @@ import { mockStaffData } from '../data/mockStaffData';
  * @param id - The ID of the staff member.
  * @returns The staff member object or null if not found.
  */
-export function getStaffById(id: string) {
-    return mockStaffData.find(staff => staff.id === id) || null;
+export function getStaffById(id: number) {
+    return mockStaffData.find(staff => staff.id === parseInt(id.toString(), 10)) || null;
 }

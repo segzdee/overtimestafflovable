@@ -1,7 +1,7 @@
 
-import { mockStaffData, StaffMember } from '../data/mockStaffData';
+import { mockStaffData, type StaffMember } from '../data/mockStaffData';
 
-export { StaffMember };
+export type { StaffMember };
 
 export const fetchStaffData = (): StaffMember[] => mockStaffData;
 
