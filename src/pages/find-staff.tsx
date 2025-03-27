@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { fetchStaffData, calculateReliabilityScore } from '../utils/staffUtils';
+import { fetchStaffData, calculateReliabilityScore } from '@/utils/staffUtils'; // Updated path to use alias
 import { useDevMode } from '@/contexts/dev/DevModeContext';
 
 export default function FindStaff() {

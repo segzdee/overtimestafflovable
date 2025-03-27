@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useNavigate } from 'react-router-dom'; // Updated from next/router to react-router-dom
 import { useDevMode } from '@/contexts/dev/DevModeContext';
 
 export default function FindShifts() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const router = useRouter();
+  const navigate = useNavigate(); // Using navigate instead of router
   const { devMode, selectedRole } = useDevMode();
 
   useEffect(() => {
@@ -30,11 +30,11 @@ export default function FindShifts() {
   }, [devMode, selectedRole]);
 
   const handleLoginRedirect = () => {
-    router.push('/login');
+    navigate('/login'); // Using navigate instead of router.push
   };
 
   const handleMarketRedirect = () => {
-    router.push('/live-market');
+    navigate('/live-market'); // Using navigate instead of router.push
   };
 
   return (
