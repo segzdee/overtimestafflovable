@@ -2,6 +2,7 @@
 import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth';
+import { Spinner } from '@/components/ui/spinner';
 
 interface ProtectedRouteProps {
   element: ReactNode;
@@ -17,9 +18,11 @@ export const ProtectedRoute = ({
   
   // Handle loading state
   if (isLoading) {
-    return <div className="h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600"></div>
-    </div>;
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
   }
   
   // If no user, redirect to login
@@ -28,7 +31,7 @@ export const ProtectedRoute = ({
   }
   
   // If roles specified and user doesn't have permission
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+  if (allowedRoles.length > 0 && user.role && !allowedRoles.includes(user.role)) {
     return <Navigate to="/forbidden" replace />;
   }
   

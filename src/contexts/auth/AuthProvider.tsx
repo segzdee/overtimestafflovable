@@ -24,15 +24,18 @@ export interface AIToken {
   name: string;
   createdAt: string;
   isActive: boolean;
+  token?: string;
 }
 
 interface AuthContextType {
   user: AuthUser | null;
+  profile?: AuthUser | null;
   isLoading: boolean;
+  loading?: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  register: (email: string, password: string, role: string) => Promise<void>;
+  register: (email: string, password: string, role: string, data?: any, onSuccess?: () => void) => Promise<void>;
   updateUser: (data: Partial<AuthUser>) => void;
   loginWithToken?: (token: string) => Promise<void>;
   updateProfile?: (data: Partial<AuthUser>) => Promise<void>;
@@ -128,7 +131,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Register function
-  const register = async (email: string, password: string, role: string) => {
+  const register = async (email: string, password: string, role: string, data?: any, onSuccess?: () => void) => {
     setIsLoading(true);
     try {
       // This is just a mock - would be replaced with actual registration
@@ -142,6 +145,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       setUser(mockUser);
       localStorage.setItem("user", JSON.stringify(mockUser));
+      
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.error("Registration failed", error);
       throw error;
@@ -171,7 +178,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       id: `token_${Date.now()}`,
       name,
       createdAt: new Date().toISOString(),
-      isActive: true
+      isActive: true,
+      token: `ai_${Math.random().toString(36).substring(2, 15)}`
     };
     
     setAiTokens(prev => [...prev, newToken]);
@@ -194,7 +202,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{
         user,
+        profile: user,
         isLoading,
+        loading: isLoading,
         isAuthenticated: !!user,
         login,
         logout,

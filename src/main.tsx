@@ -1,11 +1,9 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import { DevModeProvider } from '@/contexts/dev/DevModeContext';
 import { Toaster } from '@/components/ui/toaster';
 import { initConnectionHandling } from '@/lib/robust-connection-handler';
-import { AuthProvider } from '@/contexts/auth/AuthProvider';
 import App from './App';
 import './index.css';
 
@@ -25,13 +23,9 @@ initConnectionHandling();
 // Render the app
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <DevModeProvider>
-        <AuthProvider>
-          <App />
-          <Toaster />
-        </AuthProvider>
-      </DevModeProvider>
-    </BrowserRouter>
+    <DevModeProvider>
+      <App />
+      <Toaster />
+    </DevModeProvider>
   </React.StrictMode>
 );

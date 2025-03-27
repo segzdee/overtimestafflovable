@@ -17,6 +17,8 @@ import ServerError from '@/pages/ServerError';
 import Profile from '@/pages/Profile';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import TokenValidation from '@/pages/TokenValidation';
+import { AuthLayout } from '@/layouts/AuthLayout';
+import { DashboardLayout } from '@/layouts/DashboardLayout';
 
 // Define route configuration
 export const routes: RouteObject[] = [
@@ -25,21 +27,37 @@ export const routes: RouteObject[] = [
     path: '/',
     element: <Home />
   },
+  // Auth routes with layout
   {
-    path: '/auth/login',
+    path: '/auth',
+    element: <AuthLayout />,
+    children: [
+      {
+        path: 'login',
+        element: <Login />
+      },
+      {
+        path: 'register',
+        element: <Register />
+      },
+      {
+        path: 'forgot-password',
+        element: <ForgotPassword />
+      },
+      {
+        path: 'reset-password',
+        element: <ResetPassword />
+      },
+    ]
+  },
+  // Redirects/aliases
+  {
+    path: '/login',
     element: <Login />
   },
   {
-    path: '/login',
-    element: <Login />  // Redirect or alias
-  },
-  {
-    path: '/auth/register',
-    element: <Register />
-  },
-  {
     path: '/register',
-    element: <Register />  // Redirect or alias
+    element: <Register />
   },
   {
     path: '/market',
@@ -80,10 +98,16 @@ export const routes: RouteObject[] = [
     element: <ProtectedRoute element={<Profile />} />
   },
   
-  // Dashboard routes
+  // Dashboard routes with layout
   {
-    path: '/dashboard/:role',
-    element: <ProtectedRoute element={<DashboardRouter />} />
+    path: '/dashboard',
+    element: <DashboardLayout />,
+    children: [
+      {
+        path: ':role/*',
+        element: <ProtectedRoute element={<DashboardRouter />} />
+      }
+    ]
   },
   
   // Error pages

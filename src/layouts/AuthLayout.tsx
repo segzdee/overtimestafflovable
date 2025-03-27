@@ -1,0 +1,29 @@
+
+import React from "react";
+import { Outlet } from "react-router-dom";
+import { Card } from "@/components/ui/card";
+
+export function AuthLayout() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-primary">OvertimeStaff</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-2">
+            Staff Management Platform
+          </p>
+        </div>
+        
+        <Card className="w-full shadow-lg">
+          <Outlet />
+        </Card>
+        
+        <div className="text-center mt-6 text-sm text-gray-500 dark:text-gray-400">
+          &copy; {new Date().getFullYear()} OvertimeStaff. All rights reserved.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default AuthLayout;
