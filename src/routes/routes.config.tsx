@@ -19,108 +19,114 @@ import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import TokenValidation from '../pages/TokenValidation';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { DashboardLayout } from '../layouts/DashboardLayout';
+import { RootLayout } from '../components/layout/RootLayout';
 
 // Define route configuration
 export const routes: RouteObject[] = [
-  // Public routes
   {
-    path: '/',
-    element: <Home />
-  },
-  // Auth routes with layout
-  {
-    path: '/auth',
-    element: <AuthLayout />,
+    element: <RootLayout />,
     children: [
+      // Public routes
       {
-        path: 'login',
+        path: '/',
+        element: <Home />
+      },
+      // Auth routes with layout
+      {
+        path: '/auth',
+        element: <AuthLayout />,
+        children: [
+          {
+            path: 'login',
+            element: <Login />
+          },
+          {
+            path: 'register',
+            element: <Register />
+          },
+          {
+            path: 'forgot-password',
+            element: <ForgotPassword />
+          },
+          {
+            path: 'reset-password',
+            element: <ResetPassword />
+          },
+        ]
+      },
+      // Redirects/aliases
+      {
+        path: '/login',
         element: <Login />
       },
       {
-        path: 'register',
+        path: '/register',
         element: <Register />
       },
       {
-        path: 'forgot-password',
+        path: '/market',
+        element: <LiveMarket />
+      },
+      {
+        path: '/live-market',
+        element: <LiveMarket />
+      },
+      {
+        path: '/find-shifts',
+        element: <FindShifts />
+      },
+      {
+        path: '/find-staff',
+        element: <FindStaff />
+      },
+      {
+        path: '/verify-email',
+        element: <VerifyEmail />
+      },
+      {
+        path: '/forgot-password',
         element: <ForgotPassword />
       },
       {
-        path: 'reset-password',
+        path: '/reset-password',
         element: <ResetPassword />
       },
-    ]
-  },
-  // Redirects/aliases
-  {
-    path: '/login',
-    element: <Login />
-  },
-  {
-    path: '/register',
-    element: <Register />
-  },
-  {
-    path: '/market',
-    element: <LiveMarket />
-  },
-  {
-    path: '/live-market',
-    element: <LiveMarket />
-  },
-  {
-    path: '/find-shifts',
-    element: <FindShifts />
-  },
-  {
-    path: '/find-staff',
-    element: <FindStaff />
-  },
-  {
-    path: '/verify-email',
-    element: <VerifyEmail />
-  },
-  {
-    path: '/forgot-password',
-    element: <ForgotPassword />
-  },
-  {
-    path: '/reset-password',
-    element: <ResetPassword />
-  },
-  {
-    path: '/ai-token',
-    element: <TokenValidation />
-  },
-  
-  // Protected routes
-  {
-    path: '/profile',
-    element: <ProtectedRoute element={<Profile />} />
-  },
-  
-  // Dashboard routes with layout
-  {
-    path: '/dashboard',
-    element: <DashboardLayout />,
-    children: [
       {
-        path: ':role/*',
-        element: <ProtectedRoute element={<DashboardRouter />} />
+        path: '/ai-token',
+        element: <TokenValidation />
+      },
+      
+      // Protected routes
+      {
+        path: '/profile',
+        element: <ProtectedRoute element={<Profile />} />
+      },
+      
+      // Dashboard routes with layout
+      {
+        path: '/dashboard',
+        element: <DashboardLayout />,
+        children: [
+          {
+            path: ':role/*',
+            element: <ProtectedRoute element={<DashboardRouter />} />
+          }
+        ]
+      },
+      
+      // Error pages
+      {
+        path: '/forbidden',
+        element: <Forbidden />
+      },
+      {
+        path: '/error',
+        element: <ServerError />
+      },
+      {
+        path: '*',
+        element: <NotFound />
       }
     ]
-  },
-  
-  // Error pages
-  {
-    path: '/forbidden',
-    element: <Forbidden />
-  },
-  {
-    path: '/error',
-    element: <ServerError />
-  },
-  {
-    path: '*',
-    element: <NotFound />
   }
 ];
