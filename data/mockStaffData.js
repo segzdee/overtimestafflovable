@@ -1,4 +1,3 @@
-
 export const mockStaffData = [
   {
     id: 1,
@@ -7,14 +6,14 @@ export const mockStaffData = [
     country: "UK",
     region: "South",
     verified: true,
-    positions: ["Nurse", "ICU Specialist"],
+    positions: ["Hotel Manager", "Event Coordinator"],
     ratings: {
       clientRating: 4.8,
       reliability: 4.7,
       cancellations: 0.2,
       lateArrivals: 0.1,
       swaps: 0.3,
-      avgHourlyRate: 28.50
+      avgHourlyRate: 35.00
     }
   },
   {
@@ -24,14 +23,14 @@ export const mockStaffData = [
     country: "UK",
     region: "North",
     verified: true,
-    positions: ["Healthcare Assistant", "Elder Care"],
+    positions: ["Chef", "Catering Specialist"],
     ratings: {
       clientRating: 4.5,
       reliability: 4.3,
       cancellations: 0.5,
       lateArrivals: 0.2,
       swaps: 0.1,
-      avgHourlyRate: 22.00
+      avgHourlyRate: 25.00
     }
   },
   {
@@ -41,14 +40,14 @@ export const mockStaffData = [
     country: "UK",
     region: "West",
     verified: false,
-    positions: ["Mental Health Nurse"],
+    positions: ["Bartender", "Mixologist"],
     ratings: {
       clientRating: 4.2,
       reliability: 4.0,
       cancellations: 0.8,
       lateArrivals: 0.4,
       swaps: 0.3,
-      avgHourlyRate: 26.75
+      avgHourlyRate: 20.00
     }
   },
   {
@@ -58,14 +57,14 @@ export const mockStaffData = [
     country: "UK",
     region: "North",
     verified: true,
-    positions: ["Emergency Nurse", "Triage Specialist"],
+    positions: ["Front Desk Receptionist", "Concierge"],
     ratings: {
       clientRating: 4.9,
       reliability: 4.8,
       cancellations: 0.1,
       lateArrivals: 0.1,
       swaps: 0.1,
-      avgHourlyRate: 30.00
+      avgHourlyRate: 22.00
     }
   },
   {
@@ -75,14 +74,14 @@ export const mockStaffData = [
     country: "UK",
     region: "West",
     verified: true,
-    positions: ["Pediatric Nurse", "Neonatal Care"],
+    positions: ["Housekeeping Manager", "Room Attendant"],
     ratings: {
       clientRating: 4.7,
       reliability: 4.5,
       cancellations: 0.3,
       lateArrivals: 0.2,
       swaps: 0.2,
-      avgHourlyRate: 29.25
+      avgHourlyRate: 18.50
     }
   },
   {
@@ -92,14 +91,48 @@ export const mockStaffData = [
     country: "UK",
     region: "South",
     verified: false,
-    positions: ["General Practice Nurse"],
+    positions: ["Waiter", "Food Runner"],
     ratings: {
       clientRating: 4.3,
       reliability: 4.1,
       cancellations: 0.6,
       lateArrivals: 0.5,
       swaps: 0.4,
-      avgHourlyRate: 24.50
+      avgHourlyRate: 15.00
+    }
+  },
+  {
+    id: 7,
+    name: "Olivia Martin",
+    location: "Glasgow",
+    country: "UK",
+    region: "North",
+    verified: true,
+    positions: ["Sous Chef", "Pastry Chef"],
+    ratings: {
+      clientRating: 4.6,
+      reliability: 4.4,
+      cancellations: 0.3,
+      lateArrivals: 0.2,
+      swaps: 0.2,
+      avgHourlyRate: 28.00
+    }
+  },
+  {
+    id: 8,
+    name: "Liam Harris",
+    location: "Bristol",
+    country: "UK",
+    region: "South",
+    verified: false,
+    positions: ["Event Planner", "Banquet Coordinator"],
+    ratings: {
+      clientRating: 4.1,
+      reliability: 3.9,
+      cancellations: 0.7,
+      lateArrivals: 0.5,
+      swaps: 0.4,
+      avgHourlyRate: 30.00
     }
   }
 ];
