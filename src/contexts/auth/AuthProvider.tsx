@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { BaseRole } from "@/lib/types";
 
 // Define types
 export interface AuthUser {
@@ -9,6 +10,20 @@ export interface AuthUser {
   name?: string;
   verified?: boolean;
   avatar?: string;
+  address?: string;
+  phoneNumber?: string;
+  specialization?: string;
+  staffingCapacity?: number;
+  category?: string;
+  agencyName?: string;
+  profileComplete?: boolean;
+}
+
+export interface AIToken {
+  id: string;
+  name: string;
+  createdAt: string;
+  isActive: boolean;
 }
 
 interface AuthContextType {
@@ -19,7 +34,11 @@ interface AuthContextType {
   logout: () => void;
   register: (email: string, password: string, role: string) => Promise<void>;
   updateUser: (data: Partial<AuthUser>) => void;
-  loginWithToken: (token: string) => Promise<void>;
+  loginWithToken?: (token: string) => Promise<void>;
+  updateProfile?: (data: Partial<AuthUser>) => Promise<void>;
+  aiTokens?: AIToken[];
+  generateAiToken?: (name: string, userId: string) => Promise<AIToken>;
+  revokeAiToken?: (tokenId: string) => Promise<void>;
 }
 
 // Create context with initial values
@@ -29,6 +48,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
 
   // Check for existing session on mount
   useEffect(() => {
@@ -139,6 +159,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Update profile function
+  const updateProfile = async (data: Partial<AuthUser>) => {
+    updateUser(data);
+    return Promise.resolve();
+  };
+
+  // Generate AI token function
+  const generateAiToken = async (name: string, userId: string): Promise<AIToken> => {
+    const newToken: AIToken = {
+      id: `token_${Date.now()}`,
+      name,
+      createdAt: new Date().toISOString(),
+      isActive: true
+    };
+    
+    setAiTokens(prev => [...prev, newToken]);
+    return newToken;
+  };
+
+  // Revoke AI token function
+  const revokeAiToken = async (tokenId: string): Promise<void> => {
+    setAiTokens(prev => 
+      prev.map(token => 
+        token.id === tokenId 
+          ? { ...token, isActive: false } 
+          : token
+      )
+    );
+    return Promise.resolve();
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -150,6 +201,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         register,
         updateUser,
         loginWithToken,
+        updateProfile,
+        aiTokens,
+        generateAiToken,
+        revokeAiToken
       }}
     >
       {children}
@@ -165,5 +220,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-export type { AuthUser };

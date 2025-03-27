@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { RouteObject } from 'react-router-dom';
 import Home from '@/pages';
 import Login from '@/pages/auth/Login';

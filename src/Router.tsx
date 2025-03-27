@@ -1,4 +1,3 @@
-// src/Router.tsx
 import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth/AuthContext';
