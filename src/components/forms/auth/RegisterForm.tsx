@@ -28,7 +28,11 @@ const registerSchema = z.object({
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-const RegisterForm: React.FC<{ userType: string }> = ({ userType }) => {
+interface RegisterFormProps {
+  userType: string;
+}
+
+const RegisterForm: React.FC<RegisterFormProps> = ({ userType }) => {
   const { register } = useAuth();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,7 +63,8 @@ const RegisterForm: React.FC<{ userType: string }> = ({ userType }) => {
         role: userType
       };
 
-      // Call register function from auth context
+      // Call register function from auth context with the correct parameters
+      // Make sure this matches the expected function signature
       const result = await register(data.email, data.password, userData);
 
       if (result.error) {
@@ -157,7 +162,7 @@ const RegisterForm: React.FC<{ userType: string }> = ({ userType }) => {
               <FormControl>
                 <TermsCheckbox 
                   checked={field.value} 
-                  onCheckedChange={field.onChange}
+                  onCheckedChange={field.onChange} 
                 />
               </FormControl>
               <FormMessage />

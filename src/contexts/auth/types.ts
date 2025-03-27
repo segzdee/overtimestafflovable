@@ -1,5 +1,31 @@
+
 import { Session, User } from '@supabase/supabase-js';
 import { BaseRole } from '@/lib/types';
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  role?: string;
+  name?: string;
+  verified?: boolean;
+  avatar?: string;
+  address?: string;
+  phoneNumber?: string;
+  specialization?: string;
+  staffingCapacity?: number;
+  category?: string;
+  agencyName?: string;
+  profileComplete?: boolean;
+  notificationPreferences?: Record<string, any>;
+}
+
+export interface AIToken {
+  id: string;
+  name: string;
+  createdAt: string;
+  isActive: boolean;
+  token?: string;
+}
 
 export interface AuthContextType {
   isAuthenticated: boolean;
