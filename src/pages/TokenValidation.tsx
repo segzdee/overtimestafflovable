@@ -1,11 +1,23 @@
 
 import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ContentWrapper } from '@/components/layout/ContentWrapper';
 
-export default function TokenValidation() {
+const TokenValidation = () => {
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">AI Token Validation</h1>
-      <p>Validating your AI token...</p>
-    </div>
+    <ContentWrapper>
+      <div className="max-w-4xl mx-auto py-12">
+        <Card>
+          <CardHeader>
+            <CardTitle>API Token Validation</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>This page is used to validate and activate API tokens for AI agents.</p>
+          </CardContent>
+        </Card>
+      </div>
+    </ContentWrapper>
   );
-}
+};
+
+export default TokenValidation;

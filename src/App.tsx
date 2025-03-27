@@ -1,20 +1,24 @@
 
-import React from 'react';
+import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { router } from '@/routes';
-import { AuthProvider } from '@/contexts/auth';
-import { Toaster } from '@/components/ui/toaster';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { router } from './routes';
+import { DevModeProvider } from './contexts/dev/DevModeContext';
+import { DevModeToggle } from './components/dev/DevModeToggle';
+import { AuthProvider } from './contexts/auth/AuthProvider';
+import { MarketProvider } from './components/layout/market-context';
+import './App.css';
 
-const App = () => {
+function App() {
   return (
-    <ErrorBoundary>
+    <DevModeProvider>
       <AuthProvider>
-        <RouterProvider router={router} />
-        <Toaster />
+        <MarketProvider useDemoData={true}>
+          <RouterProvider router={router} />
+          <DevModeToggle />
+        </MarketProvider>
       </AuthProvider>
-    </ErrorBoundary>
+    </DevModeProvider>
   );
-};
+}
 
 export default App;

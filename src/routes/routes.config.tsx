@@ -1,24 +1,24 @@
 
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
-import Home from '@/pages';
-import Login from '@/pages/auth/Login';
-import Register from '@/pages/auth/Register';
-import LiveMarket from '@/pages/LiveMarket';
-import FindShifts from '@/pages/find-shifts';
-import FindStaff from '@/pages/find-staff';
-import VerifyEmail from '@/pages/verify-email';
-import ForgotPassword from '@/pages/ForgotPassword';
-import ResetPassword from '@/pages/ResetPassword';
-import DashboardRouter from '@/pages/dashboard/[role]';
-import NotFound from '@/pages/NotFound';
-import Forbidden from '@/pages/Forbidden';
-import ServerError from '@/pages/ServerError';
-import Profile from '@/pages/Profile';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
-import TokenValidation from '@/pages/TokenValidation';
-import { AuthLayout } from '@/layouts/AuthLayout';
-import { DashboardLayout } from '@/layouts/DashboardLayout';
+import Home from '../pages';
+import Login from '../pages/auth/Login';
+import Register from '../pages/auth/Register';
+import LiveMarket from '../pages/LiveMarket';
+import FindShifts from '../pages/find-shifts';
+import FindStaff from '../pages/find-staff';
+import VerifyEmail from '../pages/verify-email';
+import ForgotPassword from '../pages/ForgotPassword';
+import ResetPassword from '../pages/ResetPassword';
+import DashboardRouter from '../pages/dashboard/[role]';
+import NotFound from '../pages/NotFound';
+import Forbidden from '../pages/Forbidden';
+import ServerError from '../pages/ServerError';
+import Profile from '../pages/Profile';
+import { ProtectedRoute } from '../components/auth/ProtectedRoute';
+import TokenValidation from '../pages/TokenValidation';
+import { AuthLayout } from '../layouts/AuthLayout';
+import { DashboardLayout } from '../layouts/DashboardLayout';
 
 // Define route configuration
 export const routes: RouteObject[] = [
