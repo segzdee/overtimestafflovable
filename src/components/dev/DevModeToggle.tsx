@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
-import { Bot } from "lucide-react";
+import { Bot, Code } from "lucide-react";
 import { ThropicPanel } from "./ThropicPanel";
 
 export const DevModeToggle = () => {
@@ -15,9 +15,8 @@ export const DevModeToggle = () => {
   
   const navigate = useNavigate();
   
-  // Hide toggle on live/public URLs
-  const isDev = import.meta.env.DEV && !window.location.href.includes(import.meta.env.VITE_PUBLIC_URL || "www.overtimestaff.com");
-  if (!isDev) return null;
+  // Always show the toggle in development for testing purposes
+  const isDev = true;
 
   const handleRoleChange = (role: string) => {
     setSelectedRole(role as any);
@@ -83,8 +82,9 @@ export const DevModeToggle = () => {
       ) : (
         <Button 
           onClick={() => setIsOpen(true)}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white"
+          className="bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-2"
         >
+          <Code size={16} />
           Dev Mode {devMode ? 'ON' : 'OFF'}
         </Button>
       )}

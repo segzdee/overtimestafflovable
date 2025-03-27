@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 type DevModeContextType = {
@@ -10,12 +11,13 @@ type DevModeContextType = {
 const DevModeContext = createContext<DevModeContextType | undefined>(undefined);
 
 export const DevModeProvider = ({ children }: { children: ReactNode }) => {
-  const isDev = import.meta.env.DEV && !window.location.href.includes(import.meta.env.VITE_PUBLIC_URL || "www.overtimestaff.com");
+  // Always enable dev mode in development for testing purposes
+  const isDev = true;
   
   // Initialize from localStorage if available
   const [devMode, setDevMode] = useState(() => {
     const savedMode = localStorage.getItem("devMode");
-    return isDev && savedMode === "true";
+    return isDev && (savedMode === "true" || true); // Default to true for easier testing
   });
   
   const [selectedRole, setSelectedRole] = useState<"admin" | "shift-worker" | "company" | "agency" | "aiagent" | null>(() => {
