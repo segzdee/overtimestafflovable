@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { fetchStaffData, calculateReliabilityScore } from '../utils/staffUtils';
+import { useDevMode } from '@/contexts/dev/DevModeContext';
 
 export default function FindStaff() {
   const [staff, setStaff] = useState([]);
@@ -7,6 +9,7 @@ export default function FindStaff() {
   const [selectedRegion, setSelectedRegion] = useState("All");
   const [sortBy, setSortBy] = useState("clientRating");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const { devMode, selectedRole } = useDevMode();
 
   useEffect(() => {
     const data = fetchStaffData();
@@ -57,6 +60,14 @@ export default function FindStaff() {
       </nav>
 
       <h1 className="text-3xl font-bold mb-6 text-blue-700">Staff Marketplace</h1>
+      
+      {devMode && selectedRole && (
+        <div className="bg-amber-100 border-l-4 border-amber-500 p-4 mb-4">
+          <p className="text-amber-700">
+            Developer Mode: You are browsing as <strong>{selectedRole}</strong>
+          </p>
+        </div>
+      )}
       
       <div className="mb-6 flex flex-wrap items-center gap-4">
         {/* Filters */}
