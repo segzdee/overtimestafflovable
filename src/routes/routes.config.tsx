@@ -9,11 +9,13 @@ import FindStaff from '@/pages/find-staff';
 import VerifyEmail from '@/pages/verify-email';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
+import DashboardRouter from '@/pages/dashboard/[role]';
 import NotFound from '@/pages/NotFound';
 import Forbidden from '@/pages/Forbidden';
 import ServerError from '@/pages/ServerError';
 import Profile from '@/pages/Profile';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import TokenValidation from '@/pages/TokenValidation';
 
 // Define route configuration
 export const routes: RouteObject[] = [
@@ -66,11 +68,21 @@ export const routes: RouteObject[] = [
     path: '/reset-password',
     element: <ResetPassword />
   },
+  {
+    path: '/ai-token',
+    element: <TokenValidation />
+  },
   
   // Protected routes
   {
     path: '/profile',
     element: <ProtectedRoute element={<Profile />} />
+  },
+  
+  // Dashboard routes
+  {
+    path: '/dashboard/:role',
+    element: <ProtectedRoute element={<DashboardRouter />} />
   },
   
   // Error pages
