@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -23,14 +22,14 @@ const HeroSection = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button 
-              onClick={() => navigate("/register")} 
+              onClick={() => navigate("/registration")} // Updated to link to the registration page
               size="lg"
               className="bg-green-600 hover:bg-green-700 text-white font-medium text-base md:text-lg"
             >
-              Sign Up Free <ArrowRight className="h-4 w-4 ml-1" />
+              Registration <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button 
-              onClick={() => navigate("/find-shifts")} 
+              onClick={() => navigate("/live-market")} // Updated to link to the live market
               variant="outline" 
               size="lg"
               className="border-purple-600 text-purple-700 hover:text-purple-800 font-medium text-base md:text-lg"
