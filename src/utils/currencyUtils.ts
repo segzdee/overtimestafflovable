@@ -1,26 +1,43 @@
+// Type definition for exchange rates
+export type ExchangeRates = Record<string, number>;
 
-export const formatRate = (original: number, currency: string, exchangeRates: Record<string, number>): string => {
+// Function to format a rate based on currency and exchange rates
+export const formatRate = (
+  original: number,
+  currency: string,
+  exchangeRates: ExchangeRates
+): string => {
+  // Check if the exchange rate for the given currency exists
   if (!exchangeRates[currency]) {
-    console.error(`Exchange rate not found for currency: ${currency}`);
-    return `${original}/hr`;
+    throw new Error(`Exchange rate not found for currency: ${currency}`);
   }
 
+  // Calculate the converted rate
   const rate = original * exchangeRates[currency];
-  const symbol = currency === 'EUR' ? '€' : 
-                currency === 'USD' ? '$' :
-                currency === 'GBP' ? '£' :
-                currency === 'AED' ? 'AED ' :
-                currency === 'ZAR' ? 'R ' :
-                currency === 'CAD' ? 'C$' : '';
-  
+
+  // Map of currency symbols
+  const currencySymbols: Record<string, string> = {
+    EUR: '€',
+    USD: '$',
+    GBP: '£',
+    AED: 'AED ',
+    ZAR: 'R ',
+    CAD: 'C$',
+  };
+
+  // Get the symbol for the given currency or default to an empty string
+  const symbol = currencySymbols[currency] || '';
+
+  // Return the formatted rate
   return `${symbol}${Math.round(rate)}/hr`;
 };
 
-export const DEFAULT_EXCHANGE_RATES = {
+// Default exchange rates
+export const DEFAULT_EXCHANGE_RATES: ExchangeRates = {
   EUR: 1,
   USD: 1.1,
   GBP: 0.86,
   AED: 4.04,
   ZAR: 20.65,
-  CAD: 1.48
+  CAD: 1.48,
 };

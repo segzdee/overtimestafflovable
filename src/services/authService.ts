@@ -1,4 +1,3 @@
-
 import { AuthUser } from "@/contexts/auth/types";
 import { BaseRole } from "@/lib/types";
 
