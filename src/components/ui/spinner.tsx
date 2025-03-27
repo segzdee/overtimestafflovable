@@ -1,59 +1,27 @@
 
 import React from 'react';
-import { cn } from '@/lib/utils';
 
-interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
-  size?: 'sm' | 'md' | 'lg' | 'xl';
-  variant?: 'default' | 'secondary' | 'destructive' | 'muted';
-  color?: 'red' | 'blue' | 'green';
+interface SpinnerProps {
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
 }
 
-export function Spinner({ 
-  className, 
-  size = 'md', 
-  variant = 'default', 
-  color,
-  ...props 
-}: SpinnerProps) {
-  // Define class variants
+export const Spinner: React.FC<SpinnerProps> = ({ size = 'md', className = '' }) => {
   const sizeClasses = {
-    sm: "h-4 w-4 border-2",
-    md: "h-6 w-6 border-2",
-    lg: "h-8 w-8 border-2",
-    xl: "h-12 w-12 border-3",
+    sm: 'h-4 w-4',
+    md: 'h-8 w-8',
+    lg: 'h-12 w-12',
   };
-  
-  const variantClasses = {
-    default: "text-primary",
-    secondary: "text-secondary",
-    destructive: "text-destructive",
-    muted: "text-muted-foreground",
-  };
-  
-  const colorClasses = {
-    red: "text-red-500",
-    blue: "text-blue-500",
-    green: "text-green-500",
-  };
-  
-  const baseClasses = "inline-block animate-spin rounded-full border-2 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]";
-  
-  // Determine which classes to apply
-  const classes = [
-    baseClasses,
-    sizeClasses[size],
-    variant && variantClasses[variant],
-    color && colorClasses[color],
-  ].filter(Boolean);
-  
+
   return (
-    <div
-      className={cn(classes.join(' '), className)}
-      role="status"
-      aria-label="Loading"
-      {...props}
-    >
-      <span className="sr-only">Loading...</span>
+    <div className={`animate-spin rounded-full border-t-2 border-b-2 border-primary ${sizeClasses[size]} ${className}`}></div>
+  );
+};
+
+export const FullPageSpinner: React.FC = () => {
+  return (
+    <div className="h-screen w-full flex items-center justify-center">
+      <Spinner size="lg" />
     </div>
   );
-}
+};

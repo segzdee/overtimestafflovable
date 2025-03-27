@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { 
   fetchMarketStats, 
@@ -42,7 +43,7 @@ interface MarketContextType {
   isLoading: boolean;
   error: string | null;
   refreshMarketData: () => Promise<void>;
-  refreshData: () => Promise<void>; // Added this property that was missing
+  refreshData: () => Promise<void>;
   setTrendPeriod: (period: "week" | "month" | "quarter") => void;
   trendPeriod: "week" | "month" | "quarter";
 }

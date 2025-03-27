@@ -1,13 +1,13 @@
+
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth/AuthContext";
 import { FullPageSpinner } from "@/components/ui/spinner";
-
-type Role = "shift-worker" | "company" | "agency" | "admin" | "aiagent";
+import { BaseRole } from "@/lib/types";
 
 interface ProtectedRouteProps {
   element: React.ReactNode;
-  requiredRole?: Role | Role[];
+  requiredRole?: BaseRole | BaseRole[];
   redirectTo?: string;
 }
 
@@ -36,7 +36,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // If no specific role is required, or user has the required role, show the element
-  if (!requiredRole || userHasRequiredRole(user?.role as Role, requiredRole)) {
+  if (!requiredRole || userHasRequiredRole(user?.role as BaseRole, requiredRole)) {
     return <>{element}</>;
   }
 
@@ -46,8 +46,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
 // Helper function to check if user has the required role
 function userHasRequiredRole(
-  userRole: Role,
-  requiredRole: Role | Role[]
+  userRole: BaseRole,
+  requiredRole: BaseRole | BaseRole[]
 ): boolean {
   if (Array.isArray(requiredRole)) {
     return requiredRole.includes(userRole);
