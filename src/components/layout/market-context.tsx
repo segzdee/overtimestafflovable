@@ -1,8 +1,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { MarketUpdate } from '@/types/marketUpdate';
-import { demoMarketUpdates } from '@/data/demoMarketUpdates';
-import { marketUpdateService } from '@/services/marketUpdateService';
+import { demoUpdates } from '@/data/demoMarketUpdates';
+import { fetchMarketUpdates, subscribeToMarketUpdates } from '@/services/marketUpdateService';
 
 interface MarketContextType {
   marketUpdates: MarketUpdate[];
@@ -51,12 +51,12 @@ export const MarketProvider: React.FC<MarketProviderProps> = ({
       if (useDemoData) {
         // Use demo data with a simulated delay
         setTimeout(() => {
-          setMarketUpdates(demoMarketUpdates);
+          setMarketUpdates(demoUpdates);
           setLoading(false);
         }, 1000);
       } else {
         // Fetch real data from the service
-        const updates = await marketUpdateService.getMarketUpdates();
+        const updates = await fetchMarketUpdates('USD', {});
         setMarketUpdates(updates);
       }
     } catch (err) {

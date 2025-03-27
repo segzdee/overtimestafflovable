@@ -1,3 +1,4 @@
+
 import { MarketUpdate, ExchangeRates } from '../types/marketUpdate';
 import { formatRate } from '../utils/currencyUtils';
 import { demoUpdates } from '../data/demoMarketUpdates';
