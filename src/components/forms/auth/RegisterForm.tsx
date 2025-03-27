@@ -57,14 +57,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ userType }) => {
     try {
       // Prepare user data for registration
       const userData = {
-        email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
         role: userType
       };
 
       // Call register function from auth context with the correct parameters
-      // Make sure this matches the expected function signature
       const result = await register(data.email, data.password, userData);
 
       if (result.error) {

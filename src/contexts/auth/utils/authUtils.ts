@@ -1,105 +1,71 @@
 
-import { PostgrestError } from "@supabase/supabase-js";
-import { AuthUser } from "../types";
+import { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
-import { NotificationPreferences } from "@/lib/types";
+import { AuthUser } from "../types";
 
 export const setUserFromSupabase = async (
-  supabaseUser: any,
+  user: User,
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>
 ) => {
-  if (!supabaseUser) {
+  if (!user) {
     setUser(null);
     return;
   }
 
   try {
-    // Get the user's profile from our profiles table
+    // Load profile data from profiles table
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', supabaseUser.id)
+      .eq('id', user.id)
       .single();
 
-    if (error) throw error;
-
-    if (!profile) {
-      console.error('No profile found for user:', supabaseUser.id);
-      setUser(null);
-      return;
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error fetching profile:', error);
     }
 
-    // Get or create notification preferences
-    let { data: notificationPrefs, error: prefError } = await supabase
+    // Load notification preferences
+    const { data: notificationPrefs, error: notificationError } = await supabase
       .from('notification_preferences')
       .select('*')
-      .eq('user_id', profile.id)
+      .eq('user_id', user.id)
       .single();
 
-    if (prefError && prefError.code === 'PGRST116') {
-      // If preferences don't exist, create them with defaults
-      const { data: newPrefs, error: createError } = await supabase
-        .from('notification_preferences')
-        .insert({
-          user_id: profile.id,
-          email: true,
-          sms: false,
-          push: true
-        })
-        .select()
-        .single();
-
-      if (createError) throw createError;
-      notificationPrefs = newPrefs;
-    } else if (prefError) {
-      throw prefError;
+    if (notificationError && notificationError.code !== 'PGRST116') {
+      console.error('Error fetching notification preferences:', notificationError);
     }
 
-    // Set the authenticated user with profile data
-    setUser({
-      id: profile.id,
-      email: profile.email,
-      role: profile.role,
-      name: profile.name,
-      profileComplete: profile.profile_complete,
-      emailVerified: supabaseUser.email_confirmed_at ? true : false,
-      verificationStatus: 'pending',
-      notificationPreferences: notificationPrefs
-    });
-    
+    // Combine data into user object
+    const authUser: AuthUser = {
+      id: user.id,
+      email: user.email || '',
+      role: profile?.role || user.app_metadata?.role || 'shift-worker',
+      name: profile?.name || user.user_metadata?.name || '',
+      verified: user.email_confirmed_at ? true : false,
+      avatar: profile?.avatar_url || null,
+      profileComplete: !!profile?.profile_completed_at,
+      notificationPreferences: notificationPrefs || undefined
+    };
+
+    // Add additional profile fields if they exist
+    if (profile) {
+      if (profile.phone_number) authUser.phoneNumber = profile.phone_number;
+      if (profile.address) authUser.address = profile.address;
+      if (profile.specialization) authUser.specialization = profile.specialization;
+      if (profile.staffing_capacity) authUser.staffingCapacity = profile.staffing_capacity;
+      if (profile.category) authUser.category = profile.category;
+      if (profile.agency_name) authUser.agencyName = profile.agency_name;
+    }
+
+    setUser(authUser);
   } catch (error) {
-    console.error('Error fetching user profile:', error);
-    setUser(null);
+    console.error('Error setting user from Supabase:', error);
+    // Set minimal user data in case of error
+    setUser({
+      id: user.id,
+      email: user.email || '',
+      role: user.app_metadata?.role || 'shift-worker',
+      verified: user.email_confirmed_at ? true : false
+    });
   }
-};
-
-export const createUserProfile = async (
-  userId: string,
-  email: string,
-  role: AuthUser["role"],
-  name: string
-): Promise<{ data: any; error: PostgrestError | null }> => {
-  // Create user profile
-  const { error: profileError } = await supabase.from('profiles').insert({
-    id: userId,
-    email,
-    role,
-    name,
-    profile_complete: false
-  });
-
-  if (profileError) return { data: null, error: profileError };
-
-  // Create default notification preferences
-  const { data: prefsData, error: prefsError } = await supabase
-    .from('notification_preferences')
-    .insert({
-      user_id: userId,
-      email: true,
-      sms: false,
-      push: true
-    })
-    .select();
-
-  return { data: prefsData, error: prefsError };
 };

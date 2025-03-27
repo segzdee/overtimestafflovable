@@ -1,4 +1,3 @@
-
 import { NavigateFunction } from "react-router-dom";
 import { AuthUser, AIToken } from "./types";
 import { setUserFromSupabase } from "./utils/authUtils";
@@ -13,7 +12,7 @@ import {
   updatePassword
 } from "./operations/authOperations";
 import { supabase } from "@/lib/supabase/client";
-import { NotificationPreferences } from "@/lib/types";
+import { BaseRole, NotificationPreferences } from "@/lib/types";
 import { executeWithConnectionRetry } from "@/lib/robust-connection-handler";
 
 interface AuthOperationsProps {
@@ -27,23 +26,28 @@ export function useAuthOperations({ setUser, setAiTokens, navigate, toast }: Aut
   const handleRegister = async (
     email: string,
     password: string,
-    role: AuthUser["role"],
-    name: string,
-    category?: string
+    userData: any
   ) => {
     try {
+      const role = userData?.role as BaseRole || 'shift-worker';
+      const name = userData?.firstName && userData?.lastName 
+        ? `${userData.firstName} ${userData.lastName}` 
+        : userData?.name || '';
+      const category = userData?.category || '';
+      
       await register(email, password, role, name, category);
       toast({
         title: "Account created successfully",
         description: "Please check your email to verify your account",
       });
+      return { error: null, user: { email, role } };
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Registration failed",
         description: error instanceof Error ? error.message : "Failed to create account"
       });
-      throw error;
+      return { error: error instanceof Error ? error : new Error("Registration failed"), user: null };
     }
   };
 

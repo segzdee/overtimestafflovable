@@ -36,16 +36,11 @@ export async function registerUser(userData: UserRegistrationData): Promise<Auth
       name: userData.name,
       category: userData.category,
       profileComplete: false,
-      verificationStatus: 'pending',
-      emailVerified: false,
+      verified: false,
       notificationPreferences: {
-        id: Math.floor(Math.random() * 1000),
-        userId: `user_${Date.now()}`,
         email: true,
         sms: false,
-        push: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        push: true
       }
     };
     
