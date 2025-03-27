@@ -1,23 +1,7 @@
 
-import { mockStaffData } from '../data/mockStaffData';
+import { mockStaffData, StaffMember } from '../data/mockStaffData';
 
-export interface StaffMember {
-  id: number;
-  name: string;
-  location: string;
-  country: string;
-  region: string;
-  verified: boolean;
-  positions: string[];
-  ratings: {
-    clientRating: number;
-    reliability: number;
-    cancellations: number;
-    lateArrivals: number;
-    swaps: number;
-    avgHourlyRate: number;
-  };
-}
+export { StaffMember };
 
 export const fetchStaffData = (): StaffMember[] => mockStaffData;
 
