@@ -1,65 +1,56 @@
-
-import { useState, useEffect } from "react";
+import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/contexts/auth";
-import { useDevMode } from "@/contexts/dev/DevModeContext";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import { FullPageSpinner } from "@/components/ui/spinner";
+
+type Role = "shift-worker" | "company" | "agency" | "admin" | "aiagent";
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
-  allowedRoles: Array<"admin" | "shift-worker" | "company" | "agency" | "aiagent">;
+  element: React.ReactNode;
+  requiredRole?: Role | Role[];
+  redirectTo?: string;
 }
 
-export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
-  const { user } = useAuth();
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  element,
+  requiredRole,
+  redirectTo = "/auth/login",
+}) => {
+  const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
-  const { devMode, selectedRole } = useDevMode();
-  const [loading, setLoading] = useState(true);
-  
-  // Effect to handle loading state
-  useEffect(() => {
-    // Simple timer to simulate auth initialization
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  
-  // Show loading state
-  if (loading) {
+
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return <FullPageSpinner />;
+  }
+
+  // If not authenticated, redirect to login
+  if (!isAuthenticated) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
-      </div>
+      <Navigate
+        to={redirectTo}
+        state={{ from: location.pathname }}
+        replace
+      />
     );
   }
-  
-  // If in developer mode and a role is selected, bypass authentication
-  if (devMode && selectedRole) {
-    // Check if selected role is allowed for this route
-    if (allowedRoles.includes(selectedRole)) {
-      return <>{children}</>;
-    } else {
-      // Redirect to appropriate dashboard based on selected role
-      return <Navigate to={`/dashboard/${selectedRole.toLowerCase()}`} replace />;
-    }
+
+  // If no specific role is required, or user has the required role, show the element
+  if (!requiredRole || userHasRequiredRole(user?.role as Role, requiredRole)) {
+    return <>{element}</>;
   }
-  
-  // Normal authentication flow
-  if (!user) {
-    // Store the location they were trying to access for redirect after login
-    return <Navigate 
-      to="/login" 
-      replace 
-      state={{ from: location.pathname }}
-    />;
+
+  // User doesn't have the required role, redirect to forbidden
+  return <Navigate to="/forbidden" replace />;
+};
+
+// Helper function to check if user has the required role
+function userHasRequiredRole(
+  userRole: Role,
+  requiredRole: Role | Role[]
+): boolean {
+  if (Array.isArray(requiredRole)) {
+    return requiredRole.includes(userRole);
   }
-  
-  // Check if user has the required role for this route
-  if (!allowedRoles.includes(user.role)) {
-    return <Navigate to={`/dashboard/${user.role.toLowerCase()}`} replace />;
-  }
-  
-  // If everything checks out, render the protected content
-  return <>{children}</>;
+  return userRole === requiredRole;
 }
