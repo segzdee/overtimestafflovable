@@ -1,6 +1,3 @@
-export const mockStaffData = [
-	// ...existing mock data from all versions...
-];
 
 export interface StaffMember {
   id: number;

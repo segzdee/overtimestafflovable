@@ -1,7 +1,21 @@
+
 export interface Staff {
-	id: string;
+	id: string | number;
 	name: string;
-	role: string;
+	role?: string;
+	location?: string;
+	country?: string;
+	region?: string;
+	verified?: boolean;
+	positions?: string[];
+	ratings?: {
+		clientRating: number;
+		reliability: number;
+		cancellations: number;
+		lateArrivals: number;
+		swaps: number;
+		avgHourlyRate: number;
+	};
 }
 
 export interface Shift {
