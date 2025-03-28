@@ -1,5 +1,27 @@
 
 import { RegistrationData, PendingRegistrationData } from './types';
+import * as crypto from 'crypto';
+
+const ENCRYPTION_KEY = 'your-encryption-key'; // Replace with your actual encryption key
+const IV_LENGTH = 16;
+
+function encrypt(text: string): string {
+  let iv = crypto.randomBytes(IV_LENGTH);
+  let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
+  let encrypted = cipher.update(text);
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+  return iv.toString('hex') + ':' + encrypted.toString('hex');
+}
+
+function decrypt(text: string): string {
+  let textParts = text.split(':');
+  let iv = Buffer.from(textParts.shift()!, 'hex');
+  let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+  let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
+  let decrypted = decipher.update(encryptedText);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+  return decrypted.toString();
+}
 
 export class PendingRegistrationManager {
   public readonly STORAGE_KEY = 'pending_registration';
@@ -10,14 +32,12 @@ export class PendingRegistrationManager {
    */
   public savePendingRegistration(data: RegistrationData): void {
     try {
-      localStorage.setItem(
-        this.STORAGE_KEY,
-        JSON.stringify({
-          data,
-          timestamp: new Date().toISOString(),
-          attempts: 0
-        })
-      );
+      const encryptedData = encrypt(JSON.stringify({
+        data,
+        timestamp: new Date().toISOString(),
+        attempts: 0
+      }));
+      localStorage.setItem(this.STORAGE_KEY, encryptedData);
     } catch (error) {
       console.error('Failed to save pending registration:', error);
     }
@@ -31,7 +51,8 @@ export class PendingRegistrationManager {
       const storedData = localStorage.getItem(this.STORAGE_KEY);
       if (!storedData) return null;
       
-      return JSON.parse(storedData);
+      const decryptedData = decrypt(storedData);
+      return JSON.parse(decryptedData);
     } catch (error) {
       console.error('Failed to get pending registration:', error);
       return null;
