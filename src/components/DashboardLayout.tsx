@@ -1,10 +1,10 @@
-
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { MobileMenuButton } from "@/components/layout/MobileMenuButton";
 import { ContentWrapper } from "@/components/layout/ContentWrapper";
+import { mockStaffData } from "../data/mockStaffData";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
