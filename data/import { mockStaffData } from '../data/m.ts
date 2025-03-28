@@ -1,4 +1,4 @@
-import { mockStaffData } from '../data/mockStaffData';
+import { mockStaffData } from '../data/mockStaffData.js';
 
 export const fetchStaffData = () => mockStaffData;
 
