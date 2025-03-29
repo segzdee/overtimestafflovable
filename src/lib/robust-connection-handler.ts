@@ -1,76 +1,90 @@
 
-import { 
-  useOnlineStatus, 
-  checkOnlineStatus, 
-  startOnlineStatusMonitoring, 
-  addOnlineStatusListener 
-} from '@/lib/online-detection';
+import { useState, useEffect } from 'react';
 
-// Type definitions
-interface RetryOptions {
-  maxRetries: number;
-  baseDelay: number;
-  criticalOperation: boolean;
+// Define the types for online status
+type OnlineStatus = 'online' | 'offline' | 'reconnecting';
+
+interface OnlineStatusHook {
+  status: OnlineStatus;
+  lastOnline: Date | null;
+  checkConnection: () => Promise<boolean>;
 }
 
-/**
- * Checks if the device is currently online
- */
-export const isOnline = checkOnlineStatus;
-
-/**
- * Initializes the connection handling system
- */
-export const initConnectionHandling = startOnlineStatusMonitoring;
-
-/**
- * Executes a function with automatic retry on connection failure
- * @param fn The function to execute
- * @param options Options for retry behavior
- */
-export async function executeWithConnectionRetry<T>(
-  fn: () => Promise<T>,
-  options: RetryOptions
-): Promise<T> {
-  const { maxRetries, baseDelay, criticalOperation } = options;
-  let attempt = 0;
-  
-  while (true) {
-    try {
-      return await fn();
-    } catch (error: any) {
-      attempt++;
-      
-      // Check if we should retry
-      const isConnectionError = 
-        !navigator.onLine || 
-        error.message.includes('network') ||
-        error.message.includes('connection') ||
-        error.message.includes('timeout') ||
-        error.message.includes('ECONNREFUSED') ||
-        error.message.includes('ETIMEDOUT');
-        
-      if (!isConnectionError || attempt >= maxRetries) {
-        throw error;
-      }
-      
-      // Wait before retry with exponential backoff
-      const delay = baseDelay * Math.pow(2, attempt - 1);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      
-      // For critical operations, check for online status before retrying
-      if (criticalOperation) {
-        const online = await checkOnlineStatus();
-        if (!online) {
-          throw new Error('Operation cannot be completed while offline');
-        }
-      }
-    }
+// Function to check connection by fetching a minimal resource
+const checkConnection = async (): Promise<boolean> => {
+  try {
+    // Try to fetch a minimal resource to check connection
+    const res = await fetch('/favicon.ico', { 
+      method: 'HEAD',
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache' }
+    });
+    return res.ok;
+  } catch (error) {
+    return false;
   }
-}
+};
 
-// Hook for components to use online status
-export { useOnlineStatus };
+// Custom hook for online status monitoring
+export const useOnlineStatus = (): OnlineStatusHook => {
+  const [status, setStatus] = useState<OnlineStatus>(
+    navigator.onLine ? 'online' : 'offline'
+  );
+  const [lastOnline, setLastOnline] = useState<Date | null>(
+    navigator.onLine ? new Date() : null
+  );
+  const [isReconnecting, setIsReconnecting] = useState(false);
 
-// Listener for connection status changes
-export { addOnlineStatusListener };
+  // Handler for online event
+  const handleOnline = () => {
+    setStatus('online');
+    setLastOnline(new Date());
+  };
+
+  // Handler for offline event
+  const handleOffline = async () => {
+    // Double-check the connection to avoid false negatives
+    const isActuallyConnected = await checkConnection();
+    
+    if (!isActuallyConnected) {
+      setStatus('offline');
+      setIsReconnecting(true);
+      // Try to reconnect
+      const reconnect = setInterval(async () => {
+        const connected = await checkConnection();
+        if (connected) {
+          setStatus('online');
+          setLastOnline(new Date());
+          setIsReconnecting(false);
+          clearInterval(reconnect);
+        }
+      }, 5000); // Check every 5 seconds
+    }
+  };
+
+  useEffect(() => {
+    // Set up event listeners
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Check the connection on mount
+    checkConnection().then(connected => {
+      setStatus(connected ? 'online' : 'offline');
+      if (connected) {
+        setLastOnline(new Date());
+      }
+    });
+
+    // Clean up event listeners
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return {
+    status: isReconnecting ? 'reconnecting' : status,
+    lastOnline,
+    checkConnection
+  };
+};

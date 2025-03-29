@@ -1,85 +1,56 @@
 
-/**
- * Utility functions for monitoring and handling online/offline status
- */
+// This file provides a simple API for monitoring online status
 
-// Function to start monitoring online status
-export const startOnlineStatusMonitoring = () => {
-  const handleStatusChange = () => {
-    const isOnline = navigator.onLine;
-    console.log(`Connection status: ${isOnline ? 'Online' : 'Offline'}`);
-    
-    // Dispatch a custom event that components can listen to
-    window.dispatchEvent(
-      new CustomEvent('connectionStatusChange', { detail: { isOnline } })
-    );
-    
-    // Show a notification to the user
-    if (!isOnline) {
-      showOfflineNotification();
-    } else {
-      showOnlineNotification();
-    }
-  };
-
-  // Add event listeners for online/offline events
-  window.addEventListener('online', handleStatusChange);
-  window.addEventListener('offline', handleStatusChange);
-  
-  // Initial check
-  handleStatusChange();
-  
-  // Return a function to remove event listeners (for cleanup)
-  return () => {
-    window.removeEventListener('online', handleStatusChange);
-    window.removeEventListener('offline', handleStatusChange);
-  };
-};
-
-// Helper functions for notifications
-const showOfflineNotification = () => {
-  if (!('Notification' in window)) return;
-  
-  // Use browser notifications if available and permitted
-  if (Notification.permission === 'granted') {
-    new Notification('Connection lost', {
-      body: 'You are currently offline. Some features may be unavailable.',
-      icon: '/favicon.ico'
+// Function to check connection
+const checkConnection = async (): Promise<boolean> => {
+  try {
+    // Try to fetch a minimal resource to check connection
+    const res = await fetch('/favicon.ico', { 
+      method: 'HEAD',
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache' }
     });
+    return res.ok;
+  } catch (error) {
+    return false;
   }
-  
-  // Show UI notification
-  const offlineToast = document.createElement('div');
-  offlineToast.id = 'offline-toast';
-  offlineToast.className = 'fixed bottom-4 left-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
-  offlineToast.textContent = 'You are offline. Some features may be unavailable.';
-  document.body.appendChild(offlineToast);
-  
-  // Remove after 5 seconds
-  setTimeout(() => {
-    const toast = document.getElementById('offline-toast');
-    if (toast) document.body.removeChild(toast);
-  }, 5000);
 };
 
-const showOnlineNotification = () => {
-  // Remove offline toast if it exists
-  const offlineToast = document.getElementById('offline-toast');
-  if (offlineToast) document.body.removeChild(offlineToast);
+// Initialize and start online status monitoring
+export const startOnlineStatusMonitoring = (): void => {
+  // Initial status check
+  const isOnline = navigator.onLine;
+  console.log(`Initial connection status: ${isOnline ? 'online' : 'offline'}`);
   
-  // Show online toast
-  const onlineToast = document.createElement('div');
-  onlineToast.id = 'online-toast';
-  onlineToast.className = 'fixed bottom-4 left-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
-  onlineToast.textContent = 'You are back online!';
-  document.body.appendChild(onlineToast);
+  // Set up event listeners for online and offline events
+  window.addEventListener('online', () => {
+    console.log('Connection restored');
+    // You could trigger a notification here or other actions
+  });
   
-  // Remove after 3 seconds
-  setTimeout(() => {
-    const toast = document.getElementById('online-toast');
-    if (toast) document.body.removeChild(toast);
-  }, 3000);
+  window.addEventListener('offline', async () => {
+    // Double-check the connection to avoid false negatives
+    const isActuallyConnected = await checkConnection();
+    
+    if (!isActuallyConnected) {
+      console.log('Connection lost');
+      // You could trigger a notification here or other actions
+    }
+  });
+  
+  // Additional heartbeat check every minute to ensure we're really online
+  setInterval(async () => {
+    const isConnected = await checkConnection();
+    if (isConnected !== navigator.onLine) {
+      // If there's a discrepancy, update the browser's online status
+      console.log(`Connection status corrected: ${isConnected ? 'online' : 'offline'}`);
+      // Dispatch the appropriate event to update browser's status
+      window.dispatchEvent(new Event(isConnected ? 'online' : 'offline'));
+    }
+  }, 60000); // Check every minute
 };
 
-// Use this function to check current online status
-export const isOnline = () => navigator.onLine;
+// Export a function to manually check current connection
+export const checkCurrentConnection = async (): Promise<boolean> => {
+  return await checkConnection();
+};
