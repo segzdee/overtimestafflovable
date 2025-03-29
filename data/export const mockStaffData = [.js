@@ -4,7 +4,7 @@ export const mockStaffData = [
         name: "John Doe",
         ratings: {
             clientRating: 4.5,
-            reliability: 4.7,
+            reliability: 4.8,
             cancellations: 1,
             lateArrivals: 2,
             swaps: 0,
@@ -14,8 +14,8 @@ export const mockStaffData = [
         id: 2,
         name: "Jane Smith",
         ratings: {
-            clientRating: 4.8,
-            reliability: 4.9,
+            clientRating: 4.2,
+            reliability: 4.6,
             cancellations: 0,
             lateArrivals: 1,
             swaps: 1,

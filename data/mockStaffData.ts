@@ -6,7 +6,7 @@ export const mockStaffData = [
     country: "Unknown",
     ratings: {
       clientRating: 4.5,
-      reliability: 4.7,
+      reliability: 4.8,
       cancellations: 1,
       lateArrivals: 2,
       swaps: 0,
