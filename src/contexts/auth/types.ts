@@ -1,49 +1,17 @@
 
-import { Session, User } from '@supabase/supabase-js';
-import { BaseRole } from '@/lib/types';
-
-export interface AuthUser {
+export interface User {
   id: string;
   email: string;
   role?: string;
-  name?: string;
-  verified?: boolean;
-  avatar?: string;
-  address?: string;
-  phoneNumber?: string;
-  specialization?: string;
-  staffingCapacity?: number;
-  category?: string;
-  agencyName?: string;
-  profileComplete?: boolean;
-  notificationPreferences?: Record<string, any>;
-}
-
-export interface AIToken {
-  id: string;
-  name: string;
-  createdAt: string;
-  isActive: boolean;
-  token?: string;
+  [key: string]: any;
 }
 
 export interface AuthContextType {
+  user: User | null;
+  loading: boolean;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  user: {
-    id: string;
-    email: string;
-    role: BaseRole;
-    metadata?: Record<string, any>;
-  } | null;
-  login: (email: string, password: string) => Promise<{ error: Error | null }>;
-  logout: () => Promise<void>;
-  register: (email: string, password: string, userData: any) => Promise<{ error: Error | null; user: any | null }>;
-  resetPassword: (email: string) => Promise<{ error: Error | null }>;
-  updateUser: (data: any) => Promise<{ error: Error | null; data: any | null }>;
-  generateAiToken: (name: string) => Promise<{ error: Error | null; token: string | null }>;
-}
-
-export interface AuthProviderProps {
-  children: React.ReactNode;
+  signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  signUp?: (email: string, password: string, data?: any) => Promise<void>;
+  resetPassword?: (email: string) => Promise<void>;
 }

@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DevModeBanner } from '@/components/dev/DevModeBanner';
 import { useAuth } from '@/contexts/auth/AuthContext';
-import { StaffCard } from '@/components/staff/StaffCard';
-import { Search, MapPin, Filter, Loader2 } from 'lucide-react';
+import { LoadingSpinner } from '@/loading-animation';
+import { Search, MapPin, Filter } from 'lucide-react';
 
 // Define TypeScript interfaces for better type safety
 interface StaffMember {
@@ -96,6 +97,79 @@ const mockStaffData: StaffMember[] = [
   }
 ];
 
+// Create a StaffCard component
+const StaffCard = ({ 
+  staff, 
+  onContact, 
+  onViewProfile, 
+  isAuthenticated 
+}: { 
+  staff: StaffMember, 
+  onContact: () => void, 
+  onViewProfile: () => void, 
+  isAuthenticated: boolean 
+}) => {
+  return (
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
+      <div className="p-5">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="font-bold text-lg">{staff.name}</h3>
+          {staff.verified && (
+            <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">
+              Verified
+            </span>
+          )}
+        </div>
+        
+        <div className="text-sm text-gray-500 mb-3">
+          <div className="flex items-center gap-1">
+            <MapPin className="h-3.5 w-3.5" />
+            <span>{staff.location} • {staff.distance}</span>
+          </div>
+        </div>
+        
+        <div className="mb-3">
+          <span className="text-sm font-medium text-gray-700">Position:</span>
+          <div className="flex flex-wrap gap-1 mt-1">
+            {staff.positions.map((position, idx) => (
+              <span key={idx} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                {position}
+              </span>
+            ))}
+          </div>
+        </div>
+        
+        <div className="mb-3">
+          <span className="text-sm font-medium text-gray-700">Availability:</span>
+          <span className="ml-2 text-sm text-green-600">{staff.availability}</span>
+        </div>
+        
+        <div className="mb-4">
+          <span className="text-sm font-medium text-gray-700">Hourly Rate:</span>
+          <span className="ml-2 text-lg font-bold text-gray-900">£{staff.hourlyRate.toFixed(2)}</span>
+        </div>
+        
+        <div className="flex gap-2">
+          <Button 
+            onClick={onContact} 
+            className="flex-1"
+            variant={isAuthenticated ? "default" : "outline"}
+          >
+            {isAuthenticated ? 'Contact' : 'Sign in to Contact'}
+          </Button>
+          <Button 
+            onClick={onViewProfile} 
+            variant="outline" 
+            className="flex-1"
+          >
+            View Profile
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function FindStaff() {
   const [staff] = useState<StaffMember[]>(mockStaffData);
   const [filteredStaff, setFilteredStaff] = useState<StaffMember[]>(mockStaffData);
@@ -106,7 +180,7 @@ export default function FindStaff() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   // Get unique positions from all staff for filter options - memoized for performance
   const allPositions = useMemo(() => {
@@ -224,7 +298,7 @@ export default function FindStaff() {
           </div>
           
           {/* Radius Filter */}
-          <div className="relative"></div>
+          <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <MapPin className="h-5 w-5 text-gray-400" />
             </div>
@@ -246,16 +320,16 @@ export default function FindStaff() {
             variant="outline"
             className="flex items-center gap-2"
             aria-label="Show filters"
-          ></Button>
+          >
             <Filter className="h-4 w-4" />
             Filters
           </Button>
         </div>
         
         {/* Filter Options */}
-        <div className="flex flex-wrap gap-4 mt-4"></div>
+        <div className="flex flex-wrap gap-4 mt-4">
           {/* Position Filter */}
-          <div></div>
+          <div>
             <label htmlFor="position-filter" className="block text-sm font-medium text-gray-700 mb-1">
               Position
             </label>
@@ -286,7 +360,7 @@ export default function FindStaff() {
               value={availabilityFilter}
               onChange={(e) => setAvailabilityFilter(e.target.value)}
               aria-label="Filter by availability"
-            ></select>
+            >
               <option value="All">All Availability</option>
               {allAvailabilities.map((availability) => (
                 <option key={availability} value={availability}>
@@ -300,8 +374,7 @@ export default function FindStaff() {
       
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-8 w-8 text-purple-600 animate-spin mr-2" />
-          <p className="text-gray-500">Looking for available staff...</p>
+          <LoadingSpinner text="Looking for available staff..." />
         </div>
       ) : error ? (
         <div className="flex justify-center items-center h-64 text-red-500">
@@ -310,7 +383,7 @@ export default function FindStaff() {
       ) : (
         <>
           {/* Results Count */}
-          <p className="text-gray-600 mb-4"></p>
+          <p className="text-gray-600 mb-4">
             Showing {filteredStaff.length} staff members
           </p>
           
@@ -327,7 +400,7 @@ export default function FindStaff() {
                 />
               ))
             ) : (
-              <div className="col-span-full text-center py-12"></div>
+              <div className="col-span-full text-center py-12">
                 <p className="text-gray-500 text-lg">No staff members found matching your criteria.</p>
                 <p className="text-gray-400 mt-2">Try adjusting your filters or search terms.</p>
                 <Button 

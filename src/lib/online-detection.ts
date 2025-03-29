@@ -1,223 +1,85 @@
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/supabase-client';
-
-type OnlineStatus = 'online' | 'offline' | 'reconnecting';
-
-// Ping URL to check actual connection (not just navigator.onLine)
-const PING_URL = 'https://www.google.com/favicon.ico';
-const PING_INTERVAL = 30000; // 30 seconds
-
 /**
- * Enhanced online/offline detection that goes beyond navigator.onLine
- * by actually testing connectivity to servers
+ * Utility functions for monitoring and handling online/offline status
  */
-export function useOnlineStatus() {
-  const [status, setStatus] = useState<OnlineStatus>(navigator.onLine ? 'online' : 'offline');
-  const [lastPingSuccess, setLastPingSuccess] = useState<Date | null>(null);
-  const [reconnectionAttempts, setReconnectionAttempts] = useState(0);
 
-  // Check if we can actually reach the internet (not just network interface up)
-  const checkActualConnection = async () => {
-    try {
-      if (!navigator.onLine) {
-        setStatus('offline');
-        return false;
-      }
-
-      // Try primary service
-      const supabaseResp = await checkSupabaseConnection();
-      
-      if (supabaseResp) {
-        setStatus('online');
-        setLastPingSuccess(new Date());
-        setReconnectionAttempts(0);
-        return true;
-      }
-      
-      // Fallback to a simple ping if Supabase is unreachable (could be service-specific issue)
-      const pingResp = await fetch(`${PING_URL}?_=${Date.now()}`, { 
-        method: 'HEAD',
-        mode: 'no-cors',
-        cache: 'no-store',
-        // Short timeout
-        signal: AbortSignal.timeout(3000)
-      });
-      
-      const isConnected = pingResp.type === 'opaque' || pingResp.ok;
-      
-      if (isConnected) {
-        setStatus('online');
-        setLastPingSuccess(new Date());
-        setReconnectionAttempts(0);
-        return true;
-      } else {
-        setStatus('offline');
-        return false;
-      }
-    } catch (error) {
-      console.warn('Connection check failed:', error);
-      
-      // If we were previously online but now fail, set to reconnecting state
-      if (status === 'online') {
-        setStatus('reconnecting');
-        setReconnectionAttempts(prev => prev + 1);
-      } else if (reconnectionAttempts > 3) {
-        // After 3 failed attempts, consider truly offline
-        setStatus('offline');
-      }
-      
-      return false;
+// Function to start monitoring online status
+export const startOnlineStatusMonitoring = () => {
+  const handleStatusChange = () => {
+    const isOnline = navigator.onLine;
+    console.log(`Connection status: ${isOnline ? 'Online' : 'Offline'}`);
+    
+    // Dispatch a custom event that components can listen to
+    window.dispatchEvent(
+      new CustomEvent('connectionStatusChange', { detail: { isOnline } })
+    );
+    
+    // Show a notification to the user
+    if (!isOnline) {
+      showOfflineNotification();
+    } else {
+      showOnlineNotification();
     }
   };
 
-  // Check Supabase connection more thoroughly
-  const checkSupabaseConnection = async (): Promise<boolean> => {
-    try {
-      // Try a simple database query that should always work
-      const { count } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .limit(1);
-        
-      return true;
-    } catch (error) {
-      return false;
-    }
+  // Add event listeners for online/offline events
+  window.addEventListener('online', handleStatusChange);
+  window.addEventListener('offline', handleStatusChange);
+  
+  // Initial check
+  handleStatusChange();
+  
+  // Return a function to remove event listeners (for cleanup)
+  return () => {
+    window.removeEventListener('online', handleStatusChange);
+    window.removeEventListener('offline', handleStatusChange);
   };
-
-  const triggerReconnect = () => {
-    if (status !== 'online') {
-      setStatus('reconnecting');
-      checkActualConnection();
-    }
-  };
-
-  useEffect(() => {
-    // Initial check
-    checkActualConnection();
-    
-    // Set up interval for periodic checks
-    const intervalId = setInterval(checkActualConnection, PING_INTERVAL);
-    
-    // Listen for navigator online/offline events
-    const handleOnline = () => {
-      checkActualConnection();
-    };
-    
-    const handleOffline = () => {
-      setStatus('offline');
-    };
-    
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    // Clean up on unmount
-    return () => {
-      clearInterval(intervalId);
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
-  return {
-    status,
-    isOnline: status === 'online',
-    isReconnecting: status === 'reconnecting',
-    isOffline: status === 'offline',
-    lastPingSuccess,
-    reconnectionAttempts,
-    checkConnection: checkActualConnection,
-    triggerReconnect
-  };
-}
-
-// Simpler export for direct utility functions
-export const checkOnlineStatus = async (): Promise<boolean> => {
-  try {
-    if (!navigator.onLine) return false;
-    
-    const response = await fetch(`${PING_URL}?_=${Date.now()}`, { 
-      method: 'HEAD',
-      mode: 'no-cors',
-      cache: 'no-store',
-      signal: AbortSignal.timeout(5000)
-    });
-    
-    return response.type === 'opaque' || response.ok;
-  } catch (error) {
-    return false;
-  }
 };
 
-// Global online status event dispatcher for components that need to react to status changes
-type OnlineStatusListener = (status: OnlineStatus) => void;
-const listeners: Set<OnlineStatusListener> = new Set();
-let currentStatus: OnlineStatus = navigator.onLine ? 'online' : 'offline';
-
-// Initialize global online status monitoring
-let isMonitoringStarted = false;
-
-export function startOnlineStatusMonitoring() {
-  if (isMonitoringStarted) return;
+// Helper functions for notifications
+const showOfflineNotification = () => {
+  if (!('Notification' in window)) return;
   
-  const checkAndNotify = async () => {
-    const isOnline = await checkOnlineStatus();
-    const newStatus = isOnline ? 'online' : 'offline';
-    
-    if (newStatus !== currentStatus) {
-      currentStatus = newStatus;
-      notifyListeners(currentStatus);
-    }
-  };
-  
-  // Set up listeners for online/offline events
-  window.addEventListener('online', async () => {
-    // Double-check that we're actually online
-    const actuallyOnline = await checkOnlineStatus();
-    if (actuallyOnline) {
-      currentStatus = 'online';
-      notifyListeners(currentStatus);
-    }
-  });
-  
-  window.addEventListener('offline', () => {
-    currentStatus = 'offline';
-    notifyListeners(currentStatus);
-  });
-  
-  // Periodically check connection
-  setInterval(checkAndNotify, PING_INTERVAL);
-  
-  // Run initial check
-  checkAndNotify();
-  
-  isMonitoringStarted = true;
-}
-
-function notifyListeners(status: OnlineStatus) {
-  listeners.forEach(listener => {
-    try {
-      listener(status);
-    } catch (error) {
-      console.error('Error in online status listener:', error);
-    }
-  });
-}
-
-export function addOnlineStatusListener(listener: OnlineStatusListener) {
-  listeners.add(listener);
-  
-  // Start monitoring if this is the first listener
-  if (listeners.size === 1) {
-    startOnlineStatusMonitoring();
+  // Use browser notifications if available and permitted
+  if (Notification.permission === 'granted') {
+    new Notification('Connection lost', {
+      body: 'You are currently offline. Some features may be unavailable.',
+      icon: '/favicon.ico'
+    });
   }
   
-  // Immediately call with current status
-  listener(currentStatus);
+  // Show UI notification
+  const offlineToast = document.createElement('div');
+  offlineToast.id = 'offline-toast';
+  offlineToast.className = 'fixed bottom-4 left-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+  offlineToast.textContent = 'You are offline. Some features may be unavailable.';
+  document.body.appendChild(offlineToast);
   
-  // Return function to remove the listener
-  return () => {
-    listeners.delete(listener);
-  };
-}
+  // Remove after 5 seconds
+  setTimeout(() => {
+    const toast = document.getElementById('offline-toast');
+    if (toast) document.body.removeChild(toast);
+  }, 5000);
+};
+
+const showOnlineNotification = () => {
+  // Remove offline toast if it exists
+  const offlineToast = document.getElementById('offline-toast');
+  if (offlineToast) document.body.removeChild(offlineToast);
+  
+  // Show online toast
+  const onlineToast = document.createElement('div');
+  onlineToast.id = 'online-toast';
+  onlineToast.className = 'fixed bottom-4 left-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+  onlineToast.textContent = 'You are back online!';
+  document.body.appendChild(onlineToast);
+  
+  // Remove after 3 seconds
+  setTimeout(() => {
+    const toast = document.getElementById('online-toast');
+    if (toast) document.body.removeChild(toast);
+  }, 3000);
+};
+
+// Use this function to check current online status
+export const isOnline = () => navigator.onLine;

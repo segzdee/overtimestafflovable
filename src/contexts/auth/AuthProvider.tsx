@@ -1,232 +1,133 @@
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { BaseRole } from "@/lib/types";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { AuthContext } from "./AuthContext";
+import { User, AuthContextType } from "./types";
 
-// Define types
-export interface AuthUser {
-  id: string;
-  email: string;
-  role?: string;
-  name?: string;
-  verified?: boolean;
-  avatar?: string;
-  address?: string;
-  phoneNumber?: string;
-  specialization?: string;
-  staffingCapacity?: number;
-  category?: string;
-  agencyName?: string;
-  profileComplete?: boolean;
+interface AuthProviderProps {
+  children: React.ReactNode;
 }
 
-export interface AIToken {
-  id: string;
-  name: string;
-  createdAt: string;
-  isActive: boolean;
-  token?: string;
-}
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-interface AuthContextType {
-  user: AuthUser | null;
-  profile?: AuthUser | null;
-  isLoading: boolean;
-  loading?: boolean;
-  isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  register: (email: string, password: string, role: string, data?: any, onSuccess?: () => void) => Promise<void>;
-  updateUser: (data: Partial<AuthUser>) => void;
-  loginWithToken?: (token: string) => Promise<void>;
-  updateProfile?: (data: Partial<AuthUser>) => Promise<void>;
-  aiTokens?: AIToken[];
-  generateAiToken?: (name: string, userId: string) => Promise<AIToken>;
-  revokeAiToken?: (tokenId: string) => Promise<void>;
-}
-
-// Create context with initial values
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Provider component
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [aiTokens, setAiTokens] = useState<AIToken[]>([]);
-
-  // Check for existing session on mount
+  // Simulate checking for an existing session
   useEffect(() => {
-    // Simulate auth check
     const checkAuth = async () => {
       try {
+        // In a real app, this would check localStorage, cookies, or a token
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
           setUser(JSON.parse(storedUser));
         }
       } catch (error) {
-        console.error("Auth check failed", error);
+        console.error("Auth check failed:", error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
     checkAuth();
   }, []);
 
-  // Login function
-  const login = async (email: string, password: string) => {
-    setIsLoading(true);
+  // Sign in function
+  const signIn = async (email: string, password: string) => {
+    setLoading(true);
     try {
-      // This is just a mock - would be replaced with actual auth
-      const mockUser: AuthUser = {
-        id: "user123",
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock user - in a real app, this would come from your backend
+      const mockUser: User = {
+        id: "1",
         email,
-        name: email.split("@")[0],
         role: "user",
-        verified: true,
+        name: "Demo User"
       };
       
       setUser(mockUser);
       localStorage.setItem("user", JSON.stringify(mockUser));
     } catch (error) {
-      console.error("Login failed", error);
+      console.error("Login failed:", error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  // Login with token function for AI agents
-  const loginWithToken = async (token: string) => {
-    setIsLoading(true);
+  // Sign out function
+  const signOut = async () => {
+    setLoading(true);
     try {
-      // This is a mock implementation
-      if (token && token.length > 10) {
-        const mockUser: AuthUser = {
-          id: "ai" + Date.now().toString(),
-          email: "ai-agent@overtimestaff.com",
-          name: "AI Assistant",
-          role: "aiagent",
-          verified: true,
-        };
-        
-        setUser(mockUser);
-        localStorage.setItem("user", JSON.stringify(mockUser));
-        localStorage.setItem("ai_token", token);
-      } else {
-        throw new Error("Invalid token");
-      }
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setUser(null);
+      localStorage.removeItem("user");
     } catch (error) {
-      console.error("Token login failed", error);
+      console.error("Logout failed:", error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  // Logout function
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("ai_token");
-  };
-
-  // Register function
-  const register = async (email: string, password: string, role: string, data?: any, onSuccess?: () => void) => {
-    setIsLoading(true);
+  // Sign up function
+  const signUp = async (email: string, password: string, data?: any) => {
+    setLoading(true);
     try {
-      // This is just a mock - would be replaced with actual registration
-      const mockUser: AuthUser = {
-        id: "user" + Date.now().toString(),
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // In a real app, you would make an API request to register the user
+      console.log("Registered user with:", { email, password, ...data });
+      
+      // Auto-login after registration
+      const mockUser: User = {
+        id: "1",
         email,
-        role,
-        name: email.split("@")[0],
-        verified: false,
+        role: "user",
+        ...data
       };
       
       setUser(mockUser);
       localStorage.setItem("user", JSON.stringify(mockUser));
-      
-      if (onSuccess) {
-        onSuccess();
-      }
     } catch (error) {
-      console.error("Registration failed", error);
+      console.error("Registration failed:", error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  // Update user function
-  const updateUser = (data: Partial<AuthUser>) => {
-    if (user) {
-      const updatedUser = { ...user, ...data };
-      setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+  // Reset password function
+  const resetPassword = async (email: string) => {
+    setLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real app, this would trigger a password reset email
+      console.log("Password reset requested for:", email);
+    } catch (error) {
+      console.error("Password reset failed:", error);
+      throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Update profile function
-  const updateProfile = async (data: Partial<AuthUser>) => {
-    updateUser(data);
-    return Promise.resolve();
+  const value: AuthContextType = {
+    user,
+    loading,
+    isAuthenticated: !!user,
+    signIn,
+    signOut,
+    signUp,
+    resetPassword
   };
 
-  // Generate AI token function
-  const generateAiToken = async (name: string, userId: string): Promise<AIToken> => {
-    const newToken: AIToken = {
-      id: `token_${Date.now()}`,
-      name,
-      createdAt: new Date().toISOString(),
-      isActive: true,
-      token: `ai_${Math.random().toString(36).substring(2, 15)}`
-    };
-    
-    setAiTokens(prev => [...prev, newToken]);
-    return newToken;
-  };
-
-  // Revoke AI token function
-  const revokeAiToken = async (tokenId: string): Promise<void> => {
-    setAiTokens(prev => 
-      prev.map(token => 
-        token.id === tokenId 
-          ? { ...token, isActive: false } 
-          : token
-      )
-    );
-    return Promise.resolve();
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        profile: user,
-        isLoading,
-        loading: isLoading,
-        isAuthenticated: !!user,
-        login,
-        logout,
-        register,
-        updateUser,
-        loginWithToken,
-        updateProfile,
-        aiTokens,
-        generateAiToken,
-        revokeAiToken
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// Custom hook to use auth context
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
+export { useAuth } from "./AuthContext";

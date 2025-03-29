@@ -1,18 +1,13 @@
-import { BrowserRouter, RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './contexts/auth';
-import { MarketProvider } from './components/layout/market-context';
-import { routes } from './routes/routes.config';
-import './App.css';
 
-// Create router from routes config
-const router = createBrowserRouter(routes);
+import { RouterProvider } from 'react-router-dom';
+import { AuthProvider } from './contexts/auth/AuthProvider';
+import { router } from './routes';
+import './App.css';
 
 function App() {
   return (
     <AuthProvider>
-      <MarketProvider useDemoData={true}>
-        <RouterProvider router={router} />
-      </MarketProvider>
+      <RouterProvider router={router} />
     </AuthProvider>
   );
 }
