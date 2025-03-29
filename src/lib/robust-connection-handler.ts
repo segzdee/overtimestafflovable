@@ -1,90 +1,82 @@
 
 import { useState, useEffect } from 'react';
 
-// Define the types for online status
-type OnlineStatus = 'online' | 'offline' | 'reconnecting';
+export type ConnectionStatus = 'online' | 'offline' | 'reconnecting';
 
-interface OnlineStatusHook {
-  status: OnlineStatus;
-  lastOnline: Date | null;
-  checkConnection: () => Promise<boolean>;
-}
-
-// Function to check connection by fetching a minimal resource
-const checkConnection = async (): Promise<boolean> => {
-  try {
-    // Try to fetch a minimal resource to check connection
-    const res = await fetch('/favicon.ico', { 
-      method: 'HEAD',
-      cache: 'no-store',
-      headers: { 'Cache-Control': 'no-cache' }
-    });
-    return res.ok;
-  } catch (error) {
-    return false;
-  }
-};
-
-// Custom hook for online status monitoring
-export const useOnlineStatus = (): OnlineStatusHook => {
-  const [status, setStatus] = useState<OnlineStatus>(
+/**
+ * Custom hook for tracking online status with more reliability than just using navigator.onLine
+ */
+export const useOnlineStatus = () => {
+  const [status, setStatus] = useState<ConnectionStatus>(
     navigator.onLine ? 'online' : 'offline'
   );
-  const [lastOnline, setLastOnline] = useState<Date | null>(
-    navigator.onLine ? new Date() : null
-  );
-  const [isReconnecting, setIsReconnecting] = useState(false);
+  const [lastPingTime, setLastPingTime] = useState<number>(Date.now());
 
-  // Handler for online event
-  const handleOnline = () => {
-    setStatus('online');
-    setLastOnline(new Date());
-  };
-
-  // Handler for offline event
-  const handleOffline = async () => {
-    // Double-check the connection to avoid false negatives
-    const isActuallyConnected = await checkConnection();
-    
-    if (!isActuallyConnected) {
-      setStatus('offline');
-      setIsReconnecting(true);
-      // Try to reconnect
-      const reconnect = setInterval(async () => {
-        const connected = await checkConnection();
-        if (connected) {
-          setStatus('online');
-          setLastOnline(new Date());
-          setIsReconnecting(false);
-          clearInterval(reconnect);
-        }
-      }, 5000); // Check every 5 seconds
+  // Function to check connection by making a network request
+  const checkConnection = async (): Promise<boolean> => {
+    try {
+      // Try to fetch a minimal resource to check connection
+      const res = await fetch('/favicon.ico', { 
+        method: 'HEAD',
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' },
+        // Add a cache-busting parameter
+        signal: AbortSignal.timeout(5000) // 5 second timeout
+      });
+      return res.ok;
+    } catch (error) {
+      return false;
     }
   };
 
   useEffect(() => {
-    // Set up event listeners
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    // Check the connection on mount
-    checkConnection().then(connected => {
-      setStatus(connected ? 'online' : 'offline');
-      if (connected) {
-        setLastOnline(new Date());
+    // Function to update status based on navigator.onLine
+    const handleStatusChange = async () => {
+      if (navigator.onLine) {
+        // Double-check with a real network request
+        const isConnected = await checkConnection();
+        if (isConnected) {
+          setStatus('online');
+        } else {
+          setStatus('reconnecting');
+        }
+      } else {
+        setStatus('offline');
       }
-    });
-
-    // Clean up event listeners
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
     };
-  }, []);
 
-  return {
-    status: isReconnecting ? 'reconnecting' : status,
-    lastOnline,
-    checkConnection
-  };
+    // Setup periodical checks for more reliable status reporting
+    const pingInterval = setInterval(async () => {
+      // Only ping if we think we're online or reconnecting
+      if (status !== 'offline') {
+        const isConnected = await checkConnection();
+        if (!isConnected) {
+          // If we can't reach the server but browser thinks we're online
+          if (status === 'online') {
+            setStatus('reconnecting');
+          }
+        } else if (status === 'reconnecting') {
+          // We reconnected successfully
+          setStatus('online');
+        }
+      }
+      setLastPingTime(Date.now());
+    }, 30000); // Check every 30 seconds
+
+    // Setup listeners for online/offline events
+    window.addEventListener('online', handleStatusChange);
+    window.addEventListener('offline', handleStatusChange);
+    
+    // Initial check
+    handleStatusChange();
+
+    // Clean up
+    return () => {
+      window.removeEventListener('online', handleStatusChange);
+      window.removeEventListener('offline', handleStatusChange);
+      clearInterval(pingInterval);
+    };
+  }, [status]);
+
+  return { status, lastPingTime };
 };

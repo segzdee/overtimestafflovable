@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useOnlineStatus } from '@/lib/robust-connection-handler';
+import { ConnectionStatus } from '@/components/ConnectionStatus';
 
 // Custom hook for mobile detection
 const useIsMobile = () => {
@@ -67,20 +68,6 @@ interface NavItem {
   roles: string[];
   badge?: string;
 }
-
-// Connection Status Component
-const ConnectionStatus = () => {
-  const { status } = useOnlineStatus();
-  
-  if (status === 'online') return null;
-  
-  return (
-    <div className={`fixed bottom-0 left-0 right-0 p-2 text-center text-sm text-white 
-      ${status === 'reconnecting' ? 'bg-yellow-500' : 'bg-red-500'}`}>
-      {status === 'reconnecting' ? 'Reconnecting...' : 'You are currently offline'}
-    </div>
-  );
-};
 
 // Function to get current page title from path
 const getCurrentTitle = (path: string, navItems: NavItem[]): string => {
@@ -364,7 +351,7 @@ export function DashboardLayout() {
           <div className="flex items-center">
             {/* Left side - visible on mobile */}
             {isMobile && (
-              <div className="w-10"></div> {/* Spacer for mobile toggle button */}
+              <div className="w-10"></div> /* Spacer for mobile toggle button */
             )}
             
             {/* Title */}
@@ -435,9 +422,6 @@ export function DashboardLayout() {
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           <Outlet />
         </main>
-        
-        {/* Connection status indicator */}
-        <ConnectionStatus />
       </div>
     </div>
   );
