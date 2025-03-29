@@ -78,13 +78,11 @@ export class PendingRegistrationManager {
     if (!pendingData) return;
     
     try {
-      localStorage.setItem(
-        this.STORAGE_KEY,
-        JSON.stringify({
-          ...pendingData,
-          attempts: (pendingData.attempts || 0) + 1
-        })
-      );
+      const encryptedData = encrypt(JSON.stringify({
+        ...pendingData,
+        attempts: (pendingData.attempts || 0) + 1
+      }));
+      localStorage.setItem(this.STORAGE_KEY, encryptedData);
     } catch (error) {
       console.error('Failed to update pending registration attempts:', error);
     }
