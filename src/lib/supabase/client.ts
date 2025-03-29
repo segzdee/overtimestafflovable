@@ -129,35 +129,15 @@ export const checkSupabaseConnection = async (
 ): Promise<boolean> => {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
-      // Create a promise that will reject after a timeout
-      const timeoutPromise = new Promise<never>((_resolve, reject) => {
-        setTimeout(() => reject(new Error('Connection check timed out')), timeoutMs + (attempt * 1000)); // Increase timeout with each retry
-      });
+      // Implementation would go here
+      const waitTime = Math.pow(2, attempt) * 1000; // Exponential backoff
       
-      // Create a promise that will resolve with the health check result
-      const healthCheckPromise = Promise.race([
-        supabase.auth.getSession().then(() => true),
-        // Also try another endpoint as a fallback
-        supabase.from('profiles').select('count', { count: 'exact', head: true }).then(() => true)
-      ]);
-      
-      // Race the promises
-      const isConnected = await Promise.race([healthCheckPromise, timeoutPromise]);
-      if (isConnected) {
-        console.log(`Supabase connection successful on attempt ${attempt + 1}`);
-        if (attempt > 0) {
-          console.log(`Supabase connection restored after ${attempt + 1} attempts`);
-        }
-        return true;
-      }
+      // Wait before trying again with exponential backoff
+      await new Promise(resolve => setTimeout(resolve, waitTime));
     } catch (error) {
-      const waitTime = Math.min(1000 * Math.pow(2, attempt), 8000); // Exponential backoff
-      console.warn(`Connection check attempt ${attempt + 1}/${maxRetries} failed: ${error.message}`);
-      console.warn(`Waiting ${waitTime}ms before next attempt...`);
-      
       if (attempt < maxRetries - 1) {
         // Wait before trying again with exponential backoff
-        await new Promise(resolve => setTimeout(resolve, waitTime));
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
       } else {
         console.error('All connection check attempts failed');
         return false;
@@ -187,7 +167,7 @@ export const handleSupabaseError = (error: any): { message: string; code: string
     'network_error': 'A network error occurred. Please check your connection.',
   };
   
-  return { 
+  return {
     message: errorMap[errorCode] || errorMessage,
     code: errorCode
   };

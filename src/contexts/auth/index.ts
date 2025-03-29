@@ -1,3 +1,3 @@
-import { AuthProvider, useAuth } from './AuthContext';
+// This file should re-export from the standardized AuthContext
 
-export { AuthProvider, useAuth };
+export * from './AuthContext';

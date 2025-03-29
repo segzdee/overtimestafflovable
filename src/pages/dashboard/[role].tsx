@@ -1,14 +1,27 @@
-
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { ShiftWorkerRouter } from '@/features/shift-worker/ShiftWorkerRouter';
+import { CompanyRouter } from '@/features/company/CompanyRouter';
+import { AgencyRouter } from '@/features/agency/AgencyRouter';
+import { AdminRouter } from '@/features/admin/AdminRouter';
+import NotFound from '../NotFound';
 
-export default function DashboardRouter() {
-  const { role } = useParams<{ role: string }>();
+// Role-based router mapping for better maintainability
+const ROLE_ROUTERS = {
+  'shift-worker': ShiftWorkerRouter,
+  'company': CompanyRouter,
+  'agency': AgencyRouter,
+  'admin': AdminRouter,
+};
+
+export default function RoleDashboardRouter() {
+  const { role } = useParams();
   
-  return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Dashboard: {role}</h1>
-      <p>Dashboard content for {role} role will be displayed here.</p>
-    </div>
-  );
+  const RoleRouter = role ? ROLE_ROUTERS[role] : undefined;
+  
+  if (RoleRouter) {
+    return <RoleRouter />;
+  }
+  
+  return <NotFound />;
 }

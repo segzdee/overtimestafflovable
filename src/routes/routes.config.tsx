@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
 import Home from '../pages';
@@ -20,6 +19,11 @@ import TokenValidation from '../pages/TokenValidation';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { RootLayout } from '../components/layout/RootLayout';
+import Terms from '../pages/terms';
+import Blog from '../pages/blog';
+import BlogPost from '../pages/blog-post';
+import AIAssistant from '../pages/AIAssistant';
+import ImplementationGuide from '../pages/implementation-guide';
 
 // Define route configuration
 export const routes: RouteObject[] = [
@@ -94,6 +98,26 @@ export const routes: RouteObject[] = [
       {
         path: '/ai-token',
         element: <TokenValidation />
+      },
+      {
+        path: '/terms',
+        element: <Terms />
+      },
+      {
+        path: '/blog',
+        element: <Blog />
+      },
+      {
+        path: '/blog/:slug',
+        element: <BlogPost />
+      },
+      {
+        path: '/ai-assistant',
+        element: <ProtectedRoute element={<AIAssistant />} />
+      },
+      {
+        path: '/implementation-guide',
+        element: <ImplementationGuide />
       },
       
       // Protected routes

@@ -325,7 +325,7 @@ export default function Home() {
               onClick={() => navigate("/about-platform")}
               className="bg-purple-600 hover:bg-purple-700 text-white"
               size="lg"
-            ></Button>
+            >
               Learn more about our platform <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>

@@ -1,4 +1,4 @@
-import { defineConfig, ConfigEnv, PluginOption } from "vite";
+import { defineConfig, ConfigEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
@@ -12,42 +12,23 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
       "localhost"
     ]
   },
-  plugins: [
-    react(),
-    mode === 'development' && (() => {
-      try {
-        const componentTaggerPlugin: PluginOption = {
-          name: 'lovable-component-tagger',
-          async configResolved() {
-            try {
-              const { componentTagger } = await import('lovable-tagger');
-              if (componentTagger) {
-                componentTagger();
-              } else {
-                console.warn('Component tagger function not found in lovable-tagger');
-              }
-            } catch (e) {
-              console.warn('Lovable tagger not available, skipping component tagging:', e);
-            }
-          }
-        };
-        return componentTaggerPlugin;
-      } catch (e) {
-        console.warn('Lovable tagger setup failed:', e);
-        return null;
-      }
-    })(),
-  ].filter(Boolean), // Ensure null or undefined plugins are filtered out
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
   build: {
-    sourcemap: true,
-    outDir: 'dist',
-    define: {
-      'process.env.REACT_APP_NAME': JSON.stringify('YourReactAppName') // Replace with your app name
-    }
-  }
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "ui-components": ["@/components/ui"],
+          "auth": ["@/contexts/auth"],
+        },
+      },
+    },
+    sourcemap: process.env.NODE_ENV !== "production",
+    chunkSizeWarningLimit: 1000,
+  },
 }));

@@ -1,57 +1,67 @@
-
-<!DOCTYPE html>
-<html lang="en" class="h-full bg-gray-100">
+<!DOCTYPE html><!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-100"> class="h-full bg-gray-100">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />a charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />mage/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />cale=1.0" />
     <title>Staff Management Platform</title>
     
-    <!-- Preload critical fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" />
+    <!-- Preload critical fonts --><!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">tps://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>ssorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" />=Open+Sans:300,400,600,700&display=swap" />
     
-    <!-- Critical CSS -->
+    <!-- Critical CSS --><!-- Critical CSS -->
     <style>
-      .initial-loader {
+      .initial-loader {ial-loader {
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: center;enter;
+        justify-content: center;ter;
         height: 100vh;
-        background-color: #f3f4f6;
+        background-color: #f3f4f6;or: #f3f4f6;
       }
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid rgba(0, 0, 0, 0.1);
+      .spinner {spinner {
+        width: 40px;0px;
+        height: 40px;;
+        border: 4px solid rgba(0, 0, 0, 0.1);olid rgba(0, 0, 0, 0.1);
         border-radius: 50%;
-        border-left-color: #10b981;
-        animation: spin 1s linear infinite;
+        border-left-color: #10b981;#10b981;
+        animation: spin 1s linear infinite;nfinite;
       }
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+      @keyframes spin {keyframes spin {
+        0% { transform: rotate(0deg); } rotate(0deg); }
+        100% { transform: rotate(360deg); }); }
       }
-    </style>
+    </style>tyle>
     
-    <!-- Load Argon Dashboard CSS asynchronously -->
-    <link rel="preload" href="https://demos.creative-tim.com/argon-dashboard/assets/css/argon-dashboard.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <!-- Load Argon Dashboard CSS asynchronously --><!-- Load Argon Dashboard CSS asynchronously -->
+    <link rel="preload" href="https://demos.creative-tim.com/argon-dashboard/assets/css/argon-dashboard.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">-tim.com/argon-dashboard/assets/css/argon-dashboard.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://demos.creative-tim.com/argon-dashboard/assets/css/argon-dashboard.min.css"></noscript>
     
-    <!-- Required Core Scripts -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    <!-- Required Core Scripts --><!-- Required Core Scripts -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>g.co/gptengineer.js" type="module"></script>
   </head>
-  <body class="h-full">
+  <body class="h-full">lass="h-full">
     <div id="root">
-      <div class="initial-loader">
-        <div class="spinner"></div>
+      <div class="initial-loader">nitial-loader">
+        <div class="spinner"></div>>
       </div>
     </div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script>t type="module" src="/src/main.tsx"></script>
     
-    <!-- Load non-critical scripts asynchronously -->
-    <script defer src="https://demos.creative-tim.com/argon-dashboard/assets/js/core/popper.min.js"></script>
+    <!-- Load non-critical scripts asynchronously with SRI and fallbacks --><!-- Load non-critical scripts asynchronously -->
+    <script defer /argon-dashboard/assets/js/core/popper.min.js" integrity="sha384-abc123" crossorigin="anonymous"></script>
+      src="https://demos.creative-tim.com/argon-dashboard/assets/js/core/popper.min.js"ity="sha384-def456" crossorigin="anonymous"></script>
+      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"" integrity="sha384-ghi789" crossorigin="anonymous"></script>
+      crossorigin="anonymous""sha384-jkl012" crossorigin="anonymous"></script>
+      onerror="loadFallback('popper')"></script>mno345" crossorigin="anonymous"></script>
+    <script>
+      function loadFallback(scriptName) {
+        const script = document.createElement('script');        script.src = `/assets/fallback/${scriptName}.min.js`;
+        document.body.appendChild(script);
+        console.warn(`Loaded local fallback for ${scriptName}`);
+      }
+    </script>
     <script defer src="https://demos.creative-tim.com/argon-dashboard/assets/js/core/bootstrap.min.js"></script>
     <script defer src="https://demos.creative-tim.com/argon-dashboard/assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script defer src="https://demos.creative-tim.com/argon-dashboard/assets/js/plugins/smooth-scrollbar.min.js"></script>

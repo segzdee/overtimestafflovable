@@ -1,34 +1,58 @@
-import { Navigate } from "react-router-dom";
-import { useAuth } from "@/contexts/auth/AuthProvider";
-import { LoadingSpinner } from "@/src/loading-animation";
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import { BaseRole } from "@/lib/types";
 
 interface ProtectedRouteProps {
   element: React.ReactNode;
-  requiredRole?: string | string[];
+  requiredRole?: BaseRole | BaseRole[];
+  redirectTo?: string;
 }
 
-export const ProtectedRoute = ({ 
-  element, 
-  requiredRole 
-}: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  element,
+  requiredRole,
+  redirectTo = "/auth/login",
+}) => {
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const location = useLocation();
 
-  if (loading) {
-    return <LoadingSpinner fullPage text="Checking authentication..." />;
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600"></div>
+      </div>
+    );
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  // If not authenticated, redirect to login with return URL
+  if (!isAuthenticated) {
+    return (
+      <Navigate
+        to={redirectTo}
+        state={{ from: location.pathname }}
+        replace
+      />
+    );
   }
 
-  // Optional role-based access control
-  if (requiredRole && user.role) {
-    const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
-    
-    if (!roles.includes(user.role)) {
-      return <Navigate to="/forbidden" replace />;
-    }
+  // If no specific role is required, or user has the required role, show the element
+  if (!requiredRole || userHasRequiredRole(user?.role as BaseRole, requiredRole)) {
+    return <>{element}</>;
   }
 
-  return <>{element}</>;
+  // User doesn't have the required role, redirect to forbidden
+  return <Navigate to="/forbidden" replace />;
 };
+
+// Helper function to check if user has the required role
+function userHasRequiredRole(
+  userRole: BaseRole,
+  requiredRole: BaseRole | BaseRole[]
+): boolean {
+  if (Array.isArray(requiredRole)) {
+    return requiredRole.includes(userRole);
+  }
+  return userRole === requiredRole;
+}
