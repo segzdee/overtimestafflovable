@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Layout } from '../../components/layout/Layout';
+import { Layout } from '@/components/layout/Layout';
 import styles from './ImplementationGuide.module.css';
 
 const ImplementationGuide: React.FC = () => {
@@ -22,7 +23,6 @@ const ImplementationGuide: React.FC = () => {
             <li><strong>Footer</strong>: Site links and information</li>
           </ol>
           
-          {/* Navigation Flow section */}
           <h2>Navigation Flow</h2>
           
           <h3>TopNav Component</h3>
@@ -38,7 +38,6 @@ const ImplementationGuide: React.FC = () => {
             <li><strong>"Explore Available Shifts"</strong> button leads to the Live Market page</li>
           </ul>
           
-          {/* Authentication Handling section */}
           <h2>Authentication Handling</h2>
           
           <h3>Live Market Page</h3>
@@ -56,30 +55,29 @@ const ImplementationGuide: React.FC = () => {
             <li>Proper redirects are in place for login with return URLs</li>
           </ul>
           
-          {/* Continuing with the rest of the implementation guide sections */}
           <h2>Staff Availability Implementation</h2>
-          {/* ... rest of the content ... */}
+          {/* ... content omitted for brevity ... */}
           
           <h2>Development Mode</h2>
-          {/* ... rest of the content ... */}
+          {/* ... content omitted for brevity ... */}
           
           <h2>Implementation Details</h2>
-          {/* ... rest of the content ... */}
+          {/* ... content omitted for brevity ... */}
           
           <h2>Authentication Flow</h2>
-          {/* ... rest of the content ... */}
+          {/* ... content omitted for brevity ... */}
           
           <h2>Mock Data Implementation</h2>
-          {/* ... rest of the content ... */}
+          {/* ... content omitted for brevity ... */}
           
           <h2>Visual Design Consistency</h2>
-          {/* ... rest of the content ... */}
+          {/* ... content omitted for brevity ... */}
           
           <h2>Next Implementation Steps</h2>
-          {/* ... rest of the content ... */}
+          {/* ... content omitted for brevity ... */}
           
           <h2>Testing Guidelines</h2>
-          {/* ... rest of the content ... */}
+          {/* ... content omitted for brevity ... */}
         </div>
       </div>
     </Layout>
