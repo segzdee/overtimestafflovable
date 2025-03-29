@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Launch Vite App",
+      "program": "${workspaceFolder}/${input:entryFile}",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 9229
+    }
+  ],
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "entryFile",
+      "description": "Enter the path to your app's entry file (e.g., src/main.tsx)"
+    }
+  ]
+}
