@@ -1,40 +1,34 @@
-
-import { ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/auth';
-import { Spinner } from '@/components/ui/spinner';
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/contexts/auth/AuthProvider";
+import { LoadingSpinner } from "@/src/loading-animation";
 
 interface ProtectedRouteProps {
-  element: ReactNode;
-  allowedRoles?: string[];
+  element: React.ReactNode;
+  requiredRole?: string | string[];
 }
 
 export const ProtectedRoute = ({ 
   element, 
-  allowedRoles = [] 
+  requiredRole 
 }: ProtectedRouteProps) => {
-  const { user, isLoading } = useAuth();
-  const location = useLocation();
-  
-  // Handle loading state
-  if (isLoading) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <Spinner size="lg" />
-      </div>
-    );
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <LoadingSpinner fullPage text="Checking authentication..." />;
   }
-  
-  // If no user, redirect to login
+
   if (!user) {
-    return <Navigate to="/auth/login" state={{ from: location.pathname }} replace />;
+    return <Navigate to="/login" replace />;
   }
-  
-  // If roles specified and user doesn't have permission
-  if (allowedRoles.length > 0 && user.role && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/forbidden" replace />;
+
+  // Optional role-based access control
+  if (requiredRole && user.role) {
+    const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+    
+    if (!roles.includes(user.role)) {
+      return <Navigate to="/forbidden" replace />;
+    }
   }
-  
-  // User is authenticated and authorized
+
   return <>{element}</>;
 };

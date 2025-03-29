@@ -1,9 +1,8 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { DevModeProvider } from '@/contexts/dev/DevModeContext';
 import { Toaster } from '@/components/ui/toaster';
-import { initConnectionHandling } from '@/lib/robust-connection-handler';
+import { startOnlineStatusMonitoring } from '@/lib/online-detection';
 import App from './App';
 import './index.css';
 
@@ -18,7 +17,7 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 
 // Initialize connection handling
-initConnectionHandling();
+startOnlineStatusMonitoring();
 
 // Render the app
 root.render(

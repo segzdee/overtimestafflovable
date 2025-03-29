@@ -1,4 +1,4 @@
-import { supabase } from '../src/supabase-client';
+import { supabase } from '../src/supabase-client';  // Potential issue - make sure this file exists
 
 export async function secureRegistration(req: Request): Promise<Response> {
   try {

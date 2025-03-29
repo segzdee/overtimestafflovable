@@ -1,24 +1,29 @@
 import { useEffect } from 'react';
-import { RouterProvider, Route, Routes } from 'react-router-dom';
-import { router } from './routes';
-import { DevModeProvider } from './contexts/dev/DevModeContext';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/auth';
 import { MarketProvider } from './components/layout/market-context';
 import ImplementationGuide from './pages/implementation-guide';
+import { routes } from './routes';
 import './App.css';
 
 function App() {
   return (
-    <DevModeProvider>
-      <AuthProvider>
-        <MarketProvider useDemoData={true}>
+    <AuthProvider>
+      <MarketProvider useDemoData={true}>
+        <BrowserRouter>
           <Routes>
             <Route path="/implementation-guide" element={<ImplementationGuide />} />
-            <RouterProvider router={router} />
+            {routes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
+            ))}
           </Routes>
-        </MarketProvider>
-      </AuthProvider>
-    </DevModeProvider>
+        </BrowserRouter>
+      </MarketProvider>
+    </AuthProvider>
   );
 }
 

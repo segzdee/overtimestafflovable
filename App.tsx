@@ -1,8 +1,9 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '@/contexts/auth/AuthContext';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AuthProvider, useAuth } from '@/contexts/auth/AuthContext';
 import { DevModeProvider } from '@/contexts/dev/DevModeContext';
 import Layout from '@/components/layout/Layout';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 // Pages
 import Home from '@/pages/home';
@@ -25,6 +26,19 @@ const ALLOWED_DEV_URLS = [
   'test.overtimestaff.com'
 ];
 
+// Protected route component for authenticated routes
+const AuthProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+  
+  if (!isAuthenticated) {
+    // Redirect to login but save the location they were trying to access
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  
+  return <>{children}</>;
+};
+
 // Protected route component for dev routes
 const DevProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isDevEnvironment = ALLOWED_DEV_URLS.some(url => 
@@ -40,33 +54,53 @@ const DevProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <DevModeProvider>
-          <Routes>
-            {/* Main application routes */}
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="find-shifts" element={<FindShifts />} />
-              <Route path="find-staff" element={<FindStaff />} />
-              <Route path="live-market" element={<LiveMarket />} />
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Register />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-            
-            {/* Protected developer routes */}
-            <Route 
-              path="/dev-admin/*" 
-              element={
-                <DevProtectedRoute>
-                  <DevAdmin />
-                </DevProtectedRoute>
-              } 
-            />
-          </Routes>
-        </DevModeProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <DevModeProvider>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              
+              {/* Main application routes with layout */}
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Home />} />
+                
+                {/* Protected routes that require authentication */}
+                <Route path="find-shifts" element={
+                  <AuthProtectedRoute>
+                    <FindShifts />
+                  </AuthProtectedRoute>
+                } />
+                <Route path="find-staff" element={
+                  <AuthProtectedRoute>
+                    <FindStaff />
+                  </AuthProtectedRoute>
+                } />
+                <Route path="live-market" element={
+                  <AuthProtectedRoute>
+                    <LiveMarket />
+                  </AuthProtectedRoute>
+                } />
+                
+                {/* Catch-all route */}
+                <Route path="*" element={<NotFound />} />
+              </Route>
+              
+              {/* Protected developer routes */}
+              <Route 
+                path="/dev-admin/*" 
+                element={
+                  <DevProtectedRoute>
+                    <DevAdmin />
+                  </DevProtectedRoute>
+                } 
+              />
+            </Routes>
+          </DevModeProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }

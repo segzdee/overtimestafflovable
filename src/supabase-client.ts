@@ -1,10 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
+// Initialize Supabase client - in production, use environment variables
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-  throw new Error('Supabase environment variables are not set.');
-}
-
-export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
