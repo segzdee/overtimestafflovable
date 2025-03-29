@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Wifi, WifiOff, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { checkConnection } from '@/lib/robust-connection-handler';
+import { checkOnlineStatus as checkConnection } from '@/lib/online-detection';
 
 export function ConnectionStatus() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);

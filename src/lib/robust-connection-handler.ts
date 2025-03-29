@@ -1,9 +1,10 @@
+
 import { 
   useOnlineStatus, 
   checkOnlineStatus, 
   startOnlineStatusMonitoring, 
   addOnlineStatusListener 
-} from '@/src/online-detection';
+} from '@/lib/online-detection';
 
 // Type definitions
 interface RetryOptions {
