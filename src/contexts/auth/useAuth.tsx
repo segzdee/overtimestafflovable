@@ -1,3 +1,5 @@
 
 // Re-export the useAuth hook from the provider
-export { useAuth } from './AuthProvider';
+import { useAuth } from './AuthProvider';
+
+export { useAuth };
