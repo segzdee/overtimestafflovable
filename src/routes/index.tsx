@@ -1,7 +1,28 @@
+import { createBrowserRouter } from "react-router-dom";
+import App from "../App";
+import Dashboard from "../pages/Dashboard";
+import Login from "../pages/Login";
+import ProtectedRoute from "../components/ProtectedRoute";
 
-import React from 'react';
-import { createBrowserRouter } from 'react-router-dom';
-import { routes } from './routes.config';
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "login",
+        element: <Login />,
+      },
+    ],
+  },
+]);
 
-// Create router from config
-export const router = createBrowserRouter(routes);
+export default router;

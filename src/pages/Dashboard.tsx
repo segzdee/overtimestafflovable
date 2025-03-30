@@ -1,6 +1,8 @@
-
+import React, { Suspense } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useAuth } from "@/contexts/auth/AuthProvider";
+
+const DashboardContent = React.lazy(() => import('../components/DashboardContent'));
 
 export default function Dashboard() {
   const { role } = useParams();
@@ -15,20 +17,9 @@ export default function Dashboard() {
     return <Navigate to={`/dashboard/${user.role}`} replace />;
   }
   
-  // Temporary dashboard content based on role
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">
-        {user.role.charAt(0).toUpperCase() + user.role.slice(1)} Dashboard
-      </h1>
-      <div className="bg-white rounded-lg shadow p-6">
-        <p className="text-gray-700 mb-4">
-          Welcome back, {user.name}!
-        </p>
-        <p className="text-gray-600">
-          This is your {user.role} dashboard. More features will be available soon.
-        </p>
-      </div>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <DashboardContent />
+    </Suspense>
   );
 }

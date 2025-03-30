@@ -1,4 +1,3 @@
-
 export interface Staff {
 	id: string | number;
 	name: string;
@@ -22,4 +21,10 @@ export interface Shift {
 	id: string;
 	date: string;
 	staffId: string;
+}
+
+export interface User {
+	id: string;
+	username: string;
+	email: string;
 }

@@ -1,5 +1,4 @@
-
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from './contexts/auth/AuthProvider';
 import { router } from './routes';
 import './App.css';
