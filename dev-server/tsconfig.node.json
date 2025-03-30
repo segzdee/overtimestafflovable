@@ -1,9 +1,7 @@
+
 {
   "compilerOptions": {
-    // ...existing code...
     "composite": true,
     "noEmit": false
-    // ...existing code...
-  },
-  // ...existing code...
+  }
 }
