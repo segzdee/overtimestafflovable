@@ -1,6 +1,16 @@
 
 import { createContext, useContext } from "react";
-import { AuthContextType } from "./types";
+import { User } from "../../types/User";
+
+export interface AuthContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, userData: Partial<User>) => Promise<void>;
+  logout: () => Promise<void>;
+  updateProfile: (profileData: Partial<User>) => Promise<void>;
+}
 
 // Create the auth context with undefined default value
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

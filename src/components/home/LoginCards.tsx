@@ -1,11 +1,17 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bot, UserCircle, Building2, Building, CheckCircle } from 'lucide-react';
+import { Users, Building2, Building, Bot, CheckCircle } from 'lucide-react';
 
 const LoginCards: React.FC = () => {
+  const navigate = useNavigate();
+  
+  const handleRegisterClick = (type: string) => {
+    navigate('/user-type');
+  };
+  
   return (
     <section className="py-4 md:py-6 lg:py-10">
       <div className="container mx-auto px-4">
@@ -24,11 +30,20 @@ const LoginCards: React.FC = () => {
                 <h3 className="text-base md:text-lg font-semibold mb-2">Staffing Agency</h3>
                 <p className="text-sm text-gray-600 mb-4">Manage Multiple Venues and Staff</p>
               </div>
-              <Link to="/auth/login?type=agency" className="w-full">
-                <Button className="w-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white py-2 text-sm sm:text-base">
-                  LOGIN
+              <div className="w-full flex flex-col gap-2">
+                <Link to="/auth/login?type=agency" className="w-full">
+                  <Button className="w-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white py-2 text-sm sm:text-base">
+                    LOGIN
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline" 
+                  className="w-full text-green-700 border-green-300 hover:bg-green-50"
+                  onClick={() => handleRegisterClick('agency')}
+                >
+                  SIGN UP
                 </Button>
-              </Link>
+              </div>
             </CardContent>
           </Card>
           
@@ -42,11 +57,20 @@ const LoginCards: React.FC = () => {
                 <h3 className="text-base md:text-lg font-semibold mb-2">Hotels & Businesses</h3>
                 <p className="text-sm text-gray-600 mb-4">Post shifts and hire Extra Staff</p>
               </div>
-              <Link to="/auth/login?type=company" className="w-full">
-                <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-2 text-sm sm:text-base">
-                  LOGIN
+              <div className="w-full flex flex-col gap-2">
+                <Link to="/auth/login?type=company" className="w-full">
+                  <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-2 text-sm sm:text-base">
+                    LOGIN
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline" 
+                  className="w-full text-blue-700 border-blue-300 hover:bg-blue-50"
+                  onClick={() => handleRegisterClick('company')}
+                >
+                  SIGN UP
                 </Button>
-              </Link>
+              </div>
             </CardContent>
           </Card>
           
@@ -54,21 +78,30 @@ const LoginCards: React.FC = () => {
           <Card className="bg-white shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 h-full transform hover:-translate-y-1">
             <CardContent className="p-4 md:p-6 flex flex-col items-center justify-between h-full">
               <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                <UserCircle className="h-7 w-7 text-purple-600" />
+                <Users className="h-7 w-7 text-purple-600" />
               </div>
               <div className="text-center mb-4">
                 <h3 className="text-base md:text-lg font-semibold mb-2">Shift Workers</h3>
                 <p className="text-sm text-gray-600 mb-4">Clock-In for Extra Shifts</p>
               </div>
-              <Link to="/auth/login?type=shift-worker" className="w-full">
-                <Button className="w-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white py-2 text-sm sm:text-base">
-                  LOGIN
+              <div className="w-full flex flex-col gap-2">
+                <Link to="/auth/login?type=shift-worker" className="w-full">
+                  <Button className="w-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white py-2 text-sm sm:text-base">
+                    LOGIN
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline" 
+                  className="w-full text-purple-700 border-purple-300 hover:bg-purple-50"
+                  onClick={() => handleRegisterClick('shift-worker')}
+                >
+                  SIGN UP
                 </Button>
-              </Link>
+              </div>
             </CardContent>
           </Card>
           
-          {/* AI Agent Card - Updated with subscription highlight */}
+          {/* AI Agent Card */}
           <Card className="bg-gradient-to-r from-indigo-50 to-blue-50 shadow-md hover:shadow-lg transition-all duration-300 border-2 border-indigo-200 h-full transform hover:-translate-y-1 relative overflow-hidden">
             <div className="absolute top-2 right-2 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full">
               $10/mo
