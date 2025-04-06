@@ -2,7 +2,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -16,7 +15,22 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' && componentTagger(),
+    // The componentTagger will be imported dynamically in development mode
+    mode === 'development' && {
+      name: 'dynamic-tagger',
+      async configureServer(server) {
+        try {
+          // Dynamically import the tagger only in dev mode
+          const { componentTagger } = await import('lovable-tagger');
+          const plugin = componentTagger();
+          if (plugin.configureServer) {
+            plugin.configureServer(server);
+          }
+        } catch (e) {
+          console.warn('Could not load lovable-tagger:', e);
+        }
+      }
+    }
   ].filter(Boolean),
   resolve: {
     alias: {

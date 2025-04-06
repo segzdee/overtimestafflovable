@@ -1,15 +1,13 @@
-import React from 'react';
-import Header from '../components/Header';
 
-const Home: React.FC = () => {
-    return (
-        <div>
-            <Header />
-            <main>
-                <p>This is the home page.</p>
-            </main>
-        </div>
-    );
+import React from 'react';
+
+const Home = () => {
+  return (
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-6">Home</h1>
+      <p>Welcome to the home page. This is a public route.</p>
+    </div>
+  );
 };
 
 export default Home;

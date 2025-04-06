@@ -1,25 +1,49 @@
 
-import { createContext, useContext } from "react";
-import { User } from "../../types/User";
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export interface AuthContextType {
-  user: User | null;
+interface AuthContextType {
   isAuthenticated: boolean;
-  isLoading: boolean;
+  user: any | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, userData: Partial<User>) => Promise<void>;
-  logout: () => Promise<void>;
-  updateProfile: (profileData: Partial<User>) => Promise<void>;
+  logout: () => void;
 }
 
-// Create the auth context with undefined default value
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  isAuthenticated: false,
+  user: null,
+  login: async () => {},
+  logout: () => {},
+});
 
-// Create a custom hook to use the auth context
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+export const useAuth = () => useContext(AuthContext);
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<any | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const login = async (email: string, password: string) => {
+    // Mock login - replace with actual authentication
+    setUser({ email, name: 'Test User' });
+    setIsAuthenticated(true);
+  };
+
+  const logout = () => {
+    setUser(null);
+    setIsAuthenticated(false);
+  };
+
+  const value = {
+    isAuthenticated,
+    user,
+    login,
+    logout,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export default AuthContext;
