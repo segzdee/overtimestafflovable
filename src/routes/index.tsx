@@ -1,28 +1,24 @@
-import { createBrowserRouter } from "react-router-dom";
-import App from "../App";
-import Dashboard from "../pages/Dashboard";
-import Login from "../pages/Login";
-import ProtectedRoute from "../components/ProtectedRoute";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    children: [
-      {
-        path: "dashboard",
-        element: (
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "login",
-        element: <Login />,
-      },
-    ],
-  },
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import publicRoutes from "./public.routes";
+import privateRoutes from "./private.routes";
+import { ErrorBoundary } from "react-error-boundary";
+import { Suspense } from "react";
+import { Spinner } from "@/components/ui/spinner";
+
+// Create the router with all routes
+export const router = createBrowserRouter([
+  ...publicRoutes,
+  ...privateRoutes,
 ]);
 
-export default router;
+// Main router component with error handling and suspense
+export default function AppRouter() {
+  return (
+    <ErrorBoundary fallback={<div>Something went wrong</div>}>
+      <Suspense fallback={<div className="flex h-screen items-center justify-center"><Spinner /></div>}>
+        <RouterProvider router={router} />
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
