@@ -1,27 +1,24 @@
 
-import React from 'react';
+import React from "react";
+import { cn } from "@/lib/utils";
 
 interface SpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
 
-export const Spinner: React.FC<SpinnerProps> = ({ size = 'md', className = '' }) => {
-  const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-8 w-8',
-    lg: 'h-12 w-12',
-  };
-
+export function Spinner({ size = "md", className }: SpinnerProps) {
   return (
-    <div className={`animate-spin rounded-full border-t-2 border-b-2 border-primary ${sizeClasses[size]} ${className}`}></div>
+    <div
+      className={cn(
+        "inline-block animate-spin rounded-full border-2 border-solid border-current border-e-transparent",
+        {
+          "h-4 w-4": size === "sm",
+          "h-6 w-6": size === "md",
+          "h-8 w-8": size === "lg",
+        },
+        className
+      )}
+    />
   );
-};
-
-export const FullPageSpinner: React.FC = () => {
-  return (
-    <div className="h-screen w-full flex items-center justify-center">
-      <Spinner size="lg" />
-    </div>
-  );
-};
+}
