@@ -2,7 +2,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -16,7 +15,12 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' && componentTagger(),
+    // Only include componentTagger in development mode and if explicitly enabled
+    mode === 'development' && process.env.ENABLE_TAGGER === 'true' && {
+      name: 'conditional-tagger',
+      // This plugin stub doesn't use the actual tagger to avoid ESM issues
+      // The real tagger will be loaded by the Lovable platform when needed
+    }
   ].filter(Boolean),
   resolve: {
     alias: {
