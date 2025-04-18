@@ -3042,18 +3042,11 @@ export type Database = {
         Returns: undefined
       }
       admin_impersonate_user: {
-        Args: {
-          admin_id: string
-          user_id: string
-        }
+        Args: { admin_id: string; user_id: string }
         Returns: undefined
       }
       admin_restrict_user: {
-        Args: {
-          admin_id: string
-          user_id: string
-          restriction_reason: string
-        }
+        Args: { admin_id: string; user_id: string; restriction_reason: string }
         Returns: undefined
       }
       admin_unrestrict_user: {
@@ -3073,24 +3066,15 @@ export type Database = {
         Returns: undefined
       }
       admin_verify_user: {
-        Args: {
-          admin_id: string
-          user_id: string
-          verification_notes?: string
-        }
+        Args: { admin_id: string; user_id: string; verification_notes?: string }
         Returns: undefined
       }
       assign_admin_role: {
-        Args: {
-          tenant_id: string
-        }
+        Args: { tenant_id: string }
         Returns: undefined
       }
       auto_assign_workers_to_shift: {
-        Args: {
-          p_shift_id: string
-          p_count?: number
-        }
+        Args: { p_shift_id: string; p_count?: number }
         Returns: {
           worker_id: string
           assignment_id: string
@@ -3106,10 +3090,7 @@ export type Database = {
         Returns: boolean
       }
       check_registration_rate_limit: {
-        Args: {
-          p_email: string
-          p_ip_address: string
-        }
+        Args: { p_email: string; p_ip_address: string }
         Returns: Json
       }
       current_user_is_admin: {
@@ -3117,17 +3098,11 @@ export type Database = {
         Returns: boolean
       }
       end_admin_session: {
-        Args: {
-          session_id: string
-        }
+        Args: { session_id: string }
         Returns: undefined
       }
       generate_unique_id: {
-        Args: {
-          prefix: string
-          counter_table: string
-          counter_column: string
-        }
+        Args: { prefix: string; counter_table: string; counter_column: string }
         Returns: string
       }
       generate_verification_token: {
@@ -3139,9 +3114,7 @@ export type Database = {
         Returns: string
       }
       get_admin_actions_for_user: {
-        Args: {
-          user_id: string
-        }
+        Args: { user_id: string }
         Returns: {
           id: string
           admin_id: string
@@ -3156,9 +3129,7 @@ export type Database = {
         Returns: Json
       }
       get_available_workers: {
-        Args: {
-          shift_id: string
-        }
+        Args: { shift_id: string }
         Returns: {
           worker_id: string
           name: string
@@ -3202,9 +3173,7 @@ export type Database = {
         Returns: boolean
       }
       is_account_locked: {
-        Args: {
-          p_user_id: string
-        }
+        Args: { p_user_id: string }
         Returns: boolean
       }
       is_admin: {
@@ -3226,9 +3195,7 @@ export type Database = {
         Returns: undefined
       }
       process_registration_backup: {
-        Args: {
-          backup_id: number
-        }
+        Args: { backup_id: number }
         Returns: boolean
       }
       process_webhook: {
@@ -3243,16 +3210,11 @@ export type Database = {
         Returns: undefined
       }
       record_admin_session_action: {
-        Args: {
-          session_id: string
-        }
+        Args: { session_id: string }
         Returns: undefined
       }
       record_successful_login: {
-        Args: {
-          p_user_id: string
-          p_ip_address?: string
-        }
+        Args: { p_user_id: string; p_ip_address?: string }
         Returns: undefined
       }
       record_user_login: {
@@ -3283,9 +3245,7 @@ export type Database = {
         Returns: undefined
       }
       reset_failed_login_attempts: {
-        Args: {
-          p_user_id: string
-        }
+        Args: { p_user_id: string }
         Returns: undefined
       }
       safe_create_policy: {
@@ -3297,11 +3257,7 @@ export type Database = {
         Returns: undefined
       }
       safe_create_single_column_index: {
-        Args: {
-          index_name: string
-          table_name: string
-          column_name: string
-        }
+        Args: { index_name: string; table_name: string; column_name: string }
         Returns: undefined
       }
       send_verification_email: {
@@ -3315,15 +3271,11 @@ export type Database = {
         Returns: boolean
       }
       start_admin_session: {
-        Args: {
-          admin_id: string
-        }
+        Args: { admin_id: string }
         Returns: string
       }
       stop_admin_impersonation: {
-        Args: {
-          user_id: string
-        }
+        Args: { user_id: string }
         Returns: undefined
       }
       store_supabase_settings: {
@@ -3335,11 +3287,7 @@ export type Database = {
         Returns: undefined
       }
       track_auth_event: {
-        Args: {
-          event_type: string
-          user_id: string
-          event_data?: Json
-        }
+        Args: { event_type: string; user_id: string; event_data?: Json }
         Returns: undefined
       }
       track_connection_event: {
@@ -3367,23 +3315,15 @@ export type Database = {
         Returns: undefined
       }
       validate_business_hours: {
-        Args: {
-          p_shift_id: string
-        }
+        Args: { p_shift_id: string }
         Returns: boolean
       }
       validate_category: {
-        Args: {
-          p_role: string
-          p_category: string
-        }
+        Args: { p_role: string; p_category: string }
         Returns: boolean
       }
       verify_user_token: {
-        Args: {
-          p_token: string
-          p_token_type: string
-        }
+        Args: { p_token: string; p_token_type: string }
         Returns: Json
       }
     }
@@ -3414,27 +3354,29 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type DefaultSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -3442,20 +3384,22 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -3463,20 +3407,22 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -3484,21 +3430,23 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
@@ -3507,6 +3455,34 @@ export type CompositeTypes<
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      payment_status: [
+        "pending",
+        "processing",
+        "completed",
+        "failed",
+        "refunded",
+      ],
+      registration_status: ["pending", "approved", "rejected"],
+      shift_status: [
+        "draft",
+        "open",
+        "assigned",
+        "in_progress",
+        "completed",
+        "cancelled",
+      ],
+      subscription_status: ["inactive", "active", "expired"],
+      subscription_tier: ["free", "basic", "premium", "enterprise"],
+      tenant_status: ["active", "inactive", "suspended", "pending"],
+      tenant_type: ["company", "agency"],
+      user_role: ["admin", "shift_worker", "agency", "company"],
+    },
+  },
+} as const
