@@ -6,6 +6,7 @@ interface User {
   email: string;
   name?: string;
   role: string;
+  hasMFA?: boolean;
 }
 
 interface AuthContextType {
@@ -14,6 +15,11 @@ interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  requestPasswordReset: (email: string) => Promise<void>;
+  resetPassword: (token: string, password: string) => Promise<void>;
+  verifyEmail: (token: string) => Promise<void>;
+  setupMFA: () => Promise<boolean>;
+  verifyMFA: (code: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -22,6 +28,11 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   login: async () => {},
   logout: () => {},
+  requestPasswordReset: async () => {},
+  resetPassword: async () => {},
+  verifyEmail: async () => {},
+  setupMFA: async () => false,
+  verifyMFA: async () => false
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -68,6 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email,
         name: email.split('@')[0],
         role: 'shift-worker', // Default role, would be returned from backend
+        hasMFA: false
       };
       
       // Store user in state and localStorage
@@ -89,12 +101,90 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  const requestPasswordReset = async (email: string) => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real app, this would trigger a password reset email
+      return;
+    } catch (error) {
+      console.error('Password reset request failed:', error);
+      throw error;
+    }
+  };
+
+  const resetPassword = async (token: string, password: string) => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real app, this would validate the token and update the password
+      return;
+    } catch (error) {
+      console.error('Password reset failed:', error);
+      throw error;
+    }
+  };
+
+  const verifyEmail = async (token: string) => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real app, this would verify the email address
+      return;
+    } catch (error) {
+      console.error('Email verification failed:', error);
+      throw error;
+    }
+  };
+
+  const setupMFA = async () => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real app, this would set up MFA and return MFA details
+      
+      // Update user with MFA enabled
+      if (user) {
+        const updatedUser = { ...user, hasMFA: true };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('MFA setup failed:', error);
+      return false;
+    }
+  };
+
+  const verifyMFA = async (code: string) => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real app, this would verify the MFA code
+      return code === '123456'; // Mock validation
+    } catch (error) {
+      console.error('MFA verification failed:', error);
+      return false;
+    }
+  };
+
   const value = {
     isAuthenticated,
     isLoading,
     user,
     login,
     logout,
+    requestPasswordReset,
+    resetPassword,
+    verifyEmail,
+    setupMFA,
+    verifyMFA
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -11,6 +11,11 @@ import Register from "@/pages/Register";
 import Dashboard from "@/pages/Dashboard";
 import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "./ProtectedRoute";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
+import VerifyEmail from "@/pages/verify-email";
+import MFASetup from "@/pages/MFASetup";
+import AccountRecovery from "@/pages/AccountRecovery";
 
 // Define all routes in a single place
 const router = createBrowserRouter([
@@ -29,6 +34,26 @@ const router = createBrowserRouter([
       {
         path: "register",
         element: <Register />
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPassword />
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />
+      },
+      {
+        path: "verify-email",
+        element: <VerifyEmail />
+      },
+      {
+        path: "mfa-setup",
+        element: <ProtectedRoute><MFASetup /></ProtectedRoute>
+      },
+      {
+        path: "account-recovery",
+        element: <AccountRecovery />
       },
       {
         path: "dashboard",

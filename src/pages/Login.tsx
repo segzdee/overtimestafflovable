@@ -14,6 +14,7 @@ const Login = () => {
   
   // Get the return path from location state, default to dashboard
   const from = (location.state as any)?.from?.pathname || '/dashboard';
+  const message = (location.state as any)?.message || '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +38,7 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+          {message && <p className="mt-2 text-center text-sm text-green-600">{message}</p>}
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
@@ -70,6 +72,26 @@ const Login = () => {
             </div>
           </div>
 
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+              />
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                Remember me
+              </label>
+            </div>
+
+            <div className="text-sm">
+              <Link to="/forgot-password" className="font-medium text-purple-600 hover:text-purple-500">
+                Forgot your password?
+              </Link>
+            </div>
+          </div>
+
           {error && <div className="text-red-500 text-sm">{error}</div>}
 
           <div>
@@ -86,6 +108,12 @@ const Login = () => {
             Don't have an account?{" "}
             <Link to="/register" className="font-medium text-purple-600 hover:text-purple-500">
               Register
+            </Link>
+          </div>
+          
+          <div className="text-sm text-center">
+            <Link to="/account-recovery" className="font-medium text-purple-600 hover:text-purple-500">
+              Recover your account
             </Link>
           </div>
         </form>
