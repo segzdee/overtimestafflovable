@@ -1,49 +1,40 @@
-import React, { useState, useEffect } from 'react';
+
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDevMode } from '@/contexts/dev/DevModeContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-export default function FindShifts() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const navigate = useNavigate(); // Using navigate instead of router
-  const { devMode, selectedRole } = useDevMode();
-
-  useEffect(() => {
-    // If in dev mode and a role is selected, consider the user logged in
-    if (devMode && selectedRole) {
-      setIsLoggedIn(true);
-      setShowLoginPrompt(false);
-      return;
-    }
-
-    // Check if user is logged in (this would be replaced with your actual auth check)
-    const checkLoginStatus = () => {
-      const loggedIn = localStorage.getItem('userToken') !== null;
-      setIsLoggedIn(loggedIn);
-      if (!loggedIn) {
-        setShowLoginPrompt(true);
-      }
-    };
-
-    checkLoginStatus();
-  }, [devMode, selectedRole]);
-
-  const handleLoginRedirect = () => {
-    navigate('/login'); // Using navigate instead of router.push
-  };
-
-  const handleMarketRedirect = () => {
-    navigate('/live-market');
-  };
-  
-  // Redirect to the live market
-  useEffect(() => {
-    handleMarketRedirect();
-  }, []);
+const FindShifts = () => {
+  const navigate = useNavigate();
   
   return (
-    <div className="container mx-auto py-8">
-      <p>Redirecting to Live Market...</p>
+    <div className="container mx-auto py-8 px-4">
+      <h1 className="text-3xl font-bold mb-6">Find Shifts</h1>
+      <p className="mb-8 text-gray-600">Browse available shifts in your area</p>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[1, 2, 3, 4, 5, 6].map((item) => (
+          <Card key={item}>
+            <CardHeader>
+              <CardTitle>Shift #{item}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Location: City {item}</p>
+              <p>Date: 2025/05/{item < 10 ? '0' + item : item}</p>
+              <p>Hours: 8</p>
+              <div className="mt-4 flex justify-end">
+                <Button>Apply Now</Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="mt-8 flex justify-center">
+        <Button variant="outline" onClick={() => navigate('/')}>Back to Home</Button>
+      </div>
     </div>
   );
-}
+};
+
+export default FindShifts;

@@ -1,44 +1,37 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth/AuthContext';
+import { Button } from '@/components/ui/button';
 
 const Header = () => {
-  const { user, isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+  const { isAuthenticated, signOut } = useAuth();
 
   return (
-    <header className="bg-purple-600 text-white shadow">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="text-xl font-bold">OVERTIMESTAFF</Link>
+    <header className="bg-white border-b py-4">
+      <div className="container mx-auto flex justify-between items-center px-4">
+        <Link to="/" className="font-bold text-xl">App Logo</Link>
         
-        <nav className="flex space-x-4">
-          <Link to="/" className="hover:text-purple-200">Home</Link>
-          
-          {isAuthenticated ? (
-            <>
-              <Link to="/dashboard" className="hover:text-purple-200">Dashboard</Link>
-              <button 
-                onClick={handleLogout}
-                className="hover:text-purple-200 cursor-pointer"
-              >
-                Logout
-              </button>
-              <span className="ml-4 text-sm">
-                Welcome, {user?.name || user?.email}
-              </span>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="hover:text-purple-200">Login</Link>
-              <Link to="/register" className="hover:text-purple-200">Register</Link>
-            </>
-          )}
+        <nav>
+          <ul className="flex space-x-4">
+            <li><Link to="/" className="hover:text-purple-600">Home</Link></li>
+            
+            {isAuthenticated ? (
+              <>
+                <li><Link to="/dashboard" className="hover:text-purple-600">Dashboard</Link></li>
+                <li>
+                  <Button variant="ghost" onClick={signOut}>
+                    Logout
+                  </Button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li><Link to="/login" className="hover:text-purple-600">Login</Link></li>
+                <li><Link to="/register" className="hover:text-purple-600">Register</Link></li>
+              </>
+            )}
+          </ul>
         </nav>
       </div>
     </header>

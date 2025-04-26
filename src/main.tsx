@@ -1,9 +1,8 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { DevModeProvider } from '@/contexts/dev/DevModeContext';
+import { AuthProvider } from '@/contexts/auth/AuthContext';
 import { Toaster } from '@/components/ui/toaster';
-import { startOnlineStatusMonitoring } from '@/lib/online-detection';
 import App from './App';
 import './index.css';
 
@@ -17,15 +16,12 @@ if (!rootElement) {
 
 const root = ReactDOM.createRoot(rootElement);
 
-// Initialize connection handling
-startOnlineStatusMonitoring();
-
 // Render the app
 root.render(
   <React.StrictMode>
-    <DevModeProvider>
+    <AuthProvider>
       <App />
       <Toaster />
-    </DevModeProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
